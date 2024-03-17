@@ -1,8 +1,10 @@
+// Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+// sms10086@hotmail.com
+
 package goffmpeg6
 
 // libavcodec/avcodec.h
 type AVCodecInternal struct {
-
 }
 
 // libavcodec/d3d11va.h
@@ -30,10 +32,10 @@ type AVFilterCommand struct {
 
 // libavformat/avformat.h
 type AVIndexEntry struct {
-	Pos int64
-	Timestamp int64
+	Pos            int64
+	Timestamp      int64
 	Flags_and_size int32
-	Min_distance int32
+	Min_distance   int32
 }
 
 type URLContext struct {
