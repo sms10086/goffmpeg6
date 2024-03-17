@@ -41,7 +41,9 @@ import (
                      
                      
 
-type AVExpr C.struct_AVExpr
+type AVExpr struct {
+}
+
 
 /**
  * Parse and evaluate an expression.
@@ -103,7 +105,7 @@ func Av_expr_parse(expr **AVExpr, s *byte,
                   log_offset int32, log_ctx unsafe.Pointer) int32 {
     cb4 := syscall.NewCallbackCDecl(funcs1)
     cb6 := syscall.NewCallbackCDecl(funcs2)
-    return int32(C.av_expr_parse((**C.AVExpr)(unsafe.Pointer(expr)), 
+    return int32(C.av_expr_parse((**C.struct_AVExpr)(unsafe.Pointer(expr)), 
         (*C.char)(unsafe.Pointer(s)), (**C.char)(unsafe.Pointer(const_names)), 
         (**C.char)(unsafe.Pointer(func1_names)), 
         (**[0]byte)(unsafe.Pointer(cb4)), 
@@ -120,7 +122,7 @@ func Av_expr_parse(expr **AVExpr, s *byte,
  * @return the value of the expression
  */
 func Av_expr_eval(e *AVExpr, const_values *float64, opaque unsafe.Pointer) float64 {
-    return float64(C.av_expr_eval((*C.AVExpr)(unsafe.Pointer(e)), 
+    return float64(C.av_expr_eval((*C.struct_AVExpr)(unsafe.Pointer(e)), 
         (*C.double)(unsafe.Pointer(const_values)), opaque))
 }
 
@@ -134,7 +136,7 @@ func Av_expr_eval(e *AVExpr, const_values *float64, opaque unsafe.Pointer) float
  * or size was zero
  */
 func Av_expr_count_vars(e *AVExpr, counter *uint32, size int32) int32 {
-    return int32(C.av_expr_count_vars((*C.AVExpr)(unsafe.Pointer(e)), 
+    return int32(C.av_expr_count_vars((*C.struct_AVExpr)(unsafe.Pointer(e)), 
         (*C.unsigned)(unsafe.Pointer(counter)), C.int(size)))
 }
 
@@ -152,7 +154,7 @@ func Av_expr_count_vars(e *AVExpr, counter *uint32, size int32) int32 {
  * or size was zero
  */
 func Av_expr_count_func(e *AVExpr, counter *uint32, size int32, arg int32) int32 {
-    return int32(C.av_expr_count_func((*C.AVExpr)(unsafe.Pointer(e)), 
+    return int32(C.av_expr_count_func((*C.struct_AVExpr)(unsafe.Pointer(e)), 
         (*C.unsigned)(unsafe.Pointer(counter)), C.int(size), C.int(arg)))
 }
 
@@ -160,7 +162,7 @@ func Av_expr_count_func(e *AVExpr, counter *uint32, size int32, arg int32) int32
  * Free a parsed expression previously created with av_expr_parse().
  */
 func Av_expr_free(e *AVExpr)  {
-    C.av_expr_free((*C.AVExpr)(unsafe.Pointer(e)))
+    C.av_expr_free((*C.struct_AVExpr)(unsafe.Pointer(e)))
 }
 
 /**

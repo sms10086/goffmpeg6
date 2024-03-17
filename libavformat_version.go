@@ -26,10 +26,10 @@ package goffmpeg6
 
 //const LIBAVFORMAT_VERSION_MINOR = 16
 //const LIBAVFORMAT_VERSION_MICRO = 100
-//const LIBAVFORMAT_VERSION_INT = AV_VERSION_INT(LIBAVFORMAT_VERSION_MAJOR,                                                 LIBAVFORMAT_VERSION_MINOR,                                                 LIBAVFORMAT_VERSION_MICRO)
-//const LIBAVFORMAT_VERSION = AV_VERSION(LIBAVFORMAT_VERSION_MAJOR,                                               LIBAVFORMAT_VERSION_MINOR,                                               LIBAVFORMAT_VERSION_MICRO)
-//const LIBAVFORMAT_BUILD = LIBAVFORMAT_VERSION_INT
-//const LIBAVFORMAT_IDENT = "Lavf" AV_STRINGIFY(LIBAVFORMAT_VERSION)
+//const LIBAVFORMAT_VERSION_INT =  AV_VERSION_INT(LIBAVFORMAT_VERSION_MAJOR,                                                 LIBAVFORMAT_VERSION_MINOR,                                                 LIBAVFORMAT_VERSION_MICRO) 
+//const LIBAVFORMAT_VERSION =      AV_VERSION(LIBAVFORMAT_VERSION_MAJOR,                                               LIBAVFORMAT_VERSION_MINOR,                                               LIBAVFORMAT_VERSION_MICRO) 
+//const LIBAVFORMAT_BUILD =        LIBAVFORMAT_VERSION_INT 
+//const LIBAVFORMAT_IDENT =        "Lavf" AV_STRINGIFY(LIBAVFORMAT_VERSION) 
 
 
                           

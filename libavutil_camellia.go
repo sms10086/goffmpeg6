@@ -50,7 +50,9 @@ import (
 
 //extern const int av_camellia_size;
 
-type AVCAMELLIA C.struct_AVCAMELLIA
+type AVCAMELLIA struct {
+}
+
 
 /**
   * Allocate an AVCAMELLIA context

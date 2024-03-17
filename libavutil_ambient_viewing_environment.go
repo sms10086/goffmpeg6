@@ -50,7 +50,12 @@ import (
  * @note sizeof(AVAmbientViewingEnvironment) is not part of the public ABI, and
  *       it must be allocated using av_ambient_viewing_environment_alloc.
  */
-type AVAmbientViewingEnvironment C.struct_AVAmbientViewingEnvironment
+type AVAmbientViewingEnvironment struct {
+    Ambient_illuminance AVRational
+    Ambient_light_x AVRational
+    Ambient_light_y AVRational
+}
+
 
 /**
  * Allocate an AVAmbientViewingEnvironment structure.
@@ -70,7 +75,7 @@ func Av_ambient_viewing_environment_alloc(size *uint64) *AVAmbientViewingEnviron
  */
 func Av_ambient_viewing_environment_create_side_data(frame *AVFrame) *AVAmbientViewingEnvironment {
     return (*AVAmbientViewingEnvironment)(unsafe.Pointer(C.av_ambient_viewing_environment_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
                                                  

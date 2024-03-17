@@ -50,42 +50,43 @@ import (
 )
 
 const AV_INPUT_BUFFER_MIN_SIZE = 16384
-const AV_CODEC_FLAG_UNALIGNED = (1 <<  0)
-const AV_CODEC_FLAG_QSCALE = (1 <<  1)
-const AV_CODEC_FLAG_4MV = (1 <<  2)
-const AV_CODEC_FLAG_OUTPUT_CORRUPT = (1 <<  3)
-const AV_CODEC_FLAG_QPEL = (1 <<  4)
-const AV_CODEC_FLAG_RECON_FRAME = (1 <<  6)
-const AV_CODEC_FLAG_COPY_OPAQUE = (1 <<  7)
-const AV_CODEC_FLAG_FRAME_DURATION = (1 <<  8)
-const AV_CODEC_FLAG_PASS1 = (1 <<  9)
-const AV_CODEC_FLAG_PASS2 = (1 << 10)
-const AV_CODEC_FLAG_LOOP_FILTER = (1 << 11)
-const AV_CODEC_FLAG_GRAY = (1 << 13)
-const AV_CODEC_FLAG_PSNR = (1 << 15)
-const AV_CODEC_FLAG_INTERLACED_DCT = (1 << 18)
-const AV_CODEC_FLAG_LOW_DELAY = (1 << 19)
-const AV_CODEC_FLAG_GLOBAL_HEADER = (1 << 22)
-const AV_CODEC_FLAG_BITEXACT = (1 << 23)
-const AV_CODEC_FLAG_AC_PRED = (1 << 24)
-const AV_CODEC_FLAG_INTERLACED_ME = (1 << 29)
-const AV_CODEC_FLAG_CLOSED_GOP = (uint32(1) << 31)
-const AV_CODEC_FLAG2_FAST = (1 <<  0)
-const AV_CODEC_FLAG2_NO_OUTPUT = (1 <<  2)
-const AV_CODEC_FLAG2_LOCAL_HEADER = (1 <<  3)
-const AV_CODEC_FLAG2_CHUNKS = (1 << 15)
-const AV_CODEC_FLAG2_IGNORE_CROP = (1 << 16)
-const AV_CODEC_FLAG2_SHOW_ALL = (1 << 22)
-const AV_CODEC_FLAG2_EXPORT_MVS = (1 << 28)
-const AV_CODEC_FLAG2_SKIP_MANUAL = (1 << 29)
-const AV_CODEC_FLAG2_RO_FLUSH_NOOP = (1 << 30)
-const AV_CODEC_FLAG2_ICC_PROFILES = (uint32(1) << 31)
-const AV_CODEC_EXPORT_DATA_MVS = (1 << 0)
-const AV_CODEC_EXPORT_DATA_PRFT = (1 << 1)
-const AV_CODEC_EXPORT_DATA_VIDEO_ENC_PARAMS = (1 << 2)
-const AV_CODEC_EXPORT_DATA_FILM_GRAIN = (1 << 3)
-const AV_GET_BUFFER_FLAG_REF = (1 << 0)
-const AV_GET_ENCODE_BUFFER_FLAG_REF = (1 << 0)
+const AV_CODEC_FLAG_UNALIGNED =        (1 <<  0) 
+const AV_CODEC_FLAG_QSCALE =           (1 <<  1) 
+const AV_CODEC_FLAG_4MV =              (1 <<  2) 
+const AV_CODEC_FLAG_OUTPUT_CORRUPT =   (1 <<  3) 
+const AV_CODEC_FLAG_QPEL =             (1 <<  4) 
+const AV_CODEC_FLAG_DROPCHANGED =      (1 <<  5) 
+const AV_CODEC_FLAG_RECON_FRAME =      (1 <<  6) 
+const AV_CODEC_FLAG_COPY_OPAQUE =      (1 <<  7) 
+const AV_CODEC_FLAG_FRAME_DURATION =   (1 <<  8) 
+const AV_CODEC_FLAG_PASS1 =            (1 <<  9) 
+const AV_CODEC_FLAG_PASS2 =            (1 << 10) 
+const AV_CODEC_FLAG_LOOP_FILTER =      (1 << 11) 
+const AV_CODEC_FLAG_GRAY =             (1 << 13) 
+const AV_CODEC_FLAG_PSNR =             (1 << 15) 
+const AV_CODEC_FLAG_INTERLACED_DCT =   (1 << 18) 
+const AV_CODEC_FLAG_LOW_DELAY =        (1 << 19) 
+const AV_CODEC_FLAG_GLOBAL_HEADER =    (1 << 22) 
+const AV_CODEC_FLAG_BITEXACT =         (1 << 23) 
+const AV_CODEC_FLAG_AC_PRED =          (1 << 24) 
+const AV_CODEC_FLAG_INTERLACED_ME =    (1 << 29) 
+const AV_CODEC_FLAG_CLOSED_GOP =       (uint32(1) << 31) 
+const AV_CODEC_FLAG2_FAST =            (1 <<  0) 
+const AV_CODEC_FLAG2_NO_OUTPUT =       (1 <<  2) 
+const AV_CODEC_FLAG2_LOCAL_HEADER =    (1 <<  3) 
+const AV_CODEC_FLAG2_CHUNKS =          (1 << 15) 
+const AV_CODEC_FLAG2_IGNORE_CROP =     (1 << 16) 
+const AV_CODEC_FLAG2_SHOW_ALL =        (1 << 22) 
+const AV_CODEC_FLAG2_EXPORT_MVS =      (1 << 28) 
+const AV_CODEC_FLAG2_SKIP_MANUAL =     (1 << 29) 
+const AV_CODEC_FLAG2_RO_FLUSH_NOOP =   (1 << 30) 
+const AV_CODEC_FLAG2_ICC_PROFILES =    (uint32(1) << 31) 
+const AV_CODEC_EXPORT_DATA_MVS =          (1 << 0) 
+const AV_CODEC_EXPORT_DATA_PRFT =         (1 << 1) 
+const AV_CODEC_EXPORT_DATA_VIDEO_ENC_PARAMS =  (1 << 2) 
+const AV_CODEC_EXPORT_DATA_FILM_GRAIN =  (1 << 3) 
+const AV_GET_BUFFER_FLAG_REF =  (1 << 0) 
+const AV_GET_ENCODE_BUFFER_FLAG_REF =  (1 << 0) 
 const FF_COMPRESSION_DEFAULT = -1
 const FF_CMP_SAD = 0
 const FF_CMP_SSE = 1
@@ -104,9 +105,9 @@ const FF_CMP_DCTMAX = 13
 const FF_CMP_DCT264 = 14
 const FF_CMP_MEDIAN_SAD = 15
 const FF_CMP_CHROMA = 256
-const SLICE_FLAG_CODED_ORDER = 0x0001
-const SLICE_FLAG_ALLOW_FIELD = 0x0002
-const SLICE_FLAG_ALLOW_PLANE = 0x0004
+const SLICE_FLAG_CODED_ORDER =     0x0001  
+const SLICE_FLAG_ALLOW_FIELD =     0x0002  
+const SLICE_FLAG_ALLOW_PLANE =     0x0004  
 const FF_MB_DECISION_SIMPLE = 0
 const FF_MB_DECISION_BITS = 1
 const FF_MB_DECISION_RD = 2
@@ -133,16 +134,16 @@ const FF_DEBUG_RC = 2
 const FF_DEBUG_BITSTREAM = 4
 const FF_DEBUG_MB_TYPE = 8
 const FF_DEBUG_QP = 16
-const FF_DEBUG_DCT_COEFF = 0x00000040
-const FF_DEBUG_SKIP = 0x00000080
-const FF_DEBUG_STARTCODE = 0x00000100
-const FF_DEBUG_ER = 0x00000400
-const FF_DEBUG_MMCO = 0x00000800
-const FF_DEBUG_BUGS = 0x00001000
-const FF_DEBUG_BUFFERS = 0x00008000
-const FF_DEBUG_THREADS = 0x00010000
-const FF_DEBUG_GREEN_MD = 0x00800000
-const FF_DEBUG_NOMC = 0x01000000
+const FF_DEBUG_DCT_COEFF =    0x00000040 
+const FF_DEBUG_SKIP =         0x00000080 
+const FF_DEBUG_STARTCODE =    0x00000100 
+const FF_DEBUG_ER =           0x00000400 
+const FF_DEBUG_MMCO =         0x00000800 
+const FF_DEBUG_BUGS =         0x00001000 
+const FF_DEBUG_BUFFERS =      0x00008000 
+const FF_DEBUG_THREADS =      0x00010000 
+const FF_DEBUG_GREEN_MD =     0x00800000 
+const FF_DEBUG_NOMC =         0x01000000 
 const FF_DCT_AUTO = 0
 const FF_DCT_FASTINT = 1
 const FF_DCT_INT = 2
@@ -161,27 +162,137 @@ const FF_IDCT_SIMPLEARMV5TE = 16
 const FF_IDCT_SIMPLEARMV6 = 17
 const FF_IDCT_FAAN = 20
 const FF_IDCT_SIMPLENEON = 22
+const FF_IDCT_NONE = 24
 const FF_IDCT_SIMPLEAUTO = 128
 const FF_THREAD_FRAME = 1
 const FF_THREAD_SLICE = 2
+const FF_PROFILE_UNKNOWN = -99
+const FF_PROFILE_RESERVED = -100
+const FF_PROFILE_AAC_MAIN = 0
+const FF_PROFILE_AAC_LOW = 1
+const FF_PROFILE_AAC_SSR = 2
+const FF_PROFILE_AAC_LTP = 3
+const FF_PROFILE_AAC_HE = 4
+const FF_PROFILE_AAC_HE_V2 = 28
+const FF_PROFILE_AAC_LD = 22
+const FF_PROFILE_AAC_ELD = 38
+const FF_PROFILE_MPEG2_AAC_LOW = 128
+const FF_PROFILE_MPEG2_AAC_HE = 131
+const FF_PROFILE_DNXHD = 0
+const FF_PROFILE_DNXHR_LB = 1
+const FF_PROFILE_DNXHR_SQ = 2
+const FF_PROFILE_DNXHR_HQ = 3
+const FF_PROFILE_DNXHR_HQX = 4
+const FF_PROFILE_DNXHR_444 = 5
+const FF_PROFILE_DTS = 20
+const FF_PROFILE_DTS_ES = 30
+const FF_PROFILE_DTS_96_24 = 40
+const FF_PROFILE_DTS_HD_HRA = 50
+const FF_PROFILE_DTS_HD_MA = 60
+const FF_PROFILE_DTS_EXPRESS = 70
+const FF_PROFILE_DTS_HD_MA_X = 61
+const FF_PROFILE_DTS_HD_MA_X_IMAX = 62
+const FF_PROFILE_EAC3_DDP_ATMOS = 30
+const FF_PROFILE_TRUEHD_ATMOS = 30
+const FF_PROFILE_MPEG2_422 = 0
+const FF_PROFILE_MPEG2_HIGH = 1
+const FF_PROFILE_MPEG2_SS = 2
+const FF_PROFILE_MPEG2_SNR_SCALABLE = 3
+const FF_PROFILE_MPEG2_MAIN = 4
+const FF_PROFILE_MPEG2_SIMPLE = 5
+const FF_PROFILE_H264_CONSTRAINED =   (1<<9)   
+const FF_PROFILE_H264_INTRA =         (1<<11)  
+const FF_PROFILE_H264_BASELINE = 66
+const FF_PROFILE_H264_CONSTRAINED_BASELINE =  (66|FF_PROFILE_H264_CONSTRAINED) 
+const FF_PROFILE_H264_MAIN = 77
+const FF_PROFILE_H264_EXTENDED = 88
+const FF_PROFILE_H264_HIGH = 100
+const FF_PROFILE_H264_HIGH_10 = 110
+const FF_PROFILE_H264_HIGH_10_INTRA =         (110|FF_PROFILE_H264_INTRA) 
+const FF_PROFILE_H264_MULTIVIEW_HIGH = 118
+const FF_PROFILE_H264_HIGH_422 = 122
+const FF_PROFILE_H264_HIGH_422_INTRA =        (122|FF_PROFILE_H264_INTRA) 
+const FF_PROFILE_H264_STEREO_HIGH = 128
+const FF_PROFILE_H264_HIGH_444 = 144
+const FF_PROFILE_H264_HIGH_444_PREDICTIVE = 244
+const FF_PROFILE_H264_HIGH_444_INTRA =        (244|FF_PROFILE_H264_INTRA) 
+const FF_PROFILE_H264_CAVLC_444 = 44
+const FF_PROFILE_VC1_SIMPLE = 0
+const FF_PROFILE_VC1_MAIN = 1
+const FF_PROFILE_VC1_COMPLEX = 2
+const FF_PROFILE_VC1_ADVANCED = 3
+const FF_PROFILE_MPEG4_SIMPLE = 0
+const FF_PROFILE_MPEG4_SIMPLE_SCALABLE = 1
+const FF_PROFILE_MPEG4_CORE = 2
+const FF_PROFILE_MPEG4_MAIN = 3
+const FF_PROFILE_MPEG4_N_BIT = 4
+const FF_PROFILE_MPEG4_SCALABLE_TEXTURE = 5
+const FF_PROFILE_MPEG4_SIMPLE_FACE_ANIMATION = 6
+const FF_PROFILE_MPEG4_BASIC_ANIMATED_TEXTURE = 7
+const FF_PROFILE_MPEG4_HYBRID = 8
+const FF_PROFILE_MPEG4_ADVANCED_REAL_TIME = 9
+const FF_PROFILE_MPEG4_CORE_SCALABLE = 10
+const FF_PROFILE_MPEG4_ADVANCED_CODING = 11
+const FF_PROFILE_MPEG4_ADVANCED_CORE = 12
+const FF_PROFILE_MPEG4_ADVANCED_SCALABLE_TEXTURE = 13
+const FF_PROFILE_MPEG4_SIMPLE_STUDIO = 14
+const FF_PROFILE_MPEG4_ADVANCED_SIMPLE = 15
+const FF_PROFILE_JPEG2000_CSTREAM_RESTRICTION_0 = 1
+const FF_PROFILE_JPEG2000_CSTREAM_RESTRICTION_1 = 2
+const FF_PROFILE_JPEG2000_CSTREAM_NO_RESTRICTION = 32768
+const FF_PROFILE_JPEG2000_DCINEMA_2K = 3
+const FF_PROFILE_JPEG2000_DCINEMA_4K = 4
+const FF_PROFILE_VP9_0 = 0
+const FF_PROFILE_VP9_1 = 1
+const FF_PROFILE_VP9_2 = 2
+const FF_PROFILE_VP9_3 = 3
+const FF_PROFILE_HEVC_MAIN = 1
+const FF_PROFILE_HEVC_MAIN_10 = 2
+const FF_PROFILE_HEVC_MAIN_STILL_PICTURE = 3
+const FF_PROFILE_HEVC_REXT = 4
+const FF_PROFILE_HEVC_SCC = 9
+const FF_PROFILE_VVC_MAIN_10 = 1
+const FF_PROFILE_VVC_MAIN_10_444 = 33
+const FF_PROFILE_AV1_MAIN = 0
+const FF_PROFILE_AV1_HIGH = 1
+const FF_PROFILE_AV1_PROFESSIONAL = 2
+const FF_PROFILE_MJPEG_HUFFMAN_BASELINE_DCT =             0xc0 
+const FF_PROFILE_MJPEG_HUFFMAN_EXTENDED_SEQUENTIAL_DCT =  0xc1 
+const FF_PROFILE_MJPEG_HUFFMAN_PROGRESSIVE_DCT =          0xc2 
+const FF_PROFILE_MJPEG_HUFFMAN_LOSSLESS =                 0xc3 
+const FF_PROFILE_MJPEG_JPEG_LS =                          0xf7 
+const FF_PROFILE_SBC_MSBC = 1
+const FF_PROFILE_PRORES_PROXY = 0
+const FF_PROFILE_PRORES_LT = 1
+const FF_PROFILE_PRORES_STANDARD = 2
+const FF_PROFILE_PRORES_HQ = 3
+const FF_PROFILE_PRORES_4444 = 4
+const FF_PROFILE_PRORES_XQ = 5
+const FF_PROFILE_ARIB_PROFILE_A = 0
+const FF_PROFILE_ARIB_PROFILE_C = 1
+const FF_PROFILE_KLVA_SYNC = 0
+const FF_PROFILE_KLVA_ASYNC = 1
+const FF_PROFILE_EVC_BASELINE = 0
+const FF_PROFILE_EVC_MAIN = 1
+const FF_LEVEL_UNKNOWN = -99
 const FF_SUB_CHARENC_MODE_DO_NOTHING = -1
 const FF_SUB_CHARENC_MODE_AUTOMATIC = 0
 const FF_SUB_CHARENC_MODE_PRE_DECODER = 1
 const FF_SUB_CHARENC_MODE_IGNORE = 2
-const FF_CODEC_PROPERTY_LOSSLESS = 0x00000001
-const FF_CODEC_PROPERTY_CLOSED_CAPTIONS = 0x00000002
-const FF_CODEC_PROPERTY_FILM_GRAIN = 0x00000004
-const AV_HWACCEL_CODEC_CAP_EXPERIMENTAL = 0x0200
-const AV_HWACCEL_FLAG_IGNORE_LEVEL = (1 << 0)
-const AV_HWACCEL_FLAG_ALLOW_HIGH_DEPTH = (1 << 1)
-const AV_HWACCEL_FLAG_ALLOW_PROFILE_MISMATCH = (1 << 2)
-const AV_HWACCEL_FLAG_UNSAFE_OUTPUT = (1 << 3)
-const AV_SUBTITLE_FLAG_FORCED = 0x00000001
+const FF_CODEC_PROPERTY_LOSSLESS =         0x00000001 
+const FF_CODEC_PROPERTY_CLOSED_CAPTIONS =  0x00000002 
+const FF_CODEC_PROPERTY_FILM_GRAIN =       0x00000004 
+const AV_HWACCEL_CODEC_CAP_EXPERIMENTAL =  0x0200 
+const AV_HWACCEL_FLAG_IGNORE_LEVEL =  (1 << 0) 
+const AV_HWACCEL_FLAG_ALLOW_HIGH_DEPTH =  (1 << 1) 
+const AV_HWACCEL_FLAG_ALLOW_PROFILE_MISMATCH =  (1 << 2) 
+const AV_HWACCEL_FLAG_UNSAFE_OUTPUT =  (1 << 3) 
+const AV_SUBTITLE_FLAG_FORCED =  0x00000001 
 const AV_PARSER_PTS_NB = 4
-const PARSER_FLAG_COMPLETE_FRAMES = 0x0001
-const PARSER_FLAG_ONCE = 0x0002
-const PARSER_FLAG_FETCHED_OFFSET = 0x0004
-const PARSER_FLAG_USE_CODEC_TS = 0x1000
+const PARSER_FLAG_COMPLETE_FRAMES =            0x0001 
+const PARSER_FLAG_ONCE =                       0x0002 
+const PARSER_FLAG_FETCHED_OFFSET =             0x0004 
+const PARSER_FLAG_USE_CODEC_TS =               0x1000 
 
 
                          
@@ -219,7 +330,7 @@ const PARSER_FLAG_USE_CODEC_TS = 0x1000
                       
       
 
-type AVCodecParameters C.struct_AVCodecParameters
+// type AVCodecParameters
 
 /**
  * @defgroup libavc libavcodec
@@ -363,7 +474,13 @@ type AVCodecParameters C.struct_AVCodecParameters
 /**
  * @ingroup lavc_encoding
  */
-type RcOverride C.struct_RcOverride
+type RcOverride struct {
+    Start_frame int32
+    End_frame int32
+    Qscale int32
+    Quality_factor float32
+}
+
 
 /* encoding support
    These flags can be passed in AVCodecContext.flags before initialization.
@@ -392,13 +509,13 @@ type RcOverride C.struct_RcOverride
  */
 
                       
-   
-                                                         
-                           
-  
-                                                                            
-   
-                                               
+/**
+ * Don't output frames whose parameters differ from first
+ * decoded frame in stream.
+ *
+ * @deprecated callers should implement this functionality in their own code
+ */
+
       
 /**
  * Request the encoder to output reconstructed frames, i.e.\ frames that would
@@ -599,7 +716,168 @@ type RcOverride C.struct_RcOverride
  * structure field names for historic reasons or brevity.
  * sizeof(AVCodecContext) must not be used outside libav*.
  */
-type AVCodecContext C.struct_AVCodecContext
+type AVCodecContext struct {
+    Av_class *AVClass
+    Log_level_offset int32
+    Codec_type AVMediaType
+    Codec *AVCodec
+    Codec_id AVCodecID
+    Codec_tag uint32
+    Priv_data unsafe.Pointer
+    Internal *AVCodecInternal
+    Opaque unsafe.Pointer
+    Bit_rate int64
+    Bit_rate_tolerance int32
+    Global_quality int32
+    Compression_level int32
+    Flags int32
+    Flags2 int32
+    Extradata *uint8
+    Extradata_size int32
+    Time_base AVRational
+    Ticks_per_frame int32
+    Delay int32
+    Width int32
+    Height int32
+    Coded_width int32
+    Coded_height int32
+    Gop_size int32
+    Pix_fmt AVPixelFormat
+    Draw_horiz_band uintptr
+    Get_format uintptr
+    Max_b_frames int32
+    B_quant_factor float32
+    B_quant_offset float32
+    Has_b_frames int32
+    I_quant_factor float32
+    I_quant_offset float32
+    Lumi_masking float32
+    Temporal_cplx_masking float32
+    Spatial_cplx_masking float32
+    P_masking float32
+    Dark_masking float32
+    Slice_count int32
+    Slice_offset *int32
+    Sample_aspect_ratio AVRational
+    Me_cmp int32
+    Me_sub_cmp int32
+    Mb_cmp int32
+    Ildct_cmp int32
+    Dia_size int32
+    Last_predictor_count int32
+    Me_pre_cmp int32
+    Pre_dia_size int32
+    Me_subpel_quality int32
+    Me_range int32
+    Slice_flags int32
+    Mb_decision int32
+    Intra_matrix *uint16
+    Inter_matrix *uint16
+    Intra_dc_precision int32
+    Skip_top int32
+    Skip_bottom int32
+    Mb_lmin int32
+    Mb_lmax int32
+    Bidir_refine int32
+    Keyint_min int32
+    Refs int32
+    Mv0_threshold int32
+    Color_primaries AVColorPrimaries
+    Color_trc AVColorTransferCharacteristic
+    Colorspace AVColorSpace
+    Color_range AVColorRange
+    Chroma_sample_location AVChromaLocation
+    Slices int32
+    Field_order AVFieldOrder
+    Sample_rate int32
+    Channels int32
+    Sample_fmt AVSampleFormat
+    Frame_size int32
+    Frame_number int32
+    Block_align int32
+    Cutoff int32
+    Channel_layout uint64
+    Request_channel_layout uint64
+    Audio_service_type AVAudioServiceType
+    Request_sample_fmt AVSampleFormat
+    Get_buffer2 uintptr
+    Qcompress float32
+    Qblur float32
+    Qmin int32
+    Qmax int32
+    Max_qdiff int32
+    Rc_buffer_size int32
+    Rc_override_count int32
+    Rc_override *RcOverride
+    Rc_max_rate int64
+    Rc_min_rate int64
+    Rc_max_available_vbv_use float32
+    Rc_min_vbv_overflow_use float32
+    Rc_initial_buffer_occupancy int32
+    Trellis int32
+    Stats_out *byte
+    Stats_in *byte
+    Workaround_bugs int32
+    Strict_std_compliance int32
+    Error_concealment int32
+    Debug int32
+    Err_recognition int32
+    Reordered_opaque int64
+    Hwaccel *AVHWAccel
+    Hwaccel_context unsafe.Pointer
+    Error [AV_NUM_DATA_POINTERS]uint64
+    Dct_algo int32
+    Idct_algo int32
+    Bits_per_coded_sample int32
+    Bits_per_raw_sample int32
+    Lowres int32
+    Thread_count int32
+    Thread_type int32
+    Active_thread_type int32
+    Execute uintptr
+    Execute2 uintptr
+    Nsse_weight int32
+    Profile int32
+    Level int32
+    Skip_loop_filter AVDiscard
+    Skip_idct AVDiscard
+    Skip_frame AVDiscard
+    Subtitle_header *uint8
+    Subtitle_header_size int32
+    Initial_padding int32
+    Framerate AVRational
+    Sw_pix_fmt AVPixelFormat
+    Pkt_timebase AVRational
+    Codec_descriptor *AVCodecDescriptor
+    Pts_correction_num_faulty_pts int64
+    Pts_correction_num_faulty_dts int64
+    Pts_correction_last_pts int64
+    Pts_correction_last_dts int64
+    Sub_charenc *byte
+    Sub_charenc_mode int32
+    Skip_alpha int32
+    Seek_preroll int32
+    Chroma_intra_matrix *uint16
+    Dump_separator *uint8
+    Codec_whitelist *byte
+    Properties uint32
+    Coded_side_data *AVPacketSideData
+    Nb_coded_side_data int32
+    Hw_frames_ctx *AVBufferRef
+    Trailing_padding int32
+    Max_pixels int64
+    Hw_device_ctx *AVBufferRef
+    Hwaccel_flags int32
+    Apply_cropping int32
+    Extra_hw_frames int32
+    Discard_damaged_percentage int32
+    Max_samples int64
+    Export_side_data int32
+    Get_encode_buffer uintptr
+    Ch_layout AVChannelLayout
+    Frame_num int64
+}
+
 
 /**
  * @defgroup lavc_hwaccel AVHWAccel
@@ -609,7 +887,14 @@ type AVCodecContext C.struct_AVCodecContext
  *
  * @{
  */
-type AVHWAccel C.struct_AVHWAccel
+type AVHWAccel struct {
+    Name *byte
+    Type AVMediaType
+    Id AVCodecID
+    Pix_fmt AVPixelFormat
+    Capabilities int32
+}
+
 
 /**
  * HWAccel is experimental and is thus avoided in favor of non experimental
@@ -667,13 +952,41 @@ type AVHWAccel C.struct_AVHWAccel
  * @}
  */
 
-type AVSubtitleType C.enum_AVSubtitleType
+type AVSubtitleType int32
+const (
+    SUBTITLE_NONE AVSubtitleType = iota
+    SUBTITLE_BITMAP
+    SUBTITLE_TEXT
+    SUBTITLE_ASS
+)
 
 
 
-type AVSubtitleRect C.struct_AVSubtitleRect
 
-type AVSubtitle C.struct_AVSubtitle
+type AVSubtitleRect struct {
+    X int32
+    Y int32
+    W int32
+    H int32
+    Nb_colors int32
+    Data [4]*uint8
+    Linesize [4]int32
+    Type AVSubtitleType
+    Text *byte
+    Ass *byte
+    Flags int32
+}
+
+
+type AVSubtitle struct {
+    Format uint16
+    Start_display_time uint32
+    End_display_time uint32
+    Num_rects uint32
+    Rects **AVSubtitleRect
+    Pts int64
+}
+
 
 /**
  * Return the LIBAVCODEC_VERSION_INT constant.
@@ -711,7 +1024,7 @@ func Avcodec_license() string {
  */
 func Avcodec_alloc_context3(codec *AVCodec) *AVCodecContext {
     return (*AVCodecContext)(unsafe.Pointer(C.avcodec_alloc_context3(
-        (*C.AVCodec)(unsafe.Pointer(codec)))))
+        (*C.struct_AVCodec)(unsafe.Pointer(codec)))))
 }
 
 /**
@@ -719,7 +1032,7 @@ func Avcodec_alloc_context3(codec *AVCodec) *AVCodecContext {
  * the provided pointer.
  */
 func Avcodec_free_context(avctx **AVCodecContext)  {
-    C.avcodec_free_context((**C.AVCodecContext)(unsafe.Pointer(avctx)))
+    C.avcodec_free_context((**C.struct_AVCodecContext)(unsafe.Pointer(avctx)))
 }
 
 /**
@@ -753,7 +1066,7 @@ func Avcodec_parameters_from_context(par *AVCodecParameters,
                                     codec *AVCodecContext) int32 {
     return int32(C.avcodec_parameters_from_context(
         (*C.struct_AVCodecParameters)(unsafe.Pointer(par)), 
-        (*C.AVCodecContext)(unsafe.Pointer(codec))))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(codec))))
 }
 
 /**
@@ -767,7 +1080,7 @@ func Avcodec_parameters_from_context(par *AVCodecParameters,
 func Avcodec_parameters_to_context(codec *AVCodecContext,
                                   par *AVCodecParameters) int32 {
     return int32(C.avcodec_parameters_to_context(
-        (*C.AVCodecContext)(unsafe.Pointer(codec)), 
+        (*C.struct_AVCodecContext)(unsafe.Pointer(codec)), 
         (*C.struct_AVCodecParameters)(unsafe.Pointer(par))))
 }
 
@@ -833,9 +1146,9 @@ func Avcodec_parameters_to_context(codec *AVCodecContext,
  *      av_dict_set(), av_opt_set(), av_opt_find(), avcodec_parameters_to_context()
  */
 func Avcodec_open2(avctx *AVCodecContext, codec *AVCodec, options **AVDictionary) int32 {
-    return int32(C.avcodec_open2((*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVCodec)(unsafe.Pointer(codec)), 
-        (**C.AVDictionary)(unsafe.Pointer(options))))
+    return int32(C.avcodec_open2((*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVCodec)(unsafe.Pointer(codec)), 
+        (**C.struct_AVDictionary)(unsafe.Pointer(options))))
 }
 
 /**
@@ -852,7 +1165,7 @@ func Avcodec_open2(avctx *AVCodecContext, codec *AVCodec, options **AVDictionary
  * instead.
  */
 func Avcodec_close(avctx *AVCodecContext) int32 {
-    return int32(C.avcodec_close((*C.AVCodecContext)(unsafe.Pointer(avctx))))
+    return int32(C.avcodec_close((*C.struct_AVCodecContext)(unsafe.Pointer(avctx))))
 }
 
 /**
@@ -861,7 +1174,7 @@ func Avcodec_close(avctx *AVCodecContext) int32 {
  * @param sub AVSubtitle to free.
  */
 func Avsubtitle_free(sub *AVSubtitle)  {
-    C.avsubtitle_free((*C.AVSubtitle)(unsafe.Pointer(sub)))
+    C.avsubtitle_free((*C.struct_AVSubtitle)(unsafe.Pointer(sub)))
 }
 
 /**
@@ -880,8 +1193,8 @@ func Avsubtitle_free(sub *AVSubtitle)  {
  */
 func Avcodec_default_get_buffer2(s *AVCodecContext, frame *AVFrame, flags int32) int32 {
     return int32(C.avcodec_default_get_buffer2(
-        (*C.AVCodecContext)(unsafe.Pointer(s)), 
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(s)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
 }
 
 /**
@@ -891,8 +1204,8 @@ func Avcodec_default_get_buffer2(s *AVCodecContext, frame *AVFrame, flags int32)
  */
 func Avcodec_default_get_encode_buffer(s *AVCodecContext, pkt *AVPacket, flags int32) int32 {
     return int32(C.avcodec_default_get_encode_buffer(
-        (*C.AVCodecContext)(unsafe.Pointer(s)), 
-        (*C.AVPacket)(unsafe.Pointer(pkt)), C.int(flags)))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(s)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt)), C.int(flags)))
 }
 
 /**
@@ -903,7 +1216,7 @@ func Avcodec_default_get_encode_buffer(s *AVCodecContext, pkt *AVPacket, flags i
  * May only be used if a codec with AV_CODEC_CAP_DR1 has been opened.
  */
 func Avcodec_align_dimensions(s *AVCodecContext, width *int32, height *int32)  {
-    C.avcodec_align_dimensions((*C.AVCodecContext)(unsafe.Pointer(s)), 
+    C.avcodec_align_dimensions((*C.struct_AVCodecContext)(unsafe.Pointer(s)), 
         (*C.int)(unsafe.Pointer(width)), (*C.int)(unsafe.Pointer(height)))
 }
 
@@ -915,38 +1228,43 @@ func Avcodec_align_dimensions(s *AVCodecContext, width *int32, height *int32)  {
  * May only be used if a codec with AV_CODEC_CAP_DR1 has been opened.
  */
 func Avcodec_align_dimensions2(s *AVCodecContext, width *int32, height *int32,
-                               linesize_align[AV_NUM_DATA_POINTERS] int32)  {
-    C.avcodec_align_dimensions2((*C.AVCodecContext)(unsafe.Pointer(s)), 
+                               linesize_align [AV_NUM_DATA_POINTERS]int32)  {
+    C.avcodec_align_dimensions2((*C.struct_AVCodecContext)(unsafe.Pointer(s)), 
         (*C.int)(unsafe.Pointer(width)), (*C.int)(unsafe.Pointer(height)), 
         (*C.int)(unsafe.Pointer(&linesize_align[0])))
 }
 
                                 
-   
-                                                            
-  
-                                                                            
-                                                                             
-  
-                                                 
-                                                 
-                                                            
-   
-                     
-                                                                                
+/**
+ * Converts AVChromaLocation to swscale x/y chroma position.
+ *
+ * The positions represent the chroma (0,0) position in a coordinates system
+ * with luma (0,0) representing the origin and luma(1,1) representing 256,256
+ *
+ * @param xpos  horizontal chroma sample position
+ * @param ypos  vertical   chroma sample position
+ * @deprecated Use av_chroma_location_enum_to_pos() instead.
+ */
+ 
+func Avcodec_enum_to_chroma_pos(xpos *int32, ypos *int32, pos AVChromaLocation) int32 {
+    return int32(C.avcodec_enum_to_chroma_pos((*C.int)(unsafe.Pointer(xpos)), 
+        (*C.int)(unsafe.Pointer(ypos)), C.enum_AVChromaLocation(pos)))
+}
 
-   
-                                                            
-  
-                                                                            
-                                                                             
-  
-                                                 
-                                                 
-                                                            
-   
-                     
-                                                                     
+/**
+ * Converts swscale x/y chroma position to AVChromaLocation.
+ *
+ * The positions represent the chroma (0,0) position in a coordinates system
+ * with luma (0,0) representing the origin and luma(1,1) representing 256,256
+ *
+ * @param xpos  horizontal chroma sample position
+ * @param ypos  vertical   chroma sample position
+ * @deprecated Use av_chroma_location_pos_to_enum() instead.
+ */
+ 
+func Avcodec_chroma_pos_to_enum(xpos int32, ypos int32) AVChromaLocation {
+    return AVChromaLocation(C.avcodec_chroma_pos_to_enum(C.int(xpos), C.int(ypos)))
+}
       
 
 /**
@@ -979,10 +1297,10 @@ func Avcodec_align_dimensions2(s *AVCodecContext, width *int32, height *int32,
 func Avcodec_decode_subtitle2(avctx *AVCodecContext, sub *AVSubtitle,
                              got_sub_ptr *int32, avpkt *AVPacket) int32 {
     return int32(C.avcodec_decode_subtitle2(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVSubtitle)(unsafe.Pointer(sub)), 
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVSubtitle)(unsafe.Pointer(sub)), 
         (*C.int)(unsafe.Pointer(got_sub_ptr)), 
-        (*C.AVPacket)(unsafe.Pointer(avpkt))))
+        (*C.struct_AVPacket)(unsafe.Pointer(avpkt))))
 }
 
 /**
@@ -1033,8 +1351,8 @@ func Avcodec_decode_subtitle2(avctx *AVCodecContext, sub *AVSubtitle,
  */
 func Avcodec_send_packet(avctx *AVCodecContext, avpkt *AVPacket) int32 {
     return int32(C.avcodec_send_packet(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVPacket)(unsafe.Pointer(avpkt))))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(avpkt))))
 }
 
 /**
@@ -1058,8 +1376,8 @@ func Avcodec_send_packet(avctx *AVCodecContext, avpkt *AVPacket) int32 {
  */
 func Avcodec_receive_frame(avctx *AVCodecContext, frame *AVFrame) int32 {
     return int32(C.avcodec_receive_frame(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVFrame)(unsafe.Pointer(frame))))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame))))
 }
 
 /**
@@ -1097,8 +1415,9 @@ func Avcodec_receive_frame(avctx *AVCodecContext, frame *AVFrame) int32 {
  * @retval "another negative error code" legitimate encoding errors
  */
 func Avcodec_send_frame(avctx *AVCodecContext, frame *AVFrame) int32 {
-    return int32(C.avcodec_send_frame((*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVFrame)(unsafe.Pointer(frame))))
+    return int32(C.avcodec_send_frame(
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame))))
 }
 
 /**
@@ -1118,8 +1437,8 @@ func Avcodec_send_frame(avctx *AVCodecContext, frame *AVFrame) int32 {
  */
 func Avcodec_receive_packet(avctx *AVCodecContext, avpkt *AVPacket) int32 {
     return int32(C.avcodec_receive_packet(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVPacket)(unsafe.Pointer(avpkt))))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(avpkt))))
 }
 
 /**
@@ -1224,10 +1543,10 @@ func Avcodec_get_hw_frames_parameters(avctx *AVCodecContext,
                                      hw_pix_fmt AVPixelFormat,
                                      out_frames_ref **AVBufferRef) int32 {
     return int32(C.avcodec_get_hw_frames_parameters(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVBufferRef)(unsafe.Pointer(device_ref)), 
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVBufferRef)(unsafe.Pointer(device_ref)), 
         C.enum_AVPixelFormat(hw_pix_fmt), 
-        (**C.AVBufferRef)(unsafe.Pointer(out_frames_ref))))
+        (**C.struct_AVBufferRef)(unsafe.Pointer(out_frames_ref))))
 }
 
 
@@ -1237,11 +1556,63 @@ func Avcodec_get_hw_frames_parameters(avctx *AVCodecContext,
  * @{
  */
 
-type AVPictureStructure C.enum_AVPictureStructure
+type AVPictureStructure int32
+const (
+    AV_PICTURE_STRUCTURE_UNKNOWN AVPictureStructure = iota
+    AV_PICTURE_STRUCTURE_TOP_FIELD
+    AV_PICTURE_STRUCTURE_BOTTOM_FIELD
+    AV_PICTURE_STRUCTURE_FRAME
+)
 
-type AVCodecParserContext C.struct_AVCodecParserContext
 
-type AVCodecParser C.struct_AVCodecParser
+type AVCodecParserContext struct {
+    Priv_data unsafe.Pointer
+    Parser *AVCodecParser
+    Frame_offset int64
+    Cur_offset int64
+    Next_frame_offset int64
+    Pict_type int32
+    Repeat_pict int32
+    Pts int64
+    Dts int64
+    Last_pts int64
+    Last_dts int64
+    Fetch_timestamp int32
+    Cur_frame_start_index int32
+    Cur_frame_offset [AV_PARSER_PTS_NB]int64
+    Cur_frame_pts [AV_PARSER_PTS_NB]int64
+    Cur_frame_dts [AV_PARSER_PTS_NB]int64
+    Flags int32
+    Offset int64
+    Cur_frame_end [AV_PARSER_PTS_NB]int64
+    Key_frame int32
+    Dts_sync_point int32
+    Dts_ref_dts_delta int32
+    Pts_dts_delta int32
+    Cur_frame_pos [AV_PARSER_PTS_NB]int64
+    Pos int64
+    Last_pos int64
+    Duration int32
+    Field_order AVFieldOrder
+    Picture_structure AVPictureStructure
+    Output_picture_number int32
+    Width int32
+    Height int32
+    Coded_width int32
+    Coded_height int32
+    Format int32
+}
+
+
+type AVCodecParser struct {
+    Codec_ids [7]int32
+    Priv_data_size int32
+    Parser_init uintptr
+    Parser_parse uintptr
+    Parser_close uintptr
+    Split uintptr
+}
+
 
 /**
  * Iterate over all registered codec parsers.
@@ -1297,15 +1668,16 @@ func Av_parser_parse2(s *AVCodecParserContext,
                      buf *uint8, buf_size int32,
                      pts int64, dts int64,
                      pos int64) int32 {
-    return int32(C.av_parser_parse2((*C.AVCodecParserContext)(unsafe.Pointer(s)), 
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
+    return int32(C.av_parser_parse2(
+        (*C.struct_AVCodecParserContext)(unsafe.Pointer(s)), 
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
         (**C.uchar)(unsafe.Pointer(poutbuf)), 
         (*C.int)(unsafe.Pointer(poutbuf_size)), (*C.uchar)(unsafe.Pointer(buf)), 
         C.int(buf_size), C.longlong(pts), C.longlong(dts), C.longlong(pos)))
 }
 
 func Av_parser_close(s *AVCodecParserContext)  {
-    C.av_parser_close((*C.AVCodecParserContext)(unsafe.Pointer(s)))
+    C.av_parser_close((*C.struct_AVCodecParserContext)(unsafe.Pointer(s)))
 }
 
 /**
@@ -1321,9 +1693,9 @@ func Av_parser_close(s *AVCodecParserContext)  {
 func Avcodec_encode_subtitle(avctx *AVCodecContext, buf *uint8, buf_size int32,
                             sub *AVSubtitle) int32 {
     return int32(C.avcodec_encode_subtitle(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(buf_size), 
-        (*C.AVSubtitle)(unsafe.Pointer(sub))))
+        (*C.struct_AVSubtitle)(unsafe.Pointer(sub))))
 }
 
 
@@ -1394,20 +1766,22 @@ func Avcodec_default_get_format(s *AVCodecContext, fmt *AVPixelFormat) AVPixelFo
 
 func Avcodec_string(buf *byte, buf_size int32, enc *AVCodecContext, encode int32)  {
     C.avcodec_string((*C.char)(unsafe.Pointer(buf)), C.int(buf_size), 
-        (*C.AVCodecContext)(unsafe.Pointer(enc)), C.int(encode))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(enc)), C.int(encode))
 }
 
 func Avcodec_default_execute(c *AVCodecContext, funcx func(c2 *AVCodecContext, arg2 unsafe.Pointer) int32,arg unsafe.Pointer, ret *int32, count int32, size int32) int32 {
     cb1 := syscall.NewCallbackCDecl(funcx)
     return int32(C.avcodec_default_execute(
-        (*C.AVCodecContext)(unsafe.Pointer(c)), (*[0]byte)(unsafe.Pointer(cb1)), 
-        arg, (*C.int)(unsafe.Pointer(ret)), C.int(count), C.int(size)))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(c)), 
+        (*[0]byte)(unsafe.Pointer(cb1)), arg, (*C.int)(unsafe.Pointer(ret)), 
+        C.int(count), C.int(size)))
 }
 func Avcodec_default_execute2(c *AVCodecContext, funcx func(c2 *AVCodecContext, arg2 unsafe.Pointer, _var2 int32, _var3 int32) int32,arg unsafe.Pointer, ret *int32, count int32) int32 {
     cb1 := syscall.NewCallbackCDecl(funcx)
     return int32(C.avcodec_default_execute2(
-        (*C.AVCodecContext)(unsafe.Pointer(c)), (*[0]byte)(unsafe.Pointer(cb1)), 
-        arg, (*C.int)(unsafe.Pointer(ret)), C.int(count)))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(c)), 
+        (*[0]byte)(unsafe.Pointer(cb1)), arg, (*C.int)(unsafe.Pointer(ret)), 
+        C.int(count)))
 }
 //FIXME func typedef
 
@@ -1437,9 +1811,10 @@ func Avcodec_default_execute2(c *AVCodecContext, funcx func(c2 *AVCodecContext, 
 func Avcodec_fill_audio_frame(frame *AVFrame, nb_channels int32,
                              sample_fmt AVSampleFormat, buf *uint8,
                              buf_size int32, align int32) int32 {
-    return int32(C.avcodec_fill_audio_frame((*C.AVFrame)(unsafe.Pointer(frame)), 
-        C.int(nb_channels), C.enum_AVSampleFormat(sample_fmt), 
-        (*C.uchar)(unsafe.Pointer(buf)), C.int(buf_size), C.int(align)))
+    return int32(C.avcodec_fill_audio_frame(
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.int(nb_channels), 
+        C.enum_AVSampleFormat(sample_fmt), (*C.uchar)(unsafe.Pointer(buf)), 
+        C.int(buf_size), C.int(align)))
 }
 
 /**
@@ -1457,7 +1832,7 @@ func Avcodec_fill_audio_frame(frame *AVFrame, nb_channels int32,
  * cost of tearing down and replacing the encoder instance is high.
  */
 func Avcodec_flush_buffers(avctx *AVCodecContext)  {
-    C.avcodec_flush_buffers((*C.AVCodecContext)(unsafe.Pointer(avctx)))
+    C.avcodec_flush_buffers((*C.struct_AVCodecContext)(unsafe.Pointer(avctx)))
 }
 
 /**
@@ -1470,7 +1845,7 @@ func Avcodec_flush_buffers(avctx *AVCodecContext)  {
  */
 func Av_get_audio_frame_duration(avctx *AVCodecContext, frame_bytes int32) int32 {
     return int32(C.av_get_audio_frame_duration(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), C.int(frame_bytes)))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), C.int(frame_bytes)))
 }
 
 /* memory */
@@ -1501,7 +1876,7 @@ func Av_fast_padded_mallocz(ptr unsafe.Pointer, size *uint32, min_size uint64)  
  * with no corresponding avcodec_close()), 0 otherwise.
  */
 func Avcodec_is_open(s *AVCodecContext) int32 {
-    return int32(C.avcodec_is_open((*C.AVCodecContext)(unsafe.Pointer(s))))
+    return int32(C.avcodec_is_open((*C.struct_AVCodecContext)(unsafe.Pointer(s))))
 }
 
 /**

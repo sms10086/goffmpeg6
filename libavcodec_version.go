@@ -24,10 +24,10 @@ package goffmpeg6
 
 //const LIBAVCODEC_VERSION_MINOR = 31
 //const LIBAVCODEC_VERSION_MICRO = 102
-//const LIBAVCODEC_VERSION_INT = AV_VERSION_INT(LIBAVCODEC_VERSION_MAJOR,                                                 LIBAVCODEC_VERSION_MINOR,                                                 LIBAVCODEC_VERSION_MICRO)
-//const LIBAVCODEC_VERSION = AV_VERSION(LIBAVCODEC_VERSION_MAJOR,                                                LIBAVCODEC_VERSION_MINOR,                                                LIBAVCODEC_VERSION_MICRO)
-//const LIBAVCODEC_BUILD = LIBAVCODEC_VERSION_INT
-//const LIBAVCODEC_IDENT = "Lavc" AV_STRINGIFY(LIBAVCODEC_VERSION)
+//const LIBAVCODEC_VERSION_INT =   AV_VERSION_INT(LIBAVCODEC_VERSION_MAJOR,                                                 LIBAVCODEC_VERSION_MINOR,                                                 LIBAVCODEC_VERSION_MICRO) 
+//const LIBAVCODEC_VERSION =       AV_VERSION(LIBAVCODEC_VERSION_MAJOR,                                                LIBAVCODEC_VERSION_MINOR,                                                LIBAVCODEC_VERSION_MICRO) 
+//const LIBAVCODEC_BUILD =         LIBAVCODEC_VERSION_INT 
+//const LIBAVCODEC_IDENT =         "Lavc" AV_STRINGIFY(LIBAVCODEC_VERSION) 
 
 
                          

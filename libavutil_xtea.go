@@ -47,7 +47,10 @@ import (
  * @{
  */
 
-type AVXTEA C.struct_AVXTEA
+type AVXTEA struct {
+    Key [16]uint32
+}
+
 
 /**
  * Allocate an AVXTEA context.
@@ -63,7 +66,7 @@ func Av_xtea_alloc() *AVXTEA {
  * @param key a key of 16 bytes used for encryption/decryption,
  *            interpreted as big endian 32 bit numbers
  */
-func Av_xtea_init(ctx *AVXTEA, key[16] uint8)  {
+func Av_xtea_init(ctx *AVXTEA, key [16]uint8)  {
     C.av_xtea_init((*C.struct_AVXTEA)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(&key[0])))
 }
@@ -75,7 +78,7 @@ func Av_xtea_init(ctx *AVXTEA, key[16] uint8)  {
  * @param key a key of 16 bytes used for encryption/decryption,
  *            interpreted as little endian 32 bit numbers
  */
-func Av_xtea_le_init(ctx *AVXTEA, key[16] uint8)  {
+func Av_xtea_le_init(ctx *AVXTEA, key [16]uint8)  {
     C.av_xtea_le_init((*C.struct_AVXTEA)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(&key[0])))
 }

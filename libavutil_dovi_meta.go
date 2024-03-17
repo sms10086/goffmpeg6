@@ -67,7 +67,17 @@ const AV_DOVI_MAX_PIECES = 8
  * @note The struct must be allocated with av_dovi_alloc() and
  *       its size is not a part of the public ABI.
  */
-type AVDOVIDecoderConfigurationRecord C.struct_AVDOVIDecoderConfigurationRecord
+type AVDOVIDecoderConfigurationRecord struct {
+    Dv_version_major uint8
+    Dv_version_minor uint8
+    Dv_profile uint8
+    Dv_level uint8
+    Rpu_present_flag uint8
+    El_present_flag uint8
+    Bl_present_flag uint8
+    Dv_bl_signal_compatibility_id uint8
+}
+
 
 /**
  * Allocate a AVDOVIDecoderConfigurationRecord structure and initialize its
@@ -85,38 +95,109 @@ func Av_dovi_alloc(size *uint64) *AVDOVIDecoderConfigurationRecord {
  *
  * @note sizeof(AVDOVIRpuDataHeader) is not part of the public ABI.
  */
-type AVDOVIRpuDataHeader C.struct_AVDOVIRpuDataHeader
+type AVDOVIRpuDataHeader struct {
+    Rpu_type uint8
+    Rpu_format uint16
+    Vdr_rpu_profile uint8
+    Vdr_rpu_level uint8
+    Chroma_resampling_explicit_filter_flag uint8
+    Coef_data_type uint8
+    Coef_log2_denom uint8
+    Vdr_rpu_normalized_idc uint8
+    Bl_video_full_range_flag uint8
+    Bl_bit_depth uint8
+    El_bit_depth uint8
+    Vdr_bit_depth uint8
+    Spatial_resampling_filter_flag uint8
+    El_spatial_resampling_filter_flag uint8
+    Disable_residual_flag uint8
+}
 
-type AVDOVIMappingMethod C.enum_AVDOVIMappingMethod
+
+type AVDOVIMappingMethod int32
+const (
+    AV_DOVI_MAPPING_POLYNOMIAL AVDOVIMappingMethod = 0 + iota
+    AV_DOVI_MAPPING_MMR = 1
+)
+
 
 /**
  * Coefficients of a piece-wise function. The pieces of the function span the
  * value ranges between two adjacent pivot values.
  */
 
-type AVDOVIReshapingCurve C.struct_AVDOVIReshapingCurve
+type AVDOVIReshapingCurve struct {
+    Num_pivots uint8
+    Pivots [AV_DOVI_MAX_PIECES+1]uint16
+    Mapping_idc [AV_DOVI_MAX_PIECES]AVDOVIMappingMethod
+    Poly_order [AV_DOVI_MAX_PIECES]uint8
+    Poly_coef[AV_DOVI_MAX_PIECES] [3]int64
+    Mmr_order [AV_DOVI_MAX_PIECES]uint8
+    Mmr_constant [AV_DOVI_MAX_PIECES]int64
+    Mmr_coef[AV_DOVI_MAX_PIECES][3] [7]int64
+}
 
-type AVDOVINLQMethod C.enum_AVDOVINLQMethod
+
+type AVDOVINLQMethod int32
+const (
+    AV_DOVI_NLQ_NONE AVDOVINLQMethod = -1 + iota
+    AV_DOVI_NLQ_LINEAR_DZ = 0
+)
+
 
 /**
  * Coefficients of the non-linear inverse quantization. For the interpretation
  * of these, see ETSI GS CCM 001.
  */
-type AVDOVINLQParams C.struct_AVDOVINLQParams
+type AVDOVINLQParams struct {
+    Nlq_offset uint16
+    Vdr_in_max uint64
+    Linear_deadzone_slope uint64
+    Linear_deadzone_threshold uint64
+}
+
 
 /**
  * Dolby Vision RPU data mapping parameters.
  *
  * @note sizeof(AVDOVIDataMapping) is not part of the public ABI.
  */
-type AVDOVIDataMapping C.struct_AVDOVIDataMapping
+type AVDOVIDataMapping struct {
+    Vdr_rpu_id uint8
+    Mapping_color_space uint8
+    Mapping_chroma_format_idc uint8
+    Curves [3]AVDOVIReshapingCurve
+    Nlq_method_idc AVDOVINLQMethod
+    Num_x_partitions uint32
+    Num_y_partitions uint32
+    Nlq [3]AVDOVINLQParams
+}
+
 
 /**
  * Dolby Vision RPU colorspace metadata parameters.
  *
  * @note sizeof(AVDOVIColorMetadata) is not part of the public ABI.
  */
-type AVDOVIColorMetadata C.struct_AVDOVIColorMetadata
+type AVDOVIColorMetadata struct {
+    Dm_metadata_id uint8
+    Scene_refresh_flag uint8
+    Ycc_to_rgb_matrix [9]AVRational
+    Ycc_to_rgb_offset [3]AVRational
+    Rgb_to_lms_matrix [9]AVRational
+    Signal_eotf uint16
+    Signal_eotf_param0 uint16
+    Signal_eotf_param1 uint16
+    Signal_eotf_param2 uint32
+    Signal_bit_depth uint8
+    Signal_color_space uint8
+    Signal_chroma_format uint8
+    Signal_full_range_flag uint8
+    Source_min_pq uint16
+    Source_max_pq uint16
+    Source_diagonal uint16
+}
+
 
 /**
  * Combined struct representing a combination of header, mapping and color
@@ -126,7 +207,12 @@ type AVDOVIColorMetadata C.struct_AVDOVIColorMetadata
  *       its size is not a part of the public ABI.
  */
 
-type AVDOVIMetadata C.struct_AVDOVIMetadata
+type AVDOVIMetadata struct {
+    Header_offset uint64
+    Mapping_offset uint64
+    Color_offset uint64
+}
+
 
 // *av_dovi_get_header(constAVDOVIMetadata*data)
 

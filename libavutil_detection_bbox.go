@@ -42,9 +42,26 @@ const AV_NUM_DETECTION_BBOX_CLASSIFY = 4
                      
                   
 
-type AVDetectionBBox C.struct_AVDetectionBBox
+type AVDetectionBBox struct {
+    X int32
+    Y int32
+    W int32
+    H int32
+    Detect_label [AV_DETECTION_BBOX_LABEL_NAME_MAX_SIZE]byte
+    Detect_confidence AVRational
+    Classify_count uint32
+    Classify_labels[AV_NUM_DETECTION_BBOX_CLASSIFY] [AV_DETECTION_BBOX_LABEL_NAME_MAX_SIZE]byte
+    Classify_confidences [AV_NUM_DETECTION_BBOX_CLASSIFY]AVRational
+}
 
-type AVDetectionBBoxHeader C.struct_AVDetectionBBoxHeader
+
+type AVDetectionBBoxHeader struct {
+    Source [256]byte
+    Nb_bboxes uint32
+    Bboxes_offset uint64
+    Bbox_size uint64
+}
+
 
 /*
  * Get the bounding box at the specified {@code idx}. Must be between 0 and nb_bboxes.
@@ -61,8 +78,8 @@ type AVDetectionBBoxHeader C.struct_AVDetectionBBoxHeader
  * written here.
  */
 func Av_detection_bbox_alloc(nb_bboxes uint32, out_size *uint64) *AVDetectionBBoxHeader {
-    return (*AVDetectionBBoxHeader)(unsafe.Pointer(C.av_detection_bbox_alloc(C.uint(nb_bboxes), 
-        (*C.ulonglong)(unsafe.Pointer(out_size)))))
+    return (*AVDetectionBBoxHeader)(unsafe.Pointer(C.av_detection_bbox_alloc(
+        C.uint(nb_bboxes), (*C.ulonglong)(unsafe.Pointer(out_size)))))
 }
 
 /**
@@ -72,6 +89,6 @@ func Av_detection_bbox_alloc(nb_bboxes uint32, out_size *uint64) *AVDetectionBBo
  */
 func Av_detection_bbox_create_side_data(frame *AVFrame, nb_bboxes uint32) *AVDetectionBBoxHeader {
     return (*AVDetectionBBoxHeader)(unsafe.Pointer(C.av_detection_bbox_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.uint(nb_bboxes))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.uint(nb_bboxes))))
 }
       

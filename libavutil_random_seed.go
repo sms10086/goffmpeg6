@@ -67,8 +67,7 @@ func Av_get_random_seed() uint32 {
  * @retval "a negative AVERROR code" random data could not be generated
  */
 func Av_random_bytes(buf *uint8, len uint64) int32 {
-    return int32(C.av_random_bytes((*C.uchar)(unsafe.Pointer(buf)), 
-        C.ulonglong(len)))
+    return int32(C.av_random_bytes((*C.uchar)(unsafe.Pointer(buf)), C.ulonglong(len)))
 }
 
 /**

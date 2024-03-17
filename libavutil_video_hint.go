@@ -44,11 +44,28 @@ import (
                                
                             
 
-type AVVideoRect C.struct_AVVideoRect
+type AVVideoRect struct {
+    X uint32
+    Y uint32
+    Width uint32
+    Height uint32
+}
 
-type AVVideoHintType C.enum_AVVideoHintType
 
-type AVVideoHint C.struct_AVVideoHint
+type AVVideoHintType int32
+const (
+    AV_VIDEO_HINT_TYPE_CONSTANT AVVideoHintType = iota
+    AV_VIDEO_HINT_TYPE_CHANGED
+)
+
+
+type AVVideoHint struct {
+    Nb_rects uint64
+    Rect_offset uint64
+    Rect_size uint64
+    Type AVVideoHintType
+}
+
 
 // *av_video_hint_rects(constAVVideoHint*hints)
 
@@ -87,7 +104,7 @@ func Av_video_hint_alloc(nb_rects uint64,
 func Av_video_hint_create_side_data(frame *AVFrame,
                                             nb_rects uint64) *AVVideoHint {
     return (*AVVideoHint)(unsafe.Pointer(C.av_video_hint_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.ulonglong(nb_rects))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.ulonglong(nb_rects))))
 }
 
 

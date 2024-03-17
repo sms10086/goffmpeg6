@@ -85,9 +85,23 @@ import (
  * filter) as described in their documentation, and are to be considered
  * immutable otherwise.
  */
-type AVBSFContext C.struct_AVBSFContext
+type AVBSFContext struct {
+    Av_class *AVClass
+    Filter *AVBitStreamFilter
+    Priv_data unsafe.Pointer
+    Par_in *AVCodecParameters
+    Par_out *AVCodecParameters
+    Time_base_in AVRational
+    Time_base_out AVRational
+}
 
-type AVBitStreamFilter C.struct_AVBitStreamFilter
+
+type AVBitStreamFilter struct {
+    Name *byte
+    Codec_ids *AVCodecID
+    Priv_class *AVClass
+}
+
 
 /**
  * @return a bitstream filter with the specified name or NULL if no such
@@ -124,8 +138,9 @@ func Av_bsf_iterate(opaque *unsafe.Pointer) *AVBitStreamFilter {
  * @return 0 on success, a negative AVERROR code on failure
  */
 func Av_bsf_alloc(filter *AVBitStreamFilter, ctx **AVBSFContext) int32 {
-    return int32(C.av_bsf_alloc((*C.AVBitStreamFilter)(unsafe.Pointer(filter)), 
-        (**C.AVBSFContext)(unsafe.Pointer(ctx))))
+    return int32(C.av_bsf_alloc(
+        (*C.struct_AVBitStreamFilter)(unsafe.Pointer(filter)), 
+        (**C.struct_AVBSFContext)(unsafe.Pointer(ctx))))
 }
 
 /**
@@ -135,7 +150,7 @@ func Av_bsf_alloc(filter *AVBitStreamFilter, ctx **AVBSFContext) int32 {
  * @param ctx a AVBSFContext previously allocated with av_bsf_alloc()
  */
 func Av_bsf_init(ctx *AVBSFContext) int32 {
-    return int32(C.av_bsf_init((*C.AVBSFContext)(unsafe.Pointer(ctx))))
+    return int32(C.av_bsf_init((*C.struct_AVBSFContext)(unsafe.Pointer(ctx))))
 }
 
 /**
@@ -160,8 +175,8 @@ func Av_bsf_init(ctx *AVBSFContext) int32 {
  *  - Another negative AVERROR value if an error occurs.
  */
 func Av_bsf_send_packet(ctx *AVBSFContext, pkt *AVPacket) int32 {
-    return int32(C.av_bsf_send_packet((*C.AVBSFContext)(unsafe.Pointer(ctx)), 
-        (*C.AVPacket)(unsafe.Pointer(pkt))))
+    return int32(C.av_bsf_send_packet((*C.struct_AVBSFContext)(unsafe.Pointer(ctx)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt))))
 }
 
 /**
@@ -192,15 +207,16 @@ func Av_bsf_send_packet(ctx *AVBSFContext, pkt *AVPacket) int32 {
  * AVERROR(EAGAIN) immediately after a successful av_bsf_send_packet() call.
  */
 func Av_bsf_receive_packet(ctx *AVBSFContext, pkt *AVPacket) int32 {
-    return int32(C.av_bsf_receive_packet((*C.AVBSFContext)(unsafe.Pointer(ctx)), 
-        (*C.AVPacket)(unsafe.Pointer(pkt))))
+    return int32(C.av_bsf_receive_packet(
+        (*C.struct_AVBSFContext)(unsafe.Pointer(ctx)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt))))
 }
 
 /**
  * Reset the internal bitstream filter state. Should be called e.g. when seeking.
  */
 func Av_bsf_flush(ctx *AVBSFContext)  {
-    C.av_bsf_flush((*C.AVBSFContext)(unsafe.Pointer(ctx)))
+    C.av_bsf_flush((*C.struct_AVBSFContext)(unsafe.Pointer(ctx)))
 }
 
 /**
@@ -208,7 +224,7 @@ func Av_bsf_flush(ctx *AVBSFContext)  {
  * into the supplied pointer.
  */
 func Av_bsf_free(ctx **AVBSFContext)  {
-    C.av_bsf_free((**C.AVBSFContext)(unsafe.Pointer(ctx)))
+    C.av_bsf_free((**C.struct_AVBSFContext)(unsafe.Pointer(ctx)))
 }
 
 /**
@@ -225,7 +241,9 @@ func Av_bsf_get_class() *AVClass {
  * Structure for chain/list of bitstream filters.
  * Empty list can be allocated by av_bsf_list_alloc().
  */
-type AVBSFList C.struct_AVBSFList
+type AVBSFList struct {
+}
+
 
 /**
  * Allocate empty list of bitstream filters.
@@ -244,7 +262,7 @@ func Av_bsf_list_alloc() *AVBSFList {
  * @param lst Pointer to pointer returned by av_bsf_list_alloc()
  */
 func Av_bsf_list_free(lst **AVBSFList)  {
-    C.av_bsf_list_free((**C.AVBSFList)(unsafe.Pointer(lst)))
+    C.av_bsf_list_free((**C.struct_AVBSFList)(unsafe.Pointer(lst)))
 }
 
 /**
@@ -256,8 +274,8 @@ func Av_bsf_list_free(lst **AVBSFList)  {
  * @return >=0 on success, negative AVERROR in case of failure
  */
 func Av_bsf_list_append(lst *AVBSFList, bsf *AVBSFContext) int32 {
-    return int32(C.av_bsf_list_append((*C.AVBSFList)(unsafe.Pointer(lst)), 
-        (*C.AVBSFContext)(unsafe.Pointer(bsf))))
+    return int32(C.av_bsf_list_append((*C.struct_AVBSFList)(unsafe.Pointer(lst)), 
+        (*C.struct_AVBSFContext)(unsafe.Pointer(bsf))))
 }
 
 /**
@@ -271,9 +289,9 @@ func Av_bsf_list_append(lst *AVBSFList, bsf *AVBSFContext) int32 {
  * @return >=0 on success, negative AVERROR in case of failure
  */
 func Av_bsf_list_append2(lst *AVBSFList, bsf_name *byte, options **AVDictionary) int32 {
-    return int32(C.av_bsf_list_append2((*C.AVBSFList)(unsafe.Pointer(lst)), 
+    return int32(C.av_bsf_list_append2((*C.struct_AVBSFList)(unsafe.Pointer(lst)), 
         (*C.char)(unsafe.Pointer(bsf_name)), 
-        (**C.AVDictionary)(unsafe.Pointer(options))))
+        (**C.struct_AVDictionary)(unsafe.Pointer(options))))
 }
 /**
  * Finalize list of bitstream filters.
@@ -292,8 +310,8 @@ func Av_bsf_list_append2(lst *AVBSFList, bsf_name *byte, options **AVDictionary)
  * @return >=0 on success, negative AVERROR in case of failure
  */
 func Av_bsf_list_finalize(lst **AVBSFList, bsf **AVBSFContext) int32 {
-    return int32(C.av_bsf_list_finalize((**C.AVBSFList)(unsafe.Pointer(lst)), 
-        (**C.AVBSFContext)(unsafe.Pointer(bsf))))
+    return int32(C.av_bsf_list_finalize((**C.struct_AVBSFList)(unsafe.Pointer(lst)), 
+        (**C.struct_AVBSFContext)(unsafe.Pointer(bsf))))
 }
 
 /**
@@ -311,7 +329,7 @@ func Av_bsf_list_finalize(lst **AVBSFList, bsf **AVBSFContext) int32 {
  */
 func Av_bsf_list_parse_str(str *byte, bsf **AVBSFContext) int32 {
     return int32(C.av_bsf_list_parse_str((*C.char)(unsafe.Pointer(str)), 
-        (**C.AVBSFContext)(unsafe.Pointer(bsf))))
+        (**C.struct_AVBSFContext)(unsafe.Pointer(bsf))))
 }
 
 /**
@@ -323,7 +341,7 @@ func Av_bsf_list_parse_str(str *byte, bsf **AVBSFContext) int32 {
  */
 func Av_bsf_get_null_filter(bsf **AVBSFContext) int32 {
     return int32(C.av_bsf_get_null_filter(
-        (**C.AVBSFContext)(unsafe.Pointer(bsf))))
+        (**C.struct_AVBSFContext)(unsafe.Pointer(bsf))))
 }
 
 /**

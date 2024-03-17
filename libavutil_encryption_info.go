@@ -38,7 +38,11 @@ import (
                    
                    
 
-type AVSubsampleEncryptionInfo C.struct_AVSubsampleEncryptionInfo
+type AVSubsampleEncryptionInfo struct {
+    Bytes_of_clear_data uint32
+    Bytes_of_protected_data uint32
+}
+
 
 /**
  * This describes encryption info for a packet.  This contains frame-specific
@@ -46,14 +50,35 @@ type AVSubsampleEncryptionInfo C.struct_AVSubsampleEncryptionInfo
  *
  * The size of this struct is not part of the public ABI.
  */
-type AVEncryptionInfo C.struct_AVEncryptionInfo
+type AVEncryptionInfo struct {
+    Scheme uint32
+    Crypt_byte_block uint32
+    Skip_byte_block uint32
+    Key_id *uint8
+    Key_id_size uint32
+    Iv *uint8
+    Iv_size uint32
+    Subsamples *AVSubsampleEncryptionInfo
+    Subsample_count uint32
+}
+
 
 /**
  * This describes info used to initialize an encryption key system.
  *
  * The size of this struct is not part of the public ABI.
  */
-type AVEncryptionInitInfo C.struct_AVEncryptionInitInfo
+type AVEncryptionInitInfo struct {
+    System_id *uint8
+    System_id_size uint32
+    Key_ids **uint8
+    Num_key_ids uint32
+    Key_id_size uint32
+    Data *uint8
+    Data_size uint32
+    Next *AVEncryptionInitInfo
+}
+
 
 /**
  * Allocates an AVEncryptionInfo structure and sub-pointers to hold the given
@@ -67,8 +92,8 @@ type AVEncryptionInitInfo C.struct_AVEncryptionInitInfo
  * @return The new AVEncryptionInfo structure, or NULL on error.
  */
 func Av_encryption_info_alloc(subsample_count uint32, key_id_size uint32, iv_size uint32) *AVEncryptionInfo {
-    return (*AVEncryptionInfo)(unsafe.Pointer(C.av_encryption_info_alloc(C.uint(subsample_count), 
-        C.uint(key_id_size), C.uint(iv_size))))
+    return (*AVEncryptionInfo)(unsafe.Pointer(C.av_encryption_info_alloc(
+        C.uint(subsample_count), C.uint(key_id_size), C.uint(iv_size))))
 }
 
 /**
@@ -77,7 +102,7 @@ func Av_encryption_info_alloc(subsample_count uint32, key_id_size uint32, iv_siz
  */
 func Av_encryption_info_clone(info *AVEncryptionInfo) *AVEncryptionInfo {
     return (*AVEncryptionInfo)(unsafe.Pointer(C.av_encryption_info_clone(
-        (*C.AVEncryptionInfo)(unsafe.Pointer(info)))))
+        (*C.struct_AVEncryptionInfo)(unsafe.Pointer(info)))))
 }
 
 /**
@@ -85,7 +110,7 @@ func Av_encryption_info_clone(info *AVEncryptionInfo) *AVEncryptionInfo {
  * side-data data pointer, that should use normal side-data methods.
  */
 func Av_encryption_info_free(info *AVEncryptionInfo)  {
-    C.av_encryption_info_free((*C.AVEncryptionInfo)(unsafe.Pointer(info)))
+    C.av_encryption_info_free((*C.struct_AVEncryptionInfo)(unsafe.Pointer(info)))
 }
 
 /**
@@ -110,7 +135,7 @@ func Av_encryption_info_get_side_data(side_data *uint8, side_data_size uint64) *
 func Av_encryption_info_add_side_data(
       info *AVEncryptionInfo, side_data_size *uint64) *uint8 {
     return (*uint8)(unsafe.Pointer(C.av_encryption_info_add_side_data(
-        (*C.AVEncryptionInfo)(unsafe.Pointer(info)), 
+        (*C.struct_AVEncryptionInfo)(unsafe.Pointer(info)), 
         (*C.ulonglong)(unsafe.Pointer(side_data_size)))))
 }
 
@@ -134,7 +159,7 @@ func Av_encryption_init_info_alloc(
  */
 func Av_encryption_init_info_free(info *AVEncryptionInitInfo)  {
     C.av_encryption_init_info_free(
-        (*C.AVEncryptionInitInfo)(unsafe.Pointer(info)))
+        (*C.struct_AVEncryptionInitInfo)(unsafe.Pointer(info)))
 }
 
 /**
@@ -160,7 +185,7 @@ func Av_encryption_init_info_get_side_data(
 func Av_encryption_init_info_add_side_data(
     info *AVEncryptionInitInfo, side_data_size *uint64) *uint8 {
     return (*uint8)(unsafe.Pointer(C.av_encryption_init_info_add_side_data(
-        (*C.AVEncryptionInitInfo)(unsafe.Pointer(info)), 
+        (*C.struct_AVEncryptionInitInfo)(unsafe.Pointer(info)), 
         (*C.ulonglong)(unsafe.Pointer(side_data_size)))))
 }
 

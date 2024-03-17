@@ -39,23 +39,24 @@ import (
     "unsafe"
 )
 
-const AV_CODEC_CAP_DRAW_HORIZ_BAND = (1 <<  0)
-const AV_CODEC_CAP_DR1 = (1 <<  1)
-const AV_CODEC_CAP_DELAY = (1 <<  5)
-const AV_CODEC_CAP_SMALL_LAST_FRAME = (1 <<  6)
-const AV_CODEC_CAP_EXPERIMENTAL = (1 <<  9)
-const AV_CODEC_CAP_CHANNEL_CONF = (1 << 10)
-const AV_CODEC_CAP_FRAME_THREADS = (1 << 12)
-const AV_CODEC_CAP_SLICE_THREADS = (1 << 13)
-const AV_CODEC_CAP_PARAM_CHANGE = (1 << 14)
-const AV_CODEC_CAP_OTHER_THREADS = (1 << 15)
-const AV_CODEC_CAP_VARIABLE_FRAME_SIZE = (1 << 16)
-const AV_CODEC_CAP_AVOID_PROBING = (1 << 17)
-const AV_CODEC_CAP_HARDWARE = (1 << 18)
-const AV_CODEC_CAP_HYBRID = (1 << 19)
-const AV_CODEC_CAP_ENCODER_REORDERED_OPAQUE = (1 << 20)
-const AV_CODEC_CAP_ENCODER_FLUSH = (1 << 21)
-const AV_CODEC_CAP_ENCODER_RECON_FRAME = (1 << 22)
+const AV_CODEC_CAP_DRAW_HORIZ_BAND =      (1 <<  0) 
+const AV_CODEC_CAP_DR1 =                  (1 <<  1) 
+const AV_CODEC_CAP_DELAY =                (1 <<  5) 
+const AV_CODEC_CAP_SMALL_LAST_FRAME =     (1 <<  6) 
+const AV_CODEC_CAP_SUBFRAMES =            (1 <<  8) 
+const AV_CODEC_CAP_EXPERIMENTAL =         (1 <<  9) 
+const AV_CODEC_CAP_CHANNEL_CONF =         (1 << 10) 
+const AV_CODEC_CAP_FRAME_THREADS =        (1 << 12) 
+const AV_CODEC_CAP_SLICE_THREADS =        (1 << 13) 
+const AV_CODEC_CAP_PARAM_CHANGE =         (1 << 14) 
+const AV_CODEC_CAP_OTHER_THREADS =        (1 << 15) 
+const AV_CODEC_CAP_VARIABLE_FRAME_SIZE =  (1 << 16) 
+const AV_CODEC_CAP_AVOID_PROBING =        (1 << 17) 
+const AV_CODEC_CAP_HARDWARE =             (1 << 18) 
+const AV_CODEC_CAP_HYBRID =               (1 << 19) 
+const AV_CODEC_CAP_ENCODER_REORDERED_OPAQUE =  (1 << 20) 
+const AV_CODEC_CAP_ENCODER_FLUSH =    (1 << 21) 
+const AV_CODEC_CAP_ENCODER_RECON_FRAME =  (1 << 22) 
 
 
                        
@@ -121,18 +122,18 @@ const AV_CODEC_CAP_ENCODER_RECON_FRAME = (1 << 22)
 
 
                     
-   
-                                                
-                                                                         
-                                                                          
-                                                                         
-                                                                   
-                                                                        
-                                                                           
-                                                                          
-                    
-   
-                                                  
+/**
+ * Codec can output multiple frames per AVPacket
+ * Normally demuxers return one frame at a time, demuxers which do not do
+ * are connected to a parser to split what they return into proper frames.
+ * This flag is reserved to the very rare category of codecs which have a
+ * bitstream that cannot be split into frames without timeconsuming
+ * operations like full decoding. Demuxers carrying such bitstreams thus
+ * may return multiple frames in a packet. This has many disadvantages like
+ * prohibiting stream copy in many cases thus it should only be considered
+ * as a last resort.
+ */
+
       
 
 /**
@@ -216,12 +217,33 @@ const AV_CODEC_CAP_ENCODER_RECON_FRAME = (1 << 22)
 /**
  * AVProfile.
  */
-type AVProfile C.struct_AVProfile
+type AVProfile struct {
+    Profile int32
+    Name *byte
+}
+
 
 /**
  * AVCodec.
  */
-type AVCodec C.struct_AVCodec
+type AVCodec struct {
+    Name *byte
+    Long_name *byte
+    Type AVMediaType
+    Id AVCodecID
+    Capabilities int32
+    Max_lowres uint8
+    Supported_framerates *AVRational
+    Pix_fmts *AVPixelFormat
+    Supported_samplerates *int32
+    Sample_fmts *AVSampleFormat
+    Channel_layouts *uint64
+    Priv_class *AVClass
+    Profiles *AVProfile
+    Wrapper_name *byte
+    Ch_layouts *AVChannelLayout
+}
+
 
 /**
  * Iterate over all registered codecs.
@@ -281,14 +303,14 @@ func Avcodec_find_encoder_by_name(name *byte) *AVCodec {
  * @return a non-zero number if codec is an encoder, zero otherwise
  */
 func Av_codec_is_encoder(codec *AVCodec) int32 {
-    return int32(C.av_codec_is_encoder((*C.AVCodec)(unsafe.Pointer(codec))))
+    return int32(C.av_codec_is_encoder((*C.struct_AVCodec)(unsafe.Pointer(codec))))
 }
 
 /**
  * @return a non-zero number if codec is a decoder, zero otherwise
  */
 func Av_codec_is_decoder(codec *AVCodec) int32 {
-    return int32(C.av_codec_is_decoder((*C.AVCodec)(unsafe.Pointer(codec))))
+    return int32(C.av_codec_is_decoder((*C.struct_AVCodec)(unsafe.Pointer(codec))))
 }
 
 /**
@@ -299,13 +321,24 @@ func Av_codec_is_decoder(codec *AVCodec) int32 {
  * @return A name for the profile if found, NULL otherwise.
  */
 func Av_get_profile_name(codec *AVCodec, profile int32) string {
-    return C.GoString(C.av_get_profile_name((*C.AVCodec)(unsafe.Pointer(codec)), 
-        C.int(profile)))
+    return C.GoString(C.av_get_profile_name(
+        (*C.struct_AVCodec)(unsafe.Pointer(codec)), C.int(profile)))
 }
 
+const (
+    AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX  = 0x01 + iota
+    AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX = 0x02
+    AV_CODEC_HW_CONFIG_METHOD_INTERNAL = 0x04
+    AV_CODEC_HW_CONFIG_METHOD_AD_HOC = 0x08
+)
 
 
-type AVCodecHWConfig C.struct_AVCodecHWConfig
+type AVCodecHWConfig struct {
+    Pix_fmt AVPixelFormat
+    Methods int32
+    Device_type AVHWDeviceType
+}
+
 
 /**
  * Retrieve supported hardware configurations for a codec.
@@ -316,7 +349,7 @@ type AVCodecHWConfig C.struct_AVCodecHWConfig
  */
 func Avcodec_get_hw_config(codec *AVCodec, index int32) *AVCodecHWConfig {
     return (*AVCodecHWConfig)(unsafe.Pointer(C.avcodec_get_hw_config(
-        (*C.AVCodec)(unsafe.Pointer(codec)), C.int(index))))
+        (*C.struct_AVCodec)(unsafe.Pointer(codec)), C.int(index))))
 }
 
 /**

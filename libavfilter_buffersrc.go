@@ -48,6 +48,11 @@ import (
  * @{
  */
 
+const (
+    AV_BUFFERSRC_FLAG_NO_CHECK_FORMAT  = 1 + iota
+    AV_BUFFERSRC_FLAG_PUSH = 4
+    AV_BUFFERSRC_FLAG_KEEP_REF = 8
+)
 
 
 /**
@@ -59,7 +64,7 @@ import (
  */
 func Av_buffersrc_get_nb_failed_requests(buffer_src *AVFilterContext) uint32 {
     return uint32(C.av_buffersrc_get_nb_failed_requests(
-        (*C.AVFilterContext)(unsafe.Pointer(buffer_src))))
+        (*C.struct_AVFilterContext)(unsafe.Pointer(buffer_src))))
 }
 
 /**
@@ -69,7 +74,19 @@ func Av_buffersrc_get_nb_failed_requests(buffer_src *AVFilterContext) uint32 {
  * It should be allocated with av_buffersrc_parameters_alloc() and freed with
  * av_free(). All the allocated fields in it remain owned by the caller.
  */
-type AVBufferSrcParameters C.struct_AVBufferSrcParameters
+type AVBufferSrcParameters struct {
+    Format int32
+    Time_base AVRational
+    Width int32
+    Height int32
+    Sample_aspect_ratio AVRational
+    Frame_rate AVRational
+    Hw_frames_ctx *AVBufferRef
+    Sample_rate int32
+    Channel_layout uint64
+    Ch_layout AVChannelLayout
+}
+
 
 /**
  * Allocate a new AVBufferSrcParameters instance. It should be freed by the
@@ -94,8 +111,8 @@ func Av_buffersrc_parameters_alloc() *AVBufferSrcParameters {
  */
 func Av_buffersrc_parameters_set(ctx *AVFilterContext, param *AVBufferSrcParameters) int32 {
     return int32(C.av_buffersrc_parameters_set(
-        (*C.AVFilterContext)(unsafe.Pointer(ctx)), 
-        (*C.AVBufferSrcParameters)(unsafe.Pointer(param))))
+        (*C.struct_AVFilterContext)(unsafe.Pointer(ctx)), 
+        (*C.struct_AVBufferSrcParameters)(unsafe.Pointer(param))))
 }
 
 /**
@@ -113,8 +130,8 @@ func Av_buffersrc_parameters_set(ctx *AVFilterContext, param *AVBufferSrcParamet
  */
 func Av_buffersrc_write_frame(ctx *AVFilterContext, frame *AVFrame) int32 {
     return int32(C.av_buffersrc_write_frame(
-        (*C.AVFilterContext)(unsafe.Pointer(ctx)), 
-        (*C.AVFrame)(unsafe.Pointer(frame))))
+        (*C.struct_AVFilterContext)(unsafe.Pointer(ctx)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame))))
 }
 
 /**
@@ -137,8 +154,8 @@ func Av_buffersrc_write_frame(ctx *AVFilterContext, frame *AVFrame) int32 {
  */
 func Av_buffersrc_add_frame(ctx *AVFilterContext, frame *AVFrame) int32 {
     return int32(C.av_buffersrc_add_frame(
-        (*C.AVFilterContext)(unsafe.Pointer(ctx)), 
-        (*C.AVFrame)(unsafe.Pointer(frame))))
+        (*C.struct_AVFilterContext)(unsafe.Pointer(ctx)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame))))
 }
 
 /**
@@ -159,8 +176,8 @@ func Av_buffersrc_add_frame(ctx *AVFilterContext, frame *AVFrame) int32 {
 func Av_buffersrc_add_frame_flags(buffer_src *AVFilterContext,
                                  frame *AVFrame, flags int32) int32 {
     return int32(C.av_buffersrc_add_frame_flags(
-        (*C.AVFilterContext)(unsafe.Pointer(buffer_src)), 
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
+        (*C.struct_AVFilterContext)(unsafe.Pointer(buffer_src)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
 }
 
 /**
@@ -171,8 +188,9 @@ func Av_buffersrc_add_frame_flags(buffer_src *AVFilterContext,
  * of the last frame.
  */
 func Av_buffersrc_close(ctx *AVFilterContext, pts int64, flags uint32) int32 {
-    return int32(C.av_buffersrc_close((*C.AVFilterContext)(unsafe.Pointer(ctx)), 
-        C.longlong(pts), C.unsigned(flags)))
+    return int32(C.av_buffersrc_close(
+        (*C.struct_AVFilterContext)(unsafe.Pointer(ctx)), C.longlong(pts), 
+        C.unsigned(flags)))
 }
 
 /**

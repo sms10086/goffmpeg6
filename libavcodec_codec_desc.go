@@ -32,13 +32,13 @@ import (
     "unsafe"
 )
 
-const AV_CODEC_PROP_INTRA_ONLY = (1 << 0)
-const AV_CODEC_PROP_LOSSY = (1 << 1)
-const AV_CODEC_PROP_LOSSLESS = (1 << 2)
-const AV_CODEC_PROP_REORDER = (1 << 3)
-const AV_CODEC_PROP_FIELDS = (1 << 4)
-const AV_CODEC_PROP_BITMAP_SUB = (1 << 16)
-const AV_CODEC_PROP_TEXT_SUB = (1 << 17)
+const AV_CODEC_PROP_INTRA_ONLY =     (1 << 0) 
+const AV_CODEC_PROP_LOSSY =          (1 << 1) 
+const AV_CODEC_PROP_LOSSLESS =       (1 << 2) 
+const AV_CODEC_PROP_REORDER =        (1 << 3) 
+const AV_CODEC_PROP_FIELDS =         (1 << 4) 
+const AV_CODEC_PROP_BITMAP_SUB =     (1 << 16) 
+const AV_CODEC_PROP_TEXT_SUB =       (1 << 17) 
 
 
                             
@@ -58,7 +58,16 @@ const AV_CODEC_PROP_TEXT_SUB = (1 << 17)
  * AVCodecID.
  * @see avcodec_descriptor_get()
  */
-type AVCodecDescriptor C.struct_AVCodecDescriptor
+type AVCodecDescriptor struct {
+    Id AVCodecID
+    Type AVMediaType
+    Name *byte
+    Long_name *byte
+    Props int32
+    Mime_types **byte
+    Profiles *AVProfile
+}
+
 
 /**
  * Codec uses only intra compression.
@@ -106,7 +115,8 @@ type AVCodecDescriptor C.struct_AVCodecDescriptor
  * @return descriptor for given codec ID or NULL if no descriptor exists.
  */
 func Avcodec_descriptor_get(id AVCodecID) *AVCodecDescriptor {
-    return (*AVCodecDescriptor)(unsafe.Pointer(C.avcodec_descriptor_get(C.enum_AVCodecID(id))))
+    return (*AVCodecDescriptor)(unsafe.Pointer(C.avcodec_descriptor_get(
+        C.enum_AVCodecID(id))))
 }
 
 /**
@@ -118,7 +128,7 @@ func Avcodec_descriptor_get(id AVCodecID) *AVCodecDescriptor {
  */
 func Avcodec_descriptor_next(prev *AVCodecDescriptor) *AVCodecDescriptor {
     return (*AVCodecDescriptor)(unsafe.Pointer(C.avcodec_descriptor_next(
-        (*C.AVCodecDescriptor)(unsafe.Pointer(prev)))))
+        (*C.struct_AVCodecDescriptor)(unsafe.Pointer(prev)))))
 }
 
 /**

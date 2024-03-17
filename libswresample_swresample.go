@@ -166,13 +166,41 @@ const SWR_FLAG_RESAMPLE = 1
 //long term TODO can we enable this dynamically?
 
 /** Dithering algorithms */
-type SwrDitherType C.enum_SwrDitherType
+type SwrDitherType int32
+const (
+    SWR_DITHER_NONE SwrDitherType = 0 + iota
+    SWR_DITHER_RECTANGULAR
+    SWR_DITHER_TRIANGULAR
+    SWR_DITHER_TRIANGULAR_HIGHPASS
+    SWR_DITHER_NS = 64
+    SWR_DITHER_NS_LIPSHITZ = 64 + iota - 4
+    SWR_DITHER_NS_F_WEIGHTED
+    SWR_DITHER_NS_MODIFIED_E_WEIGHTED
+    SWR_DITHER_NS_IMPROVED_E_WEIGHTED
+    SWR_DITHER_NS_SHIBATA
+    SWR_DITHER_NS_LOW_SHIBATA
+    SWR_DITHER_NS_HIGH_SHIBATA
+    SWR_DITHER_NB
+)
+
 
 /** Resampling Engines */
-type SwrEngine C.enum_SwrEngine
+type SwrEngine int32
+const (
+    SWR_ENGINE_SWR SwrEngine = iota
+    SWR_ENGINE_SOXR
+    SWR_ENGINE_NB
+)
+
 
 /** Resampling Filter Types */
-type SwrFilterType C.enum_SwrFilterType
+type SwrFilterType int32
+const (
+    SWR_FILTER_TYPE_CUBIC SwrFilterType = iota
+    SWR_FILTER_TYPE_BLACKMAN_NUTTALL
+    SWR_FILTER_TYPE_KAISER
+)
+
 
 /**
  * @}
@@ -184,7 +212,9 @@ type SwrFilterType C.enum_SwrFilterType
  * the @ref avoptions API and cannot directly set values to members of the
  * structure.
  */
-type SwrContext C.struct_SwrContext
+type SwrContext struct {
+}
+
 
 /**
  * Get the AVClass for SwrContext. It can be used in combination with
@@ -241,32 +271,38 @@ func Swr_is_initialized(s *SwrContext) int32 {
 }
 
                              
-   
-                                                                 
-  
-                                                                            
-                                                                             
-                            
-  
-                                                                           
-                                                                
-                                                                 
-                                                              
-                                                               
-                                                                
-                                                             
-                                              
-                                                             
-  
-                              
-                                                     
-                                             
-   
-                    
-                                                           
-                                                                                                                     
-                                                                                                                     
-                                                                     
+/**
+ * Allocate SwrContext if needed and set/reset common parameters.
+ *
+ * This function does not require s to be allocated with swr_alloc(). On the
+ * other hand, swr_alloc() can use swr_alloc_set_opts() to set the parameters
+ * on the allocated context.
+ *
+ * @param s               existing Swr context if available, or NULL if not
+ * @param out_ch_layout   output channel layout (AV_CH_LAYOUT_*)
+ * @param out_sample_fmt  output sample format (AV_SAMPLE_FMT_*).
+ * @param out_sample_rate output sample rate (frequency in Hz)
+ * @param in_ch_layout    input channel layout (AV_CH_LAYOUT_*)
+ * @param in_sample_fmt   input sample format (AV_SAMPLE_FMT_*).
+ * @param in_sample_rate  input sample rate (frequency in Hz)
+ * @param log_offset      logging level offset
+ * @param log_ctx         parent logging context, can be NULL
+ *
+ * @see swr_init(), swr_free()
+ * @return NULL on error, allocated context otherwise
+ * @deprecated use @ref swr_alloc_set_opts2()
+ */
+
+func Swr_alloc_set_opts(s *SwrContext,
+                                      out_ch_layout int64, out_sample_fmt AVSampleFormat, out_sample_rate int32,
+                                      in_ch_layout int64, in_sample_fmt AVSampleFormat, in_sample_rate int32,
+                                      log_offset int32, log_ctx unsafe.Pointer) *SwrContext {
+    return (*SwrContext)(unsafe.Pointer(C.swr_alloc_set_opts(
+        (*C.struct_SwrContext)(unsafe.Pointer(s)), C.longlong(out_ch_layout), 
+        C.enum_AVSampleFormat(out_sample_fmt), C.int(out_sample_rate), 
+        C.longlong(in_ch_layout), C.enum_AVSampleFormat(in_sample_fmt), 
+        C.int(in_sample_rate), C.int(log_offset), log_ctx)))
+}
       
 
 /**
@@ -295,11 +331,10 @@ func Swr_alloc_set_opts2(ps **SwrContext,
                         out_ch_layout *AVChannelLayout, out_sample_fmt AVSampleFormat, out_sample_rate int32,
                         in_ch_layout *AVChannelLayout, in_sample_fmt AVSampleFormat, in_sample_rate int32,
                         log_offset int32, log_ctx unsafe.Pointer) int32 {
-    return int32(C.swr_alloc_set_opts2(
-        (**C.struct_SwrContext)(unsafe.Pointer(ps)), 
-        (*C.AVChannelLayout)(unsafe.Pointer(out_ch_layout)), 
+    return int32(C.swr_alloc_set_opts2((**C.struct_SwrContext)(unsafe.Pointer(ps)), 
+        (*C.struct_AVChannelLayout)(unsafe.Pointer(out_ch_layout)), 
         C.enum_AVSampleFormat(out_sample_fmt), C.int(out_sample_rate), 
-        (*C.AVChannelLayout)(unsafe.Pointer(in_ch_layout)), 
+        (*C.struct_AVChannelLayout)(unsafe.Pointer(in_ch_layout)), 
         C.enum_AVSampleFormat(in_sample_fmt), C.int(in_sample_rate), 
         C.int(log_offset), log_ctx))
 }
@@ -413,9 +448,8 @@ func Swr_next_pts(s *SwrContext, pts int64) int64 {
  *            @li swr_init() fails when called.
  */
 func Swr_set_compensation(s *SwrContext, sample_delta int32, compensation_distance int32) int32 {
-    return int32(C.swr_set_compensation(
-        (*C.struct_SwrContext)(unsafe.Pointer(s)), C.int(sample_delta), 
-        C.int(compensation_distance)))
+    return int32(C.swr_set_compensation((*C.struct_SwrContext)(unsafe.Pointer(s)), 
+        C.int(sample_delta), C.int(compensation_distance)))
 }
 
 /**
@@ -427,43 +461,48 @@ func Swr_set_compensation(s *SwrContext, sample_delta int32, compensation_distan
  * @return >= 0 on success, or AVERROR error code in case of failure.
  */
 func Swr_set_channel_mapping(s *SwrContext, channel_map *int32) int32 {
-    return int32(C.swr_set_channel_mapping(
-        (*C.struct_SwrContext)(unsafe.Pointer(s)), 
+    return int32(C.swr_set_channel_mapping((*C.struct_SwrContext)(unsafe.Pointer(s)), 
         (*C.int)(unsafe.Pointer(channel_map))))
 }
 
                              
-   
-                                    
-  
-                                                                             
-                                                                          
-                            
-  
-                                                  
-                                                   
-                                                              
-                                                                   
-                                                                             
-                                                                                
-                                                                            
-                                         
-                                                                            
-                                                                                
-                                                                             
-                                          
-                                                                       
-                                                                 
-                                                                            
-                                                          
-   
-                    
-                                                             
-                                                                        
-                                                                  
-                                                            
-                                                                       
-                                    
+/**
+ * Generate a channel mixing matrix.
+ *
+ * This function is the one used internally by libswresample for building the
+ * default mixing matrix. It is made public just as a utility function for
+ * building custom matrices.
+ *
+ * @param in_layout           input channel layout
+ * @param out_layout          output channel layout
+ * @param center_mix_level    mix level for the center channel
+ * @param surround_mix_level  mix level for the surround channel(s)
+ * @param lfe_mix_level       mix level for the low-frequency effects channel
+ * @param rematrix_maxval     if 1.0, coefficients will be normalized to prevent
+ *                            overflow. if INT_MAX, coefficients will not be
+ *                            normalized.
+ * @param[out] matrix         mixing coefficients; matrix[i + stride * o] is
+ *                            the weight of input channel i in output channel o.
+ * @param stride              distance between adjacent input channels in the
+ *                            matrix array
+ * @param matrix_encoding     matrixed stereo downmix mode (e.g. dplii)
+ * @param log_ctx             parent logging context, can be NULL
+ * @return                    0 on success, negative AVERROR code on failure
+ * @deprecated                use @ref swr_build_matrix2()
+ */
+
+func Swr_build_matrix(in_layout uint64, out_layout uint64,
+                     center_mix_level float64, surround_mix_level float64,
+                     lfe_mix_level float64, rematrix_maxval float64,
+                     rematrix_volume float64, matrix *float64,
+                     stride int32, matrix_encoding AVMatrixEncoding,
+                     log_ctx unsafe.Pointer) int32 {
+    return int32(C.swr_build_matrix(C.ulonglong(in_layout), C.ulonglong(out_layout), 
+        C.double(center_mix_level), C.double(surround_mix_level), 
+        C.double(lfe_mix_level), C.double(rematrix_maxval), 
+        C.double(rematrix_volume), (*C.double)(unsafe.Pointer(matrix)), 
+        C.int(stride), C.enum_AVMatrixEncoding(matrix_encoding), log_ctx))
+}
       
 
 /**
@@ -493,14 +532,14 @@ func Swr_build_matrix2(in_layout *AVChannelLayout, out_layout *AVChannelLayout,
                       center_mix_level float64, surround_mix_level float64,
                       lfe_mix_level float64, maxval float64,
                       rematrix_volume float64, matrix *float64,
-                      stride C.ptrdiff_t, matrix_encoding AVMatrixEncoding,
+                      stride int32, matrix_encoding AVMatrixEncoding,
                       log_context unsafe.Pointer) int32 {
     return int32(C.swr_build_matrix2(
-        (*C.AVChannelLayout)(unsafe.Pointer(in_layout)), 
-        (*C.AVChannelLayout)(unsafe.Pointer(out_layout)), 
+        (*C.struct_AVChannelLayout)(unsafe.Pointer(in_layout)), 
+        (*C.struct_AVChannelLayout)(unsafe.Pointer(out_layout)), 
         C.double(center_mix_level), C.double(surround_mix_level), 
         C.double(lfe_mix_level), C.double(maxval), C.double(rematrix_volume), 
-        (*C.double)(unsafe.Pointer(matrix)), stride, 
+        (*C.double)(unsafe.Pointer(matrix)), C.ptrdiff_t(stride), 
         C.enum_AVMatrixEncoding(matrix_encoding), log_context))
 }
 
@@ -687,9 +726,9 @@ func Swresample_license() string {
  */
 func Swr_convert_frame(swr *SwrContext,
                       output *AVFrame, input *AVFrame) int32 {
-    return int32(C.swr_convert_frame((*C.SwrContext)(unsafe.Pointer(swr)), 
-        (*C.AVFrame)(unsafe.Pointer(output)), 
-        (*C.AVFrame)(unsafe.Pointer(input))))
+    return int32(C.swr_convert_frame((*C.struct_SwrContext)(unsafe.Pointer(swr)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(output)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(input))))
 }
 
 /**
@@ -707,8 +746,9 @@ func Swr_convert_frame(swr *SwrContext,
  * @return                0 on success, AVERROR on failure.
  */
 func Swr_config_frame(swr *SwrContext, out *AVFrame, in *AVFrame) int32 {
-    return int32(C.swr_config_frame((*C.SwrContext)(unsafe.Pointer(swr)), 
-        (*C.AVFrame)(unsafe.Pointer(out)), (*C.AVFrame)(unsafe.Pointer(in))))
+    return int32(C.swr_config_frame((*C.struct_SwrContext)(unsafe.Pointer(swr)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(out)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(in))))
 }
 
 /**

@@ -24,10 +24,10 @@ package goffmpeg6
 
 //const LIBSWSCALE_VERSION_MINOR = 5
 //const LIBSWSCALE_VERSION_MICRO = 100
-//const LIBSWSCALE_VERSION_INT = AV_VERSION_INT(LIBSWSCALE_VERSION_MAJOR,                                                 LIBSWSCALE_VERSION_MINOR,                                                 LIBSWSCALE_VERSION_MICRO)
-//const LIBSWSCALE_VERSION = AV_VERSION(LIBSWSCALE_VERSION_MAJOR,                                             LIBSWSCALE_VERSION_MINOR,                                             LIBSWSCALE_VERSION_MICRO)
-//const LIBSWSCALE_BUILD = LIBSWSCALE_VERSION_INT
-//const LIBSWSCALE_IDENT = "SwS" AV_STRINGIFY(LIBSWSCALE_VERSION)
+//const LIBSWSCALE_VERSION_INT =   AV_VERSION_INT(LIBSWSCALE_VERSION_MAJOR,                                                 LIBSWSCALE_VERSION_MINOR,                                                 LIBSWSCALE_VERSION_MICRO) 
+//const LIBSWSCALE_VERSION =       AV_VERSION(LIBSWSCALE_VERSION_MAJOR,                                             LIBSWSCALE_VERSION_MINOR,                                             LIBSWSCALE_VERSION_MICRO) 
+//const LIBSWSCALE_BUILD =         LIBSWSCALE_VERSION_INT 
+//const LIBSWSCALE_IDENT =         "SwS" AV_STRINGIFY(LIBSWSCALE_VERSION) 
 
 
                          

@@ -67,7 +67,24 @@ import (
  * linesize is the buffer size, in bytes, for the 1 plane.
  *
  */
-type AVSampleFormat C.enum_AVSampleFormat
+type AVSampleFormat int32
+const (
+    AV_SAMPLE_FMT_NONE AVSampleFormat = -1 + iota
+    AV_SAMPLE_FMT_U8
+    AV_SAMPLE_FMT_S16
+    AV_SAMPLE_FMT_S32
+    AV_SAMPLE_FMT_FLT
+    AV_SAMPLE_FMT_DBL
+    AV_SAMPLE_FMT_U8P
+    AV_SAMPLE_FMT_S16P
+    AV_SAMPLE_FMT_S32P
+    AV_SAMPLE_FMT_FLTP
+    AV_SAMPLE_FMT_DBLP
+    AV_SAMPLE_FMT_S64
+    AV_SAMPLE_FMT_S64P
+    AV_SAMPLE_FMT_NB
+)
+
 
 /**
  * Return the name of sample_fmt, or NULL if sample_fmt is not
@@ -92,8 +109,8 @@ func Av_get_sample_fmt(name *byte) AVSampleFormat {
  * input.
  */
 func Av_get_alt_sample_fmt(sample_fmt AVSampleFormat, planar int32) AVSampleFormat {
-    return AVSampleFormat(C.av_get_alt_sample_fmt(
-        C.enum_AVSampleFormat(sample_fmt), C.int(planar)))
+    return AVSampleFormat(C.av_get_alt_sample_fmt(C.enum_AVSampleFormat(sample_fmt), 
+        C.int(planar)))
 }
 
 /**
@@ -221,8 +238,7 @@ func Av_samples_fill_arrays(audio_data **uint8, linesize *int32,
                            buf *uint8,
                            nb_channels int32, nb_samples int32,
                            sample_fmt AVSampleFormat, align int32) int32 {
-    return int32(C.av_samples_fill_arrays(
-        (**C.uchar)(unsafe.Pointer(audio_data)), 
+    return int32(C.av_samples_fill_arrays((**C.uchar)(unsafe.Pointer(audio_data)), 
         (*C.int)(unsafe.Pointer(linesize)), (*C.uchar)(unsafe.Pointer(buf)), 
         C.int(nb_channels), C.int(nb_samples), C.enum_AVSampleFormat(sample_fmt), 
         C.int(align)))
@@ -302,9 +318,9 @@ func Av_samples_copy(dst **uint8, src **uint8, dst_offset int32,
  */
 func Av_samples_set_silence(audio_data **uint8, offset int32, nb_samples int32,
                            nb_channels int32, sample_fmt AVSampleFormat) int32 {
-    return int32(C.av_samples_set_silence(
-        (**C.uchar)(unsafe.Pointer(audio_data)), C.int(offset), 
-        C.int(nb_samples), C.int(nb_channels), C.enum_AVSampleFormat(sample_fmt)))
+    return int32(C.av_samples_set_silence((**C.uchar)(unsafe.Pointer(audio_data)), 
+        C.int(offset), C.int(nb_samples), C.int(nb_channels), 
+        C.enum_AVSampleFormat(sample_fmt)))
 }
 
 /**

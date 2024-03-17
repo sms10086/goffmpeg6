@@ -74,7 +74,17 @@ const FF_DXVA2_WORKAROUND_INTEL_CLEARVIDEO = 2
  *
  * Use av_d3d11va_alloc_context() exclusively to allocate an AVD3D11VAContext.
  */
-type AVD3D11VAContext C.struct_AVD3D11VAContext
+type AVD3D11VAContext struct {
+    Decoder *ID3D11VideoDecoder
+    Video_context *ID3D11VideoContext
+    Cfg *D3D11_VIDEO_DECODER_CONFIG
+    Surface_count uint32
+    Surface **ID3D11VideoDecoderOutputView
+    Workaround uint64
+    Report_id uint32
+    Context_mutex HANDLE
+}
+
 
 /**
  * Allocate an AVD3D11VAContext.

@@ -33,7 +33,7 @@ import (
     "unsafe"
 )
 
-const AV_BPRINT_SIZE_UNLIMITED = (^uint32(0))
+const AV_BPRINT_SIZE_UNLIMITED =   (^uint32(0)) 
 const AV_BPRINT_SIZE_AUTOMATIC = 1
 const AV_BPRINT_SIZE_COUNT_ONLY = 0
 
@@ -106,6 +106,13 @@ const AV_BPRINT_SIZE_COUNT_ONLY = 0
  */
 
 //FF_PAD_STRUCTURE(AVBPrint, 1024,
+type AVBPrint struct {
+    Str *byte
+    Len uint32
+    Size uint32
+    Size_max uint32
+    Reserved_internal_buffer [1]byte
+}
 
 
 /**
@@ -149,8 +156,8 @@ const AV_BPRINT_SIZE_COUNT_ONLY = 0
  *                   Check also `AV_BPRINT_SIZE_*` macros.
  */
 func Av_bprint_init(buf *AVBPrint, size_init uint32, size_max uint32)  {
-    C.av_bprint_init((*C.AVBPrint)(unsafe.Pointer(buf)), C.unsigned(size_init), 
-        C.unsigned(size_max))
+    C.av_bprint_init((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
+        C.unsigned(size_init), C.unsigned(size_max))
 }
 
 /**
@@ -166,7 +173,7 @@ func Av_bprint_init(buf *AVBPrint, size_init uint32, size_max uint32)  {
  * @param size    size of buffer
  */
 func Av_bprint_init_for_buffer(buf *AVBPrint, buffer *byte, size uint32)  {
-    C.av_bprint_init_for_buffer((*C.AVBPrint)(unsafe.Pointer(buf)), 
+    C.av_bprint_init_for_buffer((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
         (*C.char)(unsafe.Pointer(buffer)), C.unsigned(size))
 }
 
@@ -184,7 +191,7 @@ func Av_bprint_init_for_buffer(buf *AVBPrint, buffer *byte, size uint32)  {
  * Append char c n times to a print buffer.
  */
 func Av_bprint_chars(buf *AVBPrint, c byte, n uint32)  {
-    C.av_bprint_chars((*C.AVBPrint)(unsafe.Pointer(buf)), C.char(c), 
+    C.av_bprint_chars((*C.struct_AVBPrint)(unsafe.Pointer(buf)), C.char(c), 
         C.unsigned(n))
 }
 
@@ -196,11 +203,13 @@ func Av_bprint_chars(buf *AVBPrint, c byte, n uint32)  {
  * param size size of data
  */
 func Av_bprint_append_data(buf *AVBPrint, data *byte, size uint32)  {
-    C.av_bprint_append_data((*C.AVBPrint)(unsafe.Pointer(buf)), 
+    C.av_bprint_append_data((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
         (*C.char)(unsafe.Pointer(data)), C.unsigned(size))
 }
 
-type tm C.struct_tm
+type tm struct {
+}
+
 /**
  * Append a formatted date and time to a print buffer.
  *
@@ -213,7 +222,7 @@ type tm C.struct_tm
  * the bprint buffer is near the limit stated by the size_max option.
  */
 func Av_bprint_strftime(buf *AVBPrint, fmt *byte, tm *tm)  {
-    C.av_bprint_strftime((*C.AVBPrint)(unsafe.Pointer(buf)), 
+    C.av_bprint_strftime((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
         (*C.char)(unsafe.Pointer(fmt)), (*C.struct_tm)(unsafe.Pointer(tm)))
 }
 
@@ -228,8 +237,8 @@ func Av_bprint_strftime(buf *AVBPrint, fmt *byte, tm *tm)  {
  */
 func Av_bprint_get_buffer(buf *AVBPrint, size uint32,
                           mem **uint8, actual_size *uint32)  {
-    C.av_bprint_get_buffer((*C.AVBPrint)(unsafe.Pointer(buf)), C.unsigned(size), 
-        (**C.uchar)(unsafe.Pointer(mem)), 
+    C.av_bprint_get_buffer((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
+        C.unsigned(size), (**C.uchar)(unsafe.Pointer(mem)), 
         (*C.unsigned)(unsafe.Pointer(actual_size)))
 }
 
@@ -237,7 +246,7 @@ func Av_bprint_get_buffer(buf *AVBPrint, size uint32,
  * Reset the string to "" but keep internal allocated data.
  */
 func Av_bprint_clear(buf *AVBPrint)  {
-    C.av_bprint_clear((*C.AVBPrint)(unsafe.Pointer(buf)))
+    C.av_bprint_clear((*C.struct_AVBPrint)(unsafe.Pointer(buf)))
 }
 
 /**
@@ -260,7 +269,7 @@ func Av_bprint_clear(buf *AVBPrint)  {
  * @return  0 for success or error code (probably AVERROR(ENOMEM))
  */
 func Av_bprint_finalize(buf *AVBPrint, ret_str **byte) int32 {
-    return int32(C.av_bprint_finalize((*C.AVBPrint)(unsafe.Pointer(buf)), 
+    return int32(C.av_bprint_finalize((*C.struct_AVBPrint)(unsafe.Pointer(buf)), 
         (**C.char)(unsafe.Pointer(ret_str))))
 }
 
@@ -279,7 +288,7 @@ func Av_bprint_finalize(buf *AVBPrint, ret_str **byte) int32 {
  */
 func Av_bprint_escape(dstbuf *AVBPrint, src *byte, special_chars *byte,
                       mode AVEscapeMode, flags int32)  {
-    C.av_bprint_escape((*C.AVBPrint)(unsafe.Pointer(dstbuf)), 
+    C.av_bprint_escape((*C.struct_AVBPrint)(unsafe.Pointer(dstbuf)), 
         (*C.char)(unsafe.Pointer(src)), (*C.char)(unsafe.Pointer(special_chars)), 
         C.enum_AVEscapeMode(mode), C.int(flags))
 }

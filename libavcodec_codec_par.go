@@ -66,6 +66,41 @@ import (
  * be allocated with avcodec_parameters_alloc() and freed with
  * avcodec_parameters_free().
  */
+type AVCodecParameters struct {
+    Codec_type AVMediaType
+    Codec_id AVCodecID
+    Codec_tag uint32
+    Extradata *uint8
+    Extradata_size int32
+    Format int32
+    Bit_rate int64
+    Bits_per_coded_sample int32
+    Bits_per_raw_sample int32
+    Profile int32
+    Level int32
+    Width int32
+    Height int32
+    Sample_aspect_ratio AVRational
+    Field_order AVFieldOrder
+    Color_range AVColorRange
+    Color_primaries AVColorPrimaries
+    Color_trc AVColorTransferCharacteristic
+    Color_space AVColorSpace
+    Chroma_location AVChromaLocation
+    Video_delay int32
+    Channel_layout uint64
+    Channels int32
+    Sample_rate int32
+    Block_align int32
+    Frame_size int32
+    Initial_padding int32
+    Trailing_padding int32
+    Seek_preroll int32
+    Ch_layout AVChannelLayout
+    Framerate AVRational
+    Coded_side_data *AVPacketSideData
+    Nb_coded_side_data int32
+}
 
 
 /**
@@ -82,7 +117,7 @@ func Avcodec_parameters_alloc() *AVCodecParameters {
  * write NULL to the supplied pointer.
  */
 func Avcodec_parameters_free(par **AVCodecParameters)  {
-    C.avcodec_parameters_free((**C.AVCodecParameters)(unsafe.Pointer(par)))
+    C.avcodec_parameters_free((**C.struct_AVCodecParameters)(unsafe.Pointer(par)))
 }
 
 /**
@@ -93,8 +128,8 @@ func Avcodec_parameters_free(par **AVCodecParameters)  {
  */
 func Avcodec_parameters_copy(dst *AVCodecParameters, src *AVCodecParameters) int32 {
     return int32(C.avcodec_parameters_copy(
-        (*C.AVCodecParameters)(unsafe.Pointer(dst)), 
-        (*C.AVCodecParameters)(unsafe.Pointer(src))))
+        (*C.struct_AVCodecParameters)(unsafe.Pointer(dst)), 
+        (*C.struct_AVCodecParameters)(unsafe.Pointer(src))))
 }
 
 /**
@@ -103,7 +138,7 @@ func Avcodec_parameters_copy(dst *AVCodecParameters, src *AVCodecParameters) int
  */
 func Av_get_audio_frame_duration2(par *AVCodecParameters, frame_bytes int32) int32 {
     return int32(C.av_get_audio_frame_duration2(
-        (*C.AVCodecParameters)(unsafe.Pointer(par)), C.int(frame_bytes)))
+        (*C.struct_AVCodecParameters)(unsafe.Pointer(par)), C.int(frame_bytes)))
 }
 
 /**

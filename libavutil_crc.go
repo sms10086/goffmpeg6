@@ -62,7 +62,19 @@ import (
 
 type AVCRC uint32
 
-type AVCRCId int
+type AVCRCId int32
+const (
+    AV_CRC_8_ATM AVCRCId = iota
+    AV_CRC_16_ANSI
+    AV_CRC_16_CCITT
+    AV_CRC_32_IEEE
+    AV_CRC_32_IEEE_LE
+    AV_CRC_16_ANSI_LE
+    AV_CRC_24_IEEE
+    AV_CRC_8_EBU
+    AV_CRC_MAX
+)
+
 
 /**
  * Initialize a CRC table.

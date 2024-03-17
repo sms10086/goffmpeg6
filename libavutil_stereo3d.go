@@ -32,7 +32,7 @@ import (
     "unsafe"
 )
 
-const AV_STEREO3D_FLAG_INVERT = (1 << 0)
+const AV_STEREO3D_FLAG_INVERT =      (1 << 0) 
 
 
 /**
@@ -62,12 +62,29 @@ const AV_STEREO3D_FLAG_INVERT = (1 << 0)
 /**
  * List of possible 3D Types
  */
-type AVStereo3DType C.enum_AVStereo3DType
+type AVStereo3DType int32
+const (
+    AV_STEREO3D_2D AVStereo3DType = iota
+    AV_STEREO3D_SIDEBYSIDE
+    AV_STEREO3D_TOPBOTTOM
+    AV_STEREO3D_FRAMESEQUENCE
+    AV_STEREO3D_CHECKERBOARD
+    AV_STEREO3D_SIDEBYSIDE_QUINCUNX
+    AV_STEREO3D_LINES
+    AV_STEREO3D_COLUMNS
+)
+
 
 /**
  * List of possible view types.
  */
-type AVStereo3DView C.enum_AVStereo3DView
+type AVStereo3DView int32
+const (
+    AV_STEREO3D_VIEW_PACKED AVStereo3DView = iota
+    AV_STEREO3D_VIEW_LEFT
+    AV_STEREO3D_VIEW_RIGHT
+)
+
 
 /**
  * Inverted views, Right/Bottom represents the left view.
@@ -81,7 +98,12 @@ type AVStereo3DView C.enum_AVStereo3DView
  * @note The struct must be allocated with av_stereo3d_alloc() and
  *       its size is not a part of the public ABI.
  */
-type AVStereo3D C.struct_AVStereo3D
+type AVStereo3D struct {
+    Type AVStereo3DType
+    Flags int32
+    View AVStereo3DView
+}
+
 
 /**
  * Allocate an AVStereo3D structure and set its fields to default values.
@@ -102,7 +124,7 @@ func Av_stereo3d_alloc() *AVStereo3D {
  */
 func Av_stereo3d_create_side_data(frame *AVFrame) *AVStereo3D {
     return (*AVStereo3D)(unsafe.Pointer(C.av_stereo3d_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
 /**

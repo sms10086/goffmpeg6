@@ -60,7 +60,13 @@ import (
 /**
  * Projection of the video surface(s) on a sphere.
  */
-type AVSphericalProjection C.enum_AVSphericalProjection
+type AVSphericalProjection int32
+const (
+    AV_SPHERICAL_EQUIRECTANGULAR AVSphericalProjection = iota
+    AV_SPHERICAL_CUBEMAP
+    AV_SPHERICAL_EQUIRECTANGULAR_TILE
+)
+
 
 /**
  * This structure describes how to handle spherical videos, outlining
@@ -69,7 +75,18 @@ type AVSphericalProjection C.enum_AVSphericalProjection
  * @note The struct must be allocated with av_spherical_alloc() and
  *       its size is not a part of the public ABI.
  */
-type AVSphericalMapping C.struct_AVSphericalMapping
+type AVSphericalMapping struct {
+    Projection AVSphericalProjection
+    Yaw int32
+    Pitch int32
+    Roll int32
+    Bound_left uint32
+    Bound_top uint32
+    Bound_right uint32
+    Bound_bottom uint32
+    Padding uint32
+}
+
 
 /**
  * Allocate a AVSphericalVideo structure and initialize its fields to default
@@ -98,7 +115,7 @@ func Av_spherical_tile_bounds(mapx *AVSphericalMapping,
                               width uint64, height uint64,
                               left *uint64, top *uint64,
                               right *uint64, bottom *uint64)  {
-    C.av_spherical_tile_bounds((*C.AVSphericalMapping)(unsafe.Pointer(mapx)), 
+    C.av_spherical_tile_bounds((*C.struct_AVSphericalMapping)(unsafe.Pointer(mapx)), 
         C.ulonglong(width), C.ulonglong(height), 
         (*C.ulonglong)(unsafe.Pointer(left)), 
         (*C.ulonglong)(unsafe.Pointer(top)), 

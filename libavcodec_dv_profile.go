@@ -31,7 +31,7 @@ import (
     "unsafe"
 )
 
-const DV_PROFILE_BYTES = (6 * 80)
+const DV_PROFILE_BYTES = 480
 
 
                             
@@ -53,7 +53,26 @@ const DV_PROFILE_BYTES = (6 * 80)
  * 525/60 and 625/50, but the plans are to use it for various
  * DV specs as well (e.g. SMPTE314M vs. IEC 61834).
  */
-type AVDVProfile C.struct_AVDVProfile
+type AVDVProfile struct {
+    Dsf int32
+    Video_stype int32
+    Frame_size int32
+    Difseg_size int32
+    N_difchan int32
+    Time_base AVRational
+    Ltc_divisor int32
+    Height int32
+    Width int32
+    Sar [2]AVRational
+    Pix_fmt AVPixelFormat
+    Bpm int32
+    Block_sizes *uint8
+    Audio_stride int32
+    Audio_min_samples [3]int32
+    Audio_samples_dist [5]int32
+    Audio_shuffle* [9]uint8
+}
+
 
 /**
  * Get a DV profile for the provided compressed frame.
@@ -66,16 +85,16 @@ type AVDVProfile C.struct_AVDVProfile
 func Av_dv_frame_profile(sys *AVDVProfile,
                                        frame *uint8, buf_size uint32) *AVDVProfile {
     return (*AVDVProfile)(unsafe.Pointer(C.av_dv_frame_profile(
-        (*C.AVDVProfile)(unsafe.Pointer(sys)), (*C.uchar)(unsafe.Pointer(frame)), 
-        C.unsigned(buf_size))))
+        (*C.struct_AVDVProfile)(unsafe.Pointer(sys)), 
+        (*C.uchar)(unsafe.Pointer(frame)), C.unsigned(buf_size))))
 }
 
 /**
  * Get a DV profile for the provided stream parameters.
  */
 func Av_dv_codec_profile(width int32, height int32, pix_fmt AVPixelFormat) *AVDVProfile {
-    return (*AVDVProfile)(unsafe.Pointer(C.av_dv_codec_profile(C.int(width), C.int(height), 
-        C.enum_AVPixelFormat(pix_fmt))))
+    return (*AVDVProfile)(unsafe.Pointer(C.av_dv_codec_profile(C.int(width), 
+        C.int(height), C.enum_AVPixelFormat(pix_fmt))))
 }
 
 /**
@@ -83,8 +102,9 @@ func Av_dv_codec_profile(width int32, height int32, pix_fmt AVPixelFormat) *AVDV
  * The frame rate is used as a best-effort parameter.
  */
 func Av_dv_codec_profile2(width int32, height int32, pix_fmt AVPixelFormat, frame_rate AVRational) *AVDVProfile {
-    return (*AVDVProfile)(unsafe.Pointer(C.av_dv_codec_profile2(C.int(width), C.int(height), 
-        C.enum_AVPixelFormat(pix_fmt), C.AVRational(frame_rate))))
+    return (*AVDVProfile)(unsafe.Pointer(C.av_dv_codec_profile2(C.int(width), 
+        C.int(height), C.enum_AVPixelFormat(pix_fmt), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&frame_rate)))))
 }
 
                                  

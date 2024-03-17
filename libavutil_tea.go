@@ -49,7 +49,9 @@ import (
 
 //extern const int av_tea_size;
 
-type AVTEA C.struct_AVTEA
+type AVTEA struct {
+}
+
 
 /**
   * Allocate an AVTEA context
@@ -66,7 +68,7 @@ func Av_tea_alloc() *AVTEA {
  * @param key a key of 16 bytes used for encryption/decryption
  * @param rounds the number of rounds in TEA (64 is the "standard")
  */
-func Av_tea_init(ctx *AVTEA, key[16] uint8, rounds int32)  {
+func Av_tea_init(ctx *AVTEA, key [16]uint8, rounds int32)  {
     C.av_tea_init((*C.struct_AVTEA)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(&key[0])), C.int(rounds))
 }

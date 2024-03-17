@@ -108,9 +108,15 @@ const AV_DICT_MULTIKEY = 64
  * @}
  */
 
-type AVDictionaryEntry C.struct_AVDictionaryEntry
+type AVDictionaryEntry struct {
+    Key *byte
+    Value *byte
+}
 
-type AVDictionary C.struct_AVDictionary
+
+type AVDictionary struct {
+}
+
 
 /**
  * Get a dictionary entry with matching key.
@@ -128,9 +134,10 @@ type AVDictionary C.struct_AVDictionary
  */
 func Av_dict_get(m *AVDictionary, key *byte,
                                prev *AVDictionaryEntry, flags int32) *AVDictionaryEntry {
-    return (*AVDictionaryEntry)(unsafe.Pointer(C.av_dict_get((*C.AVDictionary)(unsafe.Pointer(m)), 
+    return (*AVDictionaryEntry)(unsafe.Pointer(C.av_dict_get(
+        (*C.struct_AVDictionary)(unsafe.Pointer(m)), 
         (*C.char)(unsafe.Pointer(key)), 
-        (*C.AVDictionaryEntry)(unsafe.Pointer(prev)), C.int(flags))))
+        (*C.struct_AVDictionaryEntry)(unsafe.Pointer(prev)), C.int(flags))))
 }
 
 /**
@@ -160,8 +167,8 @@ func Av_dict_get(m *AVDictionary, key *byte,
 func Av_dict_iterate(m *AVDictionary,
                                          prev *AVDictionaryEntry) *AVDictionaryEntry {
     return (*AVDictionaryEntry)(unsafe.Pointer(C.av_dict_iterate(
-        (*C.AVDictionary)(unsafe.Pointer(m)), 
-        (*C.AVDictionaryEntry)(unsafe.Pointer(prev)))))
+        (*C.struct_AVDictionary)(unsafe.Pointer(m)), 
+        (*C.struct_AVDictionaryEntry)(unsafe.Pointer(prev)))))
 }
 
 /**
@@ -171,7 +178,7 @@ func Av_dict_iterate(m *AVDictionary,
  * @return  number of entries in dictionary
  */
 func Av_dict_count(m *AVDictionary) int32 {
-    return int32(C.av_dict_count((*C.AVDictionary)(unsafe.Pointer(m))))
+    return int32(C.av_dict_count((*C.struct_AVDictionary)(unsafe.Pointer(m))))
 }
 
 /**
@@ -192,7 +199,7 @@ func Av_dict_count(m *AVDictionary) int32 {
  * @return          >= 0 on success otherwise an error code <0
  */
 func Av_dict_set(pm **AVDictionary, key *byte, value *byte, flags int32) int32 {
-    return int32(C.av_dict_set((**C.AVDictionary)(unsafe.Pointer(pm)), 
+    return int32(C.av_dict_set((**C.struct_AVDictionary)(unsafe.Pointer(pm)), 
         (*C.char)(unsafe.Pointer(key)), (*C.char)(unsafe.Pointer(value)), 
         C.int(flags)))
 }
@@ -204,7 +211,7 @@ func Av_dict_set(pm **AVDictionary, key *byte, value *byte, flags int32) int32 {
  * Note: If ::AV_DICT_DONT_STRDUP_KEY is set, key will be freed on error.
  */
 func Av_dict_set_int(pm **AVDictionary, key *byte, value int64, flags int32) int32 {
-    return int32(C.av_dict_set_int((**C.AVDictionary)(unsafe.Pointer(pm)), 
+    return int32(C.av_dict_set_int((**C.struct_AVDictionary)(unsafe.Pointer(pm)), 
         (*C.char)(unsafe.Pointer(key)), C.longlong(value), C.int(flags)))
 }
 
@@ -228,7 +235,8 @@ func Av_dict_set_int(pm **AVDictionary, key *byte, value int64, flags int32) int
 func Av_dict_parse_string(pm **AVDictionary, str *byte,
                          key_val_sep *byte, pairs_sep *byte,
                          flags int32) int32 {
-    return int32(C.av_dict_parse_string((**C.AVDictionary)(unsafe.Pointer(pm)), 
+    return int32(C.av_dict_parse_string(
+        (**C.struct_AVDictionary)(unsafe.Pointer(pm)), 
         (*C.char)(unsafe.Pointer(str)), (*C.char)(unsafe.Pointer(key_val_sep)), 
         (*C.char)(unsafe.Pointer(pairs_sep)), C.int(flags)))
 }
@@ -247,8 +255,8 @@ func Av_dict_parse_string(pm **AVDictionary, str *byte,
  *           by this function, callers should free the associated memory.
  */
 func Av_dict_copy(dst **AVDictionary, src *AVDictionary, flags int32) int32 {
-    return int32(C.av_dict_copy((**C.AVDictionary)(unsafe.Pointer(dst)), 
-        (*C.AVDictionary)(unsafe.Pointer(src)), C.int(flags)))
+    return int32(C.av_dict_copy((**C.struct_AVDictionary)(unsafe.Pointer(dst)), 
+        (*C.struct_AVDictionary)(unsafe.Pointer(src)), C.int(flags)))
 }
 
 /**
@@ -256,7 +264,7 @@ func Av_dict_copy(dst **AVDictionary, src *AVDictionary, flags int32) int32 {
  * and all keys and values.
  */
 func Av_dict_free(m **AVDictionary)  {
-    C.av_dict_free((**C.AVDictionary)(unsafe.Pointer(m)))
+    C.av_dict_free((**C.struct_AVDictionary)(unsafe.Pointer(m)))
 }
 
 /**
@@ -278,7 +286,7 @@ func Av_dict_free(m **AVDictionary)  {
  */
 func Av_dict_get_string(m *AVDictionary, buffer **byte,
                        key_val_sep byte, pairs_sep byte) int32 {
-    return int32(C.av_dict_get_string((*C.AVDictionary)(unsafe.Pointer(m)), 
+    return int32(C.av_dict_get_string((*C.struct_AVDictionary)(unsafe.Pointer(m)), 
         (**C.char)(unsafe.Pointer(buffer)), C.char(key_val_sep), 
         C.char(pairs_sep)))
 }

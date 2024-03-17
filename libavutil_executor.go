@@ -35,12 +35,24 @@ import (
                          
                          
 
-type AVExecutor C.struct_AVExecutor
-type AVTask C.struct_AVTask
+type AVExecutor struct {
+}
+
+// type AVTask
+
+type AVTask struct {
+    Next *AVTask
+}
 
 
+type AVTaskCallbacks struct {
+    User_data unsafe.Pointer
+    Local_context_size int32
+    Priority_higher uintptr
+    Ready uintptr
+    Run uintptr
+}
 
-type AVTaskCallbacks C.struct_AVTaskCallbacks
 
 /**
  * Alloc executor
@@ -50,7 +62,8 @@ type AVTaskCallbacks C.struct_AVTaskCallbacks
  */
 func Av_executor_alloc(callbacks *AVTaskCallbacks, thread_count int32) *AVExecutor {
     return (*AVExecutor)(unsafe.Pointer(C.av_executor_alloc(
-        (*C.AVTaskCallbacks)(unsafe.Pointer(callbacks)), C.int(thread_count))))
+        (*C.struct_AVTaskCallbacks)(unsafe.Pointer(callbacks)), 
+        C.int(thread_count))))
 }
 
 /**
@@ -58,7 +71,7 @@ func Av_executor_alloc(callbacks *AVTaskCallbacks, thread_count int32) *AVExecut
  * @param e  pointer to executor
  */
 func Av_executor_free(e **AVExecutor)  {
-    C.av_executor_free((**C.AVExecutor)(unsafe.Pointer(e)))
+    C.av_executor_free((**C.struct_AVExecutor)(unsafe.Pointer(e)))
 }
 
 /**
@@ -67,8 +80,8 @@ func Av_executor_free(e **AVExecutor)  {
  * @param t pointer to task. If NULL, it will wakeup one work thread
  */
 func Av_executor_execute(e *AVExecutor, t *AVTask)  {
-    C.av_executor_execute((*C.AVExecutor)(unsafe.Pointer(e)), 
-        (*C.AVTask)(unsafe.Pointer(t)))
+    C.av_executor_execute((*C.struct_AVExecutor)(unsafe.Pointer(e)), 
+        (*C.struct_AVTask)(unsafe.Pointer(t)))
 }
 
                           

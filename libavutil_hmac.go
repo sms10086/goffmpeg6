@@ -44,9 +44,20 @@ import (
  * @{
  */
 
-type AVHMACType C.enum_AVHMACType
+type AVHMACType int32
+const (
+    AV_HMAC_MD5 AVHMACType = iota
+    AV_HMAC_SHA1
+    AV_HMAC_SHA224
+    AV_HMAC_SHA256
+    AV_HMAC_SHA384
+    AV_HMAC_SHA512
+)
 
-type AVHMAC C.struct_AVHMAC
+
+type AVHMAC struct {
+}
+
 
 /**
  * Allocate an AVHMAC context.
@@ -61,7 +72,7 @@ func Av_hmac_alloc(typex AVHMACType) *AVHMAC {
  * @param ctx The context to free, may be NULL
  */
 func Av_hmac_free(ctx *AVHMAC)  {
-    C.av_hmac_free((*C.AVHMAC)(unsafe.Pointer(ctx)))
+    C.av_hmac_free((*C.struct_AVHMAC)(unsafe.Pointer(ctx)))
 }
 
 /**
@@ -71,7 +82,7 @@ func Av_hmac_free(ctx *AVHMAC)  {
  * @param keylen The length of the key, in bytes
  */
 func Av_hmac_init(ctx *AVHMAC, key *uint8, keylen uint32)  {
-    C.av_hmac_init((*C.AVHMAC)(unsafe.Pointer(ctx)), 
+    C.av_hmac_init((*C.struct_AVHMAC)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(key)), C.uint(keylen))
 }
 
@@ -82,7 +93,7 @@ func Av_hmac_init(ctx *AVHMAC, key *uint8, keylen uint32)  {
  * @param len  The length of the data, in bytes
  */
 func Av_hmac_update(ctx *AVHMAC, data *uint8, len uint32)  {
-    C.av_hmac_update((*C.AVHMAC)(unsafe.Pointer(ctx)), 
+    C.av_hmac_update((*C.struct_AVHMAC)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(data)), C.uint(len))
 }
 
@@ -94,7 +105,7 @@ func Av_hmac_update(ctx *AVHMAC, data *uint8, len uint32)  {
  * @return       The number of bytes written to out, or a negative error code.
  */
 func Av_hmac_final(ctx *AVHMAC, out *uint8, outlen uint32) int32 {
-    return int32(C.av_hmac_final((*C.AVHMAC)(unsafe.Pointer(ctx)), 
+    return int32(C.av_hmac_final((*C.struct_AVHMAC)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(out)), C.uint(outlen)))
 }
 
@@ -112,7 +123,7 @@ func Av_hmac_final(ctx *AVHMAC, out *uint8, outlen uint32) int32 {
 func Av_hmac_calc(ctx *AVHMAC, data *uint8, len uint32,
                  key *uint8, keylen uint32,
                  out *uint8, outlen uint32) int32 {
-    return int32(C.av_hmac_calc((*C.AVHMAC)(unsafe.Pointer(ctx)), 
+    return int32(C.av_hmac_calc((*C.struct_AVHMAC)(unsafe.Pointer(ctx)), 
         (*C.uchar)(unsafe.Pointer(data)), C.uint(len), 
         (*C.uchar)(unsafe.Pointer(key)), C.uint(keylen), 
         (*C.uchar)(unsafe.Pointer(out)), C.uint(outlen)))

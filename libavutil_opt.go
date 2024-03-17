@@ -45,17 +45,17 @@ const AV_OPT_FLAG_VIDEO_PARAM = 16
 const AV_OPT_FLAG_SUBTITLE_PARAM = 32
 const AV_OPT_FLAG_EXPORT = 64
 const AV_OPT_FLAG_READONLY = 128
-const AV_OPT_FLAG_BSF_PARAM = (1<<8)
-const AV_OPT_FLAG_RUNTIME_PARAM = (1<<15)
-const AV_OPT_FLAG_FILTERING_PARAM = (1<<16)
-const AV_OPT_FLAG_DEPRECATED = (1<<17)
-const AV_OPT_FLAG_CHILD_CONSTS = (1<<18)
-const AV_OPT_SEARCH_CHILDREN = (1 << 0)
-const AV_OPT_SEARCH_FAKE_OBJ = (1 << 1)
-const AV_OPT_ALLOW_NULL = (1 << 2)
-const AV_OPT_MULTI_COMPONENT_RANGE = (1 << 12)
-const AV_OPT_SERIALIZE_SKIP_DEFAULTS = 0x00000001
-const AV_OPT_SERIALIZE_OPT_FLAGS_EXACT = 0x00000002
+const AV_OPT_FLAG_BSF_PARAM =        (1<<8)  
+const AV_OPT_FLAG_RUNTIME_PARAM =    (1<<15)  
+const AV_OPT_FLAG_FILTERING_PARAM =  (1<<16)  
+const AV_OPT_FLAG_DEPRECATED =       (1<<17)  
+const AV_OPT_FLAG_CHILD_CONSTS =     (1<<18)  
+const AV_OPT_SEARCH_CHILDREN =    (1 << 0)  
+const AV_OPT_SEARCH_FAKE_OBJ =    (1 << 1) 
+const AV_OPT_ALLOW_NULL =  (1 << 2) 
+const AV_OPT_MULTI_COMPONENT_RANGE =  (1 << 12) 
+const AV_OPT_SERIALIZE_SKIP_DEFAULTS =               0x00000001   
+const AV_OPT_SERIALIZE_OPT_FLAGS_EXACT =             0x00000002   
 
 
                     
@@ -259,21 +259,68 @@ const AV_OPT_SERIALIZE_OPT_FLAGS_EXACT = 0x00000002
  * before the file is actually opened.
  */
 
-type AVOptionType C.enum_AVOptionType
+type AVOptionType int32
+const (
+    AV_OPT_TYPE_FLAGS AVOptionType = iota
+    AV_OPT_TYPE_INT
+    AV_OPT_TYPE_INT64
+    AV_OPT_TYPE_DOUBLE
+    AV_OPT_TYPE_FLOAT
+    AV_OPT_TYPE_STRING
+    AV_OPT_TYPE_RATIONAL
+    AV_OPT_TYPE_BINARY
+    AV_OPT_TYPE_DICT
+    AV_OPT_TYPE_UINT64
+    AV_OPT_TYPE_CONST
+    AV_OPT_TYPE_IMAGE_SIZE
+    AV_OPT_TYPE_PIXEL_FMT
+    AV_OPT_TYPE_SAMPLE_FMT
+    AV_OPT_TYPE_VIDEO_RATE
+    AV_OPT_TYPE_DURATION
+    AV_OPT_TYPE_COLOR
+    AV_OPT_TYPE_CHANNEL_LAYOUT
+    AV_OPT_TYPE_BOOL
+    AV_OPT_TYPE_CHLAYOUT
+)
+
 
 /**
  * AVOption
  */
-type AVOption C.struct_AVOption
+type AVOption struct {
+    Name *byte
+    Help *byte
+    Offset int32
+    Type AVOptionType
+    Default_val int64
+    Min float64
+    Max float64
+    Flags int32
+    Unit *byte
+}
+
 
 /**
  * A single allowed range of values, or a single allowed value.
  */
-type AVOptionRange C.struct_AVOptionRange
+type AVOptionRange struct {
+    Str *byte
+    Value_min float64
+    Value_max float64
+    Component_min float64
+    Component_max float64
+    Is_range int32
+}
+
 
 /**
  * List of AVOptionRange structs.
  */
+type AVOptionRanges struct {
+    Range **AVOptionRange
+    Nb_ranges int32
+    Nb_components int32
+}
 
 
 /**
@@ -286,8 +333,7 @@ type AVOptionRange C.struct_AVOptionRange
  * @param av_log_obj log context to use for showing the options
  */
 func Av_opt_show2(obj unsafe.Pointer, av_log_obj unsafe.Pointer, req_flags int32, rej_flags int32) int32 {
-    return int32(C.av_opt_show2(obj, av_log_obj, C.int(req_flags), 
-        C.int(rej_flags)))
+    return int32(C.av_opt_show2(obj, av_log_obj, C.int(req_flags), C.int(rej_flags)))
 }
 
 /**
@@ -460,6 +506,9 @@ func Av_opt_get_key_value(ropts **byte,
         (**C.char)(unsafe.Pointer(rkey)), (**C.char)(unsafe.Pointer(rval))))
 }
 
+const (
+    AV_OPT_FLAG_IMPLICIT_KEY  = 1 + iota
+)
 
 
 /**
@@ -477,28 +526,29 @@ func Av_opt_get_key_value(ropts **byte,
  * @return 0 on success, a negative number on failure.
  */
 func Av_opt_eval_flags (obj unsafe.Pointer, o *AVOption, val *byte, flags_out *int32) int32 {
-    return int32(C.av_opt_eval_flags(obj, (*C.AVOption)(unsafe.Pointer(o)), 
+    return int32(C.av_opt_eval_flags(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
         (*C.char)(unsafe.Pointer(val)), (*C.int)(unsafe.Pointer(flags_out))))
 }
 func Av_opt_eval_int   (obj unsafe.Pointer, o *AVOption, val *byte, int_out *int32) int32 {
-    return int32(C.av_opt_eval_int(obj, (*C.AVOption)(unsafe.Pointer(o)), 
+    return int32(C.av_opt_eval_int(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
         (*C.char)(unsafe.Pointer(val)), (*C.int)(unsafe.Pointer(int_out))))
 }
 func Av_opt_eval_int64 (obj unsafe.Pointer, o *AVOption, val *byte, int64_out *int64) int32 {
-    return int32(C.av_opt_eval_int64(obj, (*C.AVOption)(unsafe.Pointer(o)), 
+    return int32(C.av_opt_eval_int64(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
         (*C.char)(unsafe.Pointer(val)), (*C.longlong)(unsafe.Pointer(int64_out))))
 }
 func Av_opt_eval_float (obj unsafe.Pointer, o *AVOption, val *byte, float_out *float32) int32 {
-    return int32(C.av_opt_eval_float(obj, (*C.AVOption)(unsafe.Pointer(o)), 
+    return int32(C.av_opt_eval_float(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
         (*C.char)(unsafe.Pointer(val)), (*C.float)(unsafe.Pointer(float_out))))
 }
 func Av_opt_eval_double(obj unsafe.Pointer, o *AVOption, val *byte, double_out *float64) int32 {
-    return int32(C.av_opt_eval_double(obj, (*C.AVOption)(unsafe.Pointer(o)), 
+    return int32(C.av_opt_eval_double(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
         (*C.char)(unsafe.Pointer(val)), (*C.double)(unsafe.Pointer(double_out))))
 }
 func Av_opt_eval_q     (obj unsafe.Pointer, o *AVOption, val *byte, q_out *AVRational) int32 {
-    return int32(C.av_opt_eval_q(obj, (*C.AVOption)(unsafe.Pointer(o)), 
-        (*C.char)(unsafe.Pointer(val)), (*C.AVRational)(unsafe.Pointer(q_out))))
+    return int32(C.av_opt_eval_q(obj, (*C.struct_AVOption)(unsafe.Pointer(o)), 
+        (*C.char)(unsafe.Pointer(val)), 
+        (*C.struct_AVRational)(unsafe.Pointer(q_out))))
 }
 /**
  * @}
@@ -551,8 +601,9 @@ func Av_opt_eval_q     (obj unsafe.Pointer, o *AVOption, val *byte, q_out *AVRat
  */
 func Av_opt_find(obj unsafe.Pointer, name *byte, unit *byte,
                             opt_flags int32, search_flags int32) *AVOption {
-    return (*AVOption)(unsafe.Pointer(C.av_opt_find(obj, (*C.char)(unsafe.Pointer(name)), 
-        (*C.char)(unsafe.Pointer(unit)), C.int(opt_flags), C.int(search_flags))))
+    return (*AVOption)(unsafe.Pointer(C.av_opt_find(obj, 
+        (*C.char)(unsafe.Pointer(name)), (*C.char)(unsafe.Pointer(unit)), 
+        C.int(opt_flags), C.int(search_flags))))
 }
 
 /**
@@ -578,9 +629,9 @@ func Av_opt_find(obj unsafe.Pointer, name *byte, unit *byte,
  */
 func Av_opt_find2(obj unsafe.Pointer, name *byte, unit *byte,
                              opt_flags int32, search_flags int32, target_obj *unsafe.Pointer) *AVOption {
-    return (*AVOption)(unsafe.Pointer(C.av_opt_find2(obj, (*C.char)(unsafe.Pointer(name)), 
-        (*C.char)(unsafe.Pointer(unit)), C.int(opt_flags), C.int(search_flags), 
-        target_obj)))
+    return (*AVOption)(unsafe.Pointer(C.av_opt_find2(obj, 
+        (*C.char)(unsafe.Pointer(name)), (*C.char)(unsafe.Pointer(unit)), 
+        C.int(opt_flags), C.int(search_flags), target_obj)))
 }
 
 /**
@@ -593,7 +644,8 @@ func Av_opt_find2(obj unsafe.Pointer, name *byte, unit *byte,
  * @return next AVOption or NULL
  */
 func Av_opt_next(obj unsafe.Pointer, prev *AVOption) *AVOption {
-    return (*AVOption)(unsafe.Pointer(C.av_opt_next(obj, (*C.AVOption)(unsafe.Pointer(prev)))))
+    return (*AVOption)(unsafe.Pointer(C.av_opt_next(obj, 
+        (*C.struct_AVOption)(unsafe.Pointer(prev)))))
 }
 
 /**
@@ -614,7 +666,7 @@ func Av_opt_child_next(obj unsafe.Pointer, prev unsafe.Pointer) unsafe.Pointer {
  */
 func Av_opt_child_class_iterate(parent *AVClass, iter *unsafe.Pointer) *AVClass {
     return (*AVClass)(unsafe.Pointer(C.av_opt_child_class_iterate(
-        (*C.AVClass)(unsafe.Pointer(parent)), iter)))
+        (*C.struct_AVClass)(unsafe.Pointer(parent)), iter)))
 }
 
 /**
@@ -660,7 +712,7 @@ func Av_opt_set_double  (obj unsafe.Pointer, name *byte, val float64, search_fla
 }
 func Av_opt_set_q       (obj unsafe.Pointer, name *byte, val AVRational, search_flags int32) int32 {
     return int32(C.av_opt_set_q(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.AVRational(val), C.int(search_flags)))
+        *(*C.struct_AVRational)(unsafe.Pointer(&val)), C.int(search_flags)))
 }
 func Av_opt_set_bin     (obj unsafe.Pointer, name *byte, val *uint8, size int32, search_flags int32) int32 {
     return int32(C.av_opt_set_bin(obj, (*C.char)(unsafe.Pointer(name)), 
@@ -680,15 +732,18 @@ func Av_opt_set_sample_fmt(obj unsafe.Pointer, name *byte, fmt AVSampleFormat, s
 }
 func Av_opt_set_video_rate(obj unsafe.Pointer, name *byte, val AVRational, search_flags int32) int32 {
     return int32(C.av_opt_set_video_rate(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.AVRational(val), C.int(search_flags)))
+        *(*C.struct_AVRational)(unsafe.Pointer(&val)), C.int(search_flags)))
 }
                              
-                    
-                                                                                                
+
+func Av_opt_set_channel_layout(obj unsafe.Pointer, name *byte, ch_layout int64, search_flags int32) int32 {
+    return int32(C.av_opt_set_channel_layout(obj, (*C.char)(unsafe.Pointer(name)), 
+        C.longlong(ch_layout), C.int(search_flags)))
+}
       
 func Av_opt_set_chlayout(obj unsafe.Pointer, name *byte, layout *AVChannelLayout, search_flags int32) int32 {
     return int32(C.av_opt_set_chlayout(obj, (*C.char)(unsafe.Pointer(name)), 
-        (*C.AVChannelLayout)(unsafe.Pointer(layout)), C.int(search_flags)))
+        (*C.struct_AVChannelLayout)(unsafe.Pointer(layout)), C.int(search_flags)))
 }
 /**
  * @note Any old dictionary present is discarded and replaced with a copy of the new one. The
@@ -696,7 +751,7 @@ func Av_opt_set_chlayout(obj unsafe.Pointer, name *byte, layout *AVChannelLayout
  */
 func Av_opt_set_dict_val(obj unsafe.Pointer, name *byte, val *AVDictionary, search_flags int32) int32 {
     return int32(C.av_opt_set_dict_val(obj, (*C.char)(unsafe.Pointer(name)), 
-        (*C.AVDictionary)(unsafe.Pointer(val)), C.int(search_flags)))
+        (*C.struct_AVDictionary)(unsafe.Pointer(val)), C.int(search_flags)))
 }
 
 /**
@@ -749,7 +804,7 @@ func Av_opt_get_double  (obj unsafe.Pointer, name *byte, search_flags int32, out
 }
 func Av_opt_get_q       (obj unsafe.Pointer, name *byte, search_flags int32, out_val *AVRational) int32 {
     return int32(C.av_opt_get_q(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.int(search_flags), (*C.AVRational)(unsafe.Pointer(out_val))))
+        C.int(search_flags), (*C.struct_AVRational)(unsafe.Pointer(out_val))))
 }
 func Av_opt_get_image_size(obj unsafe.Pointer, name *byte, search_flags int32, w_out *int32, h_out *int32) int32 {
     return int32(C.av_opt_get_image_size(obj, (*C.char)(unsafe.Pointer(name)), 
@@ -766,15 +821,18 @@ func Av_opt_get_sample_fmt(obj unsafe.Pointer, name *byte, search_flags int32, o
 }
 func Av_opt_get_video_rate(obj unsafe.Pointer, name *byte, search_flags int32, out_val *AVRational) int32 {
     return int32(C.av_opt_get_video_rate(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.int(search_flags), (*C.AVRational)(unsafe.Pointer(out_val))))
+        C.int(search_flags), (*C.struct_AVRational)(unsafe.Pointer(out_val))))
 }
                              
-                    
-                                                                                                 
+
+func Av_opt_get_channel_layout(obj unsafe.Pointer, name *byte, search_flags int32, ch_layout *int64) int32 {
+    return int32(C.av_opt_get_channel_layout(obj, (*C.char)(unsafe.Pointer(name)), 
+        C.int(search_flags), (*C.longlong)(unsafe.Pointer(ch_layout))))
+}
       
 func Av_opt_get_chlayout(obj unsafe.Pointer, name *byte, search_flags int32, layout *AVChannelLayout) int32 {
     return int32(C.av_opt_get_chlayout(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.int(search_flags), (*C.AVChannelLayout)(unsafe.Pointer(layout))))
+        C.int(search_flags), (*C.struct_AVChannelLayout)(unsafe.Pointer(layout))))
 }
 /**
  * @param[out] out_val The returned dictionary is a copy of the actual value and must
@@ -782,7 +840,7 @@ func Av_opt_get_chlayout(obj unsafe.Pointer, name *byte, search_flags int32, lay
  */
 func Av_opt_get_dict_val(obj unsafe.Pointer, name *byte, search_flags int32, out_val **AVDictionary) int32 {
     return int32(C.av_opt_get_dict_val(obj, (*C.char)(unsafe.Pointer(name)), 
-        C.int(search_flags), (**C.AVDictionary)(unsafe.Pointer(out_val))))
+        C.int(search_flags), (**C.struct_AVDictionary)(unsafe.Pointer(out_val))))
 }
 /**
  * @}
@@ -796,15 +854,16 @@ func Av_opt_get_dict_val(obj unsafe.Pointer, name *byte, search_flags int32, out
  *          or written to.
  */
 func Av_opt_ptr(avclass *AVClass, obj unsafe.Pointer, name *byte) unsafe.Pointer {
-    return (unsafe.Pointer)(unsafe.Pointer(C.av_opt_ptr((*C.AVClass)(unsafe.Pointer(avclass)), 
-        obj, (*C.char)(unsafe.Pointer(name)))))
+    return (unsafe.Pointer)(unsafe.Pointer(C.av_opt_ptr(
+        (*C.struct_AVClass)(unsafe.Pointer(avclass)), obj, 
+        (*C.char)(unsafe.Pointer(name)))))
 }
 
 /**
  * Free an AVOptionRanges struct and set it to NULL.
  */
 func Av_opt_freep_ranges(ranges **AVOptionRanges)  {
-    C.av_opt_freep_ranges((**C.AVOptionRanges)(unsafe.Pointer(ranges)))
+    C.av_opt_freep_ranges((**C.struct_AVOptionRanges)(unsafe.Pointer(ranges)))
 }
 
 /**
@@ -822,7 +881,7 @@ func Av_opt_freep_ranges(ranges **AVOptionRanges)  {
  */
 func Av_opt_query_ranges(_var0 **AVOptionRanges, obj unsafe.Pointer, key *byte, flags int32) int32 {
     return int32(C.av_opt_query_ranges(
-        (**C.AVOptionRanges)(unsafe.Pointer(_var0)), obj, 
+        (**C.struct_AVOptionRanges)(unsafe.Pointer(_var0)), obj, 
         (*C.char)(unsafe.Pointer(key)), C.int(flags)))
 }
 
@@ -863,7 +922,7 @@ func Av_opt_copy(dest unsafe.Pointer, src unsafe.Pointer) int32 {
  */
 func Av_opt_query_ranges_default(_var0 **AVOptionRanges, obj unsafe.Pointer, key *byte, flags int32) int32 {
     return int32(C.av_opt_query_ranges_default(
-        (**C.AVOptionRanges)(unsafe.Pointer(_var0)), obj, 
+        (**C.struct_AVOptionRanges)(unsafe.Pointer(_var0)), obj, 
         (*C.char)(unsafe.Pointer(key)), C.int(flags)))
 }
 
@@ -881,7 +940,7 @@ func Av_opt_query_ranges_default(_var0 **AVOptionRanges, obj unsafe.Pointer, key
  */
 func Av_opt_is_set_to_default(obj unsafe.Pointer, o *AVOption) int32 {
     return int32(C.av_opt_is_set_to_default(obj, 
-        (*C.AVOption)(unsafe.Pointer(o))))
+        (*C.struct_AVOption)(unsafe.Pointer(o))))
 }
 
 /**

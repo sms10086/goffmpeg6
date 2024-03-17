@@ -26,10 +26,10 @@ package goffmpeg6
 
 //const LIBSWRESAMPLE_VERSION_MINOR = 12
 //const LIBSWRESAMPLE_VERSION_MICRO = 100
-//const LIBSWRESAMPLE_VERSION_INT = AV_VERSION_INT(LIBSWRESAMPLE_VERSION_MAJOR,                                                    LIBSWRESAMPLE_VERSION_MINOR,                                                    LIBSWRESAMPLE_VERSION_MICRO)
-//const LIBSWRESAMPLE_VERSION = AV_VERSION(LIBSWRESAMPLE_VERSION_MAJOR,                                                LIBSWRESAMPLE_VERSION_MINOR,                                                LIBSWRESAMPLE_VERSION_MICRO)
-//const LIBSWRESAMPLE_BUILD = LIBSWRESAMPLE_VERSION_INT
-//const LIBSWRESAMPLE_IDENT = "SwR" AV_STRINGIFY(LIBSWRESAMPLE_VERSION)
+//const LIBSWRESAMPLE_VERSION_INT =   AV_VERSION_INT(LIBSWRESAMPLE_VERSION_MAJOR,                                                    LIBSWRESAMPLE_VERSION_MINOR,                                                    LIBSWRESAMPLE_VERSION_MICRO) 
+//const LIBSWRESAMPLE_VERSION =       AV_VERSION(LIBSWRESAMPLE_VERSION_MAJOR,                                                LIBSWRESAMPLE_VERSION_MINOR,                                                LIBSWRESAMPLE_VERSION_MICRO) 
+//const LIBSWRESAMPLE_BUILD =         LIBSWRESAMPLE_VERSION_INT 
+//const LIBSWRESAMPLE_IDENT =         "SwR" AV_STRINGIFY(LIBSWRESAMPLE_VERSION) 
 
 
                             

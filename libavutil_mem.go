@@ -312,8 +312,8 @@ func Av_reallocp_array(ptr unsafe.Pointer, nmemb uint64, size uint64) int32 {
  * @see av_fast_malloc()
  */
 func Av_fast_realloc(ptr unsafe.Pointer, size *uint32, min_size uint64) unsafe.Pointer {
-    return (unsafe.Pointer)(unsafe.Pointer(C.av_fast_realloc(ptr, (*C.uint)(unsafe.Pointer(size)), 
-        C.ulonglong(min_size))))
+    return (unsafe.Pointer)(unsafe.Pointer(C.av_fast_realloc(ptr, 
+        (*C.uint)(unsafe.Pointer(size)), C.ulonglong(min_size))))
 }
 
 /**
@@ -368,8 +368,7 @@ func Av_fast_malloc(ptr unsafe.Pointer, size *uint32, min_size uint64)  {
  * @see av_fast_malloc()
  */
 func Av_fast_mallocz(ptr unsafe.Pointer, size *uint32, min_size uint64)  {
-    C.av_fast_mallocz(ptr, (*C.uint)(unsafe.Pointer(size)), 
-        C.ulonglong(min_size))
+    C.av_fast_mallocz(ptr, (*C.uint)(unsafe.Pointer(size)), C.ulonglong(min_size))
 }
 
 /**
@@ -575,8 +574,8 @@ func Av_dynarray_add(tab_ptr unsafe.Pointer, nb_ptr *int32, elem unsafe.Pointer)
  * @see av_dynarray_add(), av_dynarray2_add()
  */
 func Av_dynarray_add_nofree(tab_ptr unsafe.Pointer, nb_ptr *int32, elem unsafe.Pointer) int32 {
-    return int32(C.av_dynarray_add_nofree(tab_ptr, 
-        (*C.int)(unsafe.Pointer(nb_ptr)), elem))
+    return int32(C.av_dynarray_add_nofree(tab_ptr, (*C.int)(unsafe.Pointer(nb_ptr)), 
+        elem))
 }
 
 /**

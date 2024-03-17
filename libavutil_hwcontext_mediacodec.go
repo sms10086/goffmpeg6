@@ -21,9 +21,9 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavutil
-//#include "libavutil/hwcontext_mediacodec.h"
-import "C"
+import (
+    "unsafe"
+)
 
 
 
@@ -35,6 +35,11 @@ import "C"
  *
  * Allocated as AVHWDeviceContext.hwctx
  */
-type AVMediaCodecDeviceContext C.struct_AVMediaCodecDeviceContext
+type AVMediaCodecDeviceContext struct {
+    Surface unsafe.Pointer
+    Native_window unsafe.Pointer
+    Create_window int32
+}
+
 
                                           

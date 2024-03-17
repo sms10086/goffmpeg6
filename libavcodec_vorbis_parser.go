@@ -29,9 +29,9 @@ import (
     "unsafe"
 )
 
-const VORBIS_FLAG_HEADER = 0x00000001
-const VORBIS_FLAG_COMMENT = 0x00000002
-const VORBIS_FLAG_SETUP = 0x00000004
+const VORBIS_FLAG_HEADER =   0x00000001 
+const VORBIS_FLAG_COMMENT =  0x00000002 
+const VORBIS_FLAG_SETUP =    0x00000004 
 
 
 /**
@@ -46,7 +46,9 @@ const VORBIS_FLAG_SETUP = 0x00000004
 
                    
 
-type AVVorbisParseContext C.struct_AVVorbisParseContext
+type AVVorbisParseContext struct {
+}
+
 
 /**
  * Allocate and initialize the Vorbis parser using headers in the extradata.
@@ -61,7 +63,7 @@ func Av_vorbis_parse_init(extradata *uint8,
  * Free the parser and everything associated with it.
  */
 func Av_vorbis_parse_free(s **AVVorbisParseContext)  {
-    C.av_vorbis_parse_free((**C.AVVorbisParseContext)(unsafe.Pointer(s)))
+    C.av_vorbis_parse_free((**C.struct_AVVorbisParseContext)(unsafe.Pointer(s)))
 }
 
 
@@ -82,7 +84,7 @@ func Av_vorbis_parse_free(s **AVVorbisParseContext)  {
 func Av_vorbis_parse_frame_flags(s *AVVorbisParseContext, buf *uint8,
                                 buf_size int32, flags *int32) int32 {
     return int32(C.av_vorbis_parse_frame_flags(
-        (*C.AVVorbisParseContext)(unsafe.Pointer(s)), 
+        (*C.struct_AVVorbisParseContext)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(buf_size), 
         (*C.int)(unsafe.Pointer(flags))))
 }
@@ -97,12 +99,12 @@ func Av_vorbis_parse_frame_flags(s *AVVorbisParseContext, buf *uint8,
 func Av_vorbis_parse_frame(s *AVVorbisParseContext, buf *uint8,
                           buf_size int32) int32 {
     return int32(C.av_vorbis_parse_frame(
-        (*C.AVVorbisParseContext)(unsafe.Pointer(s)), 
+        (*C.struct_AVVorbisParseContext)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(buf_size)))
 }
 
 func Av_vorbis_parse_reset(s *AVVorbisParseContext)  {
-    C.av_vorbis_parse_reset((*C.AVVorbisParseContext)(unsafe.Pointer(s)))
+    C.av_vorbis_parse_reset((*C.struct_AVVorbisParseContext)(unsafe.Pointer(s)))
 }
 
                                     

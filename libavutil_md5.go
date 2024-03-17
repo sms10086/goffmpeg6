@@ -59,7 +59,9 @@ import (
 
 //extern const int av_md5_size;
 
-type AVMD5 C.struct_AVMD5
+type AVMD5 struct {
+}
+
 
 /**
  * Allocate an AVMD5 context.
@@ -108,8 +110,8 @@ func Av_md5_final(ctx *AVMD5, dst *uint8)  {
  * @param len The length of the data, in bytes
  */
 func Av_md5_sum(dst *uint8, src *uint8, len uint64)  {
-    C.av_md5_sum((*C.uchar)(unsafe.Pointer(dst)), 
-        (*C.uchar)(unsafe.Pointer(src)), C.ulonglong(len))
+    C.av_md5_sum((*C.uchar)(unsafe.Pointer(dst)), (*C.uchar)(unsafe.Pointer(src)), 
+        C.ulonglong(len))
 }
 
 /**

@@ -41,7 +41,18 @@ import (
  * @note function pointers can be NULL if the specific features have been
  *       disabled at build time.
  */
-type AVDCT C.struct_AVDCT
+type AVDCT struct {
+    Av_class *AVClass
+    Idct uintptr
+    Idct_permutation [64]uint8
+    Fdct uintptr
+    Dct_algo int32
+    Idct_algo int32
+    Get_pixels uintptr
+    Bits_per_sample int32
+    Get_pixels_unaligned uintptr
+}
+
 
 /**
  * Allocates a AVDCT context.
@@ -54,7 +65,7 @@ func Avcodec_dct_alloc() *AVDCT {
     return (*AVDCT)(unsafe.Pointer(C.avcodec_dct_alloc()))
 }
 func Avcodec_dct_init(_var0 *AVDCT) int32 {
-    return int32(C.avcodec_dct_init((*C.AVDCT)(unsafe.Pointer(_var0))))
+    return int32(C.avcodec_dct_init((*C.struct_AVDCT)(unsafe.Pointer(_var0))))
 }
 
 func Avcodec_dct_get_class() *AVClass {

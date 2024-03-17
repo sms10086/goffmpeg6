@@ -21,10 +21,6 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavutil
-//#include <stdint.h>
-//#include "libavutil/replaygain.h"
-import "C"
 
 
 
@@ -38,6 +34,12 @@ import "C"
  * http://wiki.hydrogenaudio.org/index.php?title=ReplayGain_1.0_specification).
  * The size of this struct is a part of the public ABI.
  */
-type AVReplayGain C.struct_AVReplayGain
+type AVReplayGain struct {
+    Track_gain int32
+    Track_peak uint32
+    Album_gain int32
+    Album_peak uint32
+}
+
 
                                 

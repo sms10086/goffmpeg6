@@ -45,7 +45,10 @@ import (
  * be used as output by the decoder.
  *
  */
-type AVMediaCodecContext C.struct_AVMediaCodecContext
+type AVMediaCodecContext struct {
+    Surface unsafe.Pointer
+}
+
 
 /**
  * Allocate and initialize a MediaCodec context.
@@ -69,8 +72,8 @@ func Av_mediacodec_alloc_context() *AVMediaCodecContext {
  */
 func Av_mediacodec_default_init(avctx *AVCodecContext, ctx *AVMediaCodecContext, surface unsafe.Pointer) int32 {
     return int32(C.av_mediacodec_default_init(
-        (*C.AVCodecContext)(unsafe.Pointer(avctx)), 
-        (*C.AVMediaCodecContext)(unsafe.Pointer(ctx)), surface))
+        (*C.struct_AVCodecContext)(unsafe.Pointer(avctx)), 
+        (*C.struct_AVMediaCodecContext)(unsafe.Pointer(ctx)), surface))
 }
 
 /**
@@ -80,13 +83,15 @@ func Av_mediacodec_default_init(avctx *AVCodecContext, ctx *AVMediaCodecContext,
  * @param avctx codec context
  */
 func Av_mediacodec_default_free(avctx *AVCodecContext)  {
-    C.av_mediacodec_default_free((*C.AVCodecContext)(unsafe.Pointer(avctx)))
+    C.av_mediacodec_default_free((*C.struct_AVCodecContext)(unsafe.Pointer(avctx)))
 }
 
 /**
  * Opaque structure representing a MediaCodec buffer to render.
  */
-type AVMediaCodecBuffer C.struct_AVMediaCodecBuffer
+type AVMediaCodecBuffer struct {
+}
+
 
 /**
  * Release a MediaCodec buffer and render it to the surface that is associated

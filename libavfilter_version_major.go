@@ -25,7 +25,7 @@ package goffmpeg6
 
 
 //const LIBAVFILTER_VERSION_MAJOR = 9
-//const FF_API_LIBPLACEBO_OPTS = (LIBAVFILTER_VERSION_MAJOR < 10)
+const FF_API_LIBPLACEBO_OPTS = true
 
 
                                 

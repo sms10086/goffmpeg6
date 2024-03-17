@@ -34,9 +34,15 @@ import (
                               
                               
 
-type AVThreadMessageQueue C.struct_AVThreadMessageQueue
+type AVThreadMessageQueue struct {
+}
 
-type AVThreadMessageFlags C.enum_AVThreadMessageFlags
+
+type AVThreadMessageFlags int32
+const (
+    AV_THREAD_MESSAGE_NONBLOCK AVThreadMessageFlags = 1 + iota
+)
+
 
 /**
  * Allocate a new message queue.
@@ -51,7 +57,7 @@ func Av_thread_message_queue_alloc(mq **AVThreadMessageQueue,
                                   nelem uint32,
                                   elsize uint32) int32 {
     return int32(C.av_thread_message_queue_alloc(
-        (**C.AVThreadMessageQueue)(unsafe.Pointer(mq)), C.unsigned(nelem), 
+        (**C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), C.unsigned(nelem), 
         C.unsigned(elsize)))
 }
 
@@ -62,7 +68,7 @@ func Av_thread_message_queue_alloc(mq **AVThreadMessageQueue,
  */
 func Av_thread_message_queue_free(mq **AVThreadMessageQueue)  {
     C.av_thread_message_queue_free(
-        (**C.AVThreadMessageQueue)(unsafe.Pointer(mq)))
+        (**C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)))
 }
 
 /**
@@ -72,7 +78,8 @@ func Av_thread_message_queue_send(mq *AVThreadMessageQueue,
                                  msg unsafe.Pointer,
                                  flags uint32) int32 {
     return int32(C.av_thread_message_queue_send(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq)), msg, C.unsigned(flags)))
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), msg, 
+        C.unsigned(flags)))
 }
 
 /**
@@ -82,7 +89,8 @@ func Av_thread_message_queue_recv(mq *AVThreadMessageQueue,
                                  msg unsafe.Pointer,
                                  flags uint32) int32 {
     return int32(C.av_thread_message_queue_recv(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq)), msg, C.unsigned(flags)))
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), msg, 
+        C.unsigned(flags)))
 }
 
 /**
@@ -96,7 +104,7 @@ func Av_thread_message_queue_recv(mq *AVThreadMessageQueue,
 func Av_thread_message_queue_set_err_send(mq *AVThreadMessageQueue,
                                           err int32)  {
     C.av_thread_message_queue_set_err_send(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq)), C.int(err))
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), C.int(err))
 }
 
 /**
@@ -110,7 +118,7 @@ func Av_thread_message_queue_set_err_send(mq *AVThreadMessageQueue,
 func Av_thread_message_queue_set_err_recv(mq *AVThreadMessageQueue,
                                           err int32)  {
     C.av_thread_message_queue_set_err_recv(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq)), C.int(err))
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), C.int(err))
 }
 
 /**
@@ -121,7 +129,7 @@ func Av_thread_message_queue_set_free_func(mq *AVThreadMessageQueue,
                                            free_func func(msg unsafe.Pointer) )  {
     cb1 := syscall.NewCallbackCDecl(free_func)
     C.av_thread_message_queue_set_free_func(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq)), 
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)), 
         (*[0]byte)(unsafe.Pointer(cb1)))
 }
 
@@ -133,7 +141,7 @@ func Av_thread_message_queue_set_free_func(mq *AVThreadMessageQueue,
  */
 func Av_thread_message_queue_nb_elems(mq *AVThreadMessageQueue) int32 {
     return int32(C.av_thread_message_queue_nb_elems(
-        (*C.AVThreadMessageQueue)(unsafe.Pointer(mq))))
+        (*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq))))
 }
 
 /**
@@ -144,7 +152,7 @@ func Av_thread_message_queue_nb_elems(mq *AVThreadMessageQueue) int32 {
  * reads).
  */
 func Av_thread_message_flush(mq *AVThreadMessageQueue)  {
-    C.av_thread_message_flush((*C.AVThreadMessageQueue)(unsafe.Pointer(mq)))
+    C.av_thread_message_flush((*C.struct_AVThreadMessageQueue)(unsafe.Pointer(mq)))
 }
 
                                    

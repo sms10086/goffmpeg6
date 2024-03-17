@@ -37,15 +37,15 @@ import (
     "unsafe"
 )
 
-const AVIO_SEEKABLE_NORMAL = (1 << 0)
-const AVIO_SEEKABLE_TIME = (1 << 1)
-const AVSEEK_SIZE = 0x10000
-const AVSEEK_FORCE = 0x20000
+const AVIO_SEEKABLE_NORMAL =  (1 << 0) 
+const AVIO_SEEKABLE_TIME =    (1 << 1) 
+const AVSEEK_SIZE =  0x10000 
+const AVSEEK_FORCE =  0x20000 
 const AVIO_FLAG_READ = 1
 const AVIO_FLAG_WRITE = 2
-const AVIO_FLAG_READ_WRITE = (AVIO_FLAG_READ|AVIO_FLAG_WRITE)
+const AVIO_FLAG_READ_WRITE =  (AVIO_FLAG_READ|AVIO_FLAG_WRITE)   
 const AVIO_FLAG_NONBLOCK = 8
-const AVIO_FLAG_DIRECT = 0x8000
+const AVIO_FLAG_DIRECT =  0x8000 
 
                        
                        
@@ -86,12 +86,30 @@ const AVIO_FLAG_DIRECT = 0x8000
  * new elements have been added after this struct in AVFormatContext
  * or AVIOContext.
  */
-type AVIOInterruptCB C.struct_AVIOInterruptCB
+type AVIOInterruptCB struct {
+    Callback uintptr
+    Opaque unsafe.Pointer
+}
+
 
 /**
  * Directory entry types.
  */
-type AVIODirEntryType C.enum_AVIODirEntryType
+type AVIODirEntryType int32
+const (
+    AVIO_ENTRY_UNKNOWN AVIODirEntryType = iota
+    AVIO_ENTRY_BLOCK_DEVICE
+    AVIO_ENTRY_CHARACTER_DEVICE
+    AVIO_ENTRY_DIRECTORY
+    AVIO_ENTRY_NAMED_PIPE
+    AVIO_ENTRY_SYMBOLIC_LINK
+    AVIO_ENTRY_SOCKET
+    AVIO_ENTRY_FILE
+    AVIO_ENTRY_SERVER
+    AVIO_ENTRY_SHARE
+    AVIO_ENTRY_WORKGROUP
+)
+
 
 /**
  * Describes single entry of the directory.
@@ -99,21 +117,43 @@ type AVIODirEntryType C.enum_AVIODirEntryType
  * Only name and type fields are guaranteed be set.
  * Rest of fields are protocol or/and platform dependent and might be unknown.
  */
-type AVIODirEntry C.struct_AVIODirEntry
+type AVIODirEntry struct {
+    Name *byte
+    Type int32
+    Utf8 int32
+    Size int64
+    Modification_timestamp int64
+    Access_timestamp int64
+    Status_change_timestamp int64
+    User_id int64
+    Group_id int64
+    Filemode int64
+}
+
 
                          
-                               
-                                   
-                 
+type AVIODirContext struct {
+    Url_context *URLContext
+}
+
      
-type AVIODirContext C.struct_AVIODirContext
+                                             
       
 
 /**
  * Different data types that can be returned via the AVIO
  * write_data_type callback.
  */
-type AVIODataMarkerType C.enum_AVIODataMarkerType
+type AVIODataMarkerType int32
+const (
+    AVIO_DATA_MARKER_HEADER AVIODataMarkerType = iota
+    AVIO_DATA_MARKER_SYNC_POINT
+    AVIO_DATA_MARKER_BOUNDARY_POINT
+    AVIO_DATA_MARKER_UNKNOWN
+    AVIO_DATA_MARKER_TRAILER
+    AVIO_DATA_MARKER_FLUSH_POINT
+)
+
 
 /**
  * Bytestream IO Context.
@@ -127,7 +167,38 @@ type AVIODataMarkerType C.enum_AVIODataMarkerType
  *       when implementing custom I/O. Normally these are set to the
  *       function pointers specified in avio_alloc_context()
  */
-type AVIOContext C.struct_AVIOContext
+type AVIOContext struct {
+    Av_class *AVClass
+    Buffer *uint8
+    Buffer_size int32
+    Buf_ptr *uint8
+    Buf_end *uint8
+    Opaque unsafe.Pointer
+    Read_packet uintptr
+    Write_packet uintptr
+    Seek uintptr
+    Pos int64
+    Eof_reached int32
+    Error int32
+    Write_flag int32
+    Max_packet_size int32
+    Min_packet_size int32
+    Checksum uint32
+    Checksum_ptr *uint8
+    Update_checksum uintptr
+    Read_pause uintptr
+    Read_seek uintptr
+    Seekable int32
+    Direct int32
+    Protocol_whitelist *byte
+    Protocol_blacklist *byte
+    Write_data_type uintptr
+    Ignore_boundary_point int32
+    Buf_ptr_max *uint8
+    Bytes_read int64
+    Bytes_written int64
+}
+
 
 /**
  * Return the name of the protocol that will handle the passed URL.
@@ -167,9 +238,9 @@ func Avio_check(url *byte, flags int32) int32 {
  * @return >=0 on success or negative on error.
  */
 func Avio_open_dir(s **AVIODirContext, url *byte, options **AVDictionary) int32 {
-    return int32(C.avio_open_dir((**C.AVIODirContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_open_dir((**C.struct_AVIODirContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(url)), 
-        (**C.AVDictionary)(unsafe.Pointer(options))))
+        (**C.struct_AVDictionary)(unsafe.Pointer(options))))
 }
 
 /**
@@ -184,8 +255,8 @@ func Avio_open_dir(s **AVIODirContext, url *byte, options **AVDictionary) int32 
  *             error.
  */
 func Avio_read_dir(s *AVIODirContext, next **AVIODirEntry) int32 {
-    return int32(C.avio_read_dir((*C.AVIODirContext)(unsafe.Pointer(s)), 
-        (**C.AVIODirEntry)(unsafe.Pointer(next))))
+    return int32(C.avio_read_dir((*C.struct_AVIODirContext)(unsafe.Pointer(s)), 
+        (**C.struct_AVIODirEntry)(unsafe.Pointer(next))))
 }
 
 /**
@@ -198,7 +269,7 @@ func Avio_read_dir(s *AVIODirContext, next **AVIODirEntry) int32 {
  * @return >=0 on success or negative on error.
  */
 func Avio_close_dir(s **AVIODirContext) int32 {
-    return int32(C.avio_close_dir((**C.AVIODirContext)(unsafe.Pointer(s))))
+    return int32(C.avio_close_dir((**C.struct_AVIODirContext)(unsafe.Pointer(s))))
 }
 
 /**
@@ -207,7 +278,7 @@ func Avio_close_dir(s **AVIODirContext) int32 {
  * @param entry entry to be freed.
  */
 func Avio_free_directory_entry(entry **AVIODirEntry)  {
-    C.avio_free_directory_entry((**C.AVIODirEntry)(unsafe.Pointer(entry)))
+    C.avio_free_directory_entry((**C.struct_AVIODirEntry)(unsafe.Pointer(entry)))
 }
 
 /**
@@ -240,18 +311,18 @@ func Avio_alloc_context(
                   opaque unsafe.Pointer,
                   read_packet func(opaque unsafe.Pointer, buf *uint8, buf_size int32) int32,
                               
-                                                                                
-     
                   write_packet func(opaque unsafe.Pointer, buf *uint8, buf_size int32) int32,
+     
+                                                                                      
       
                   seek func(opaque unsafe.Pointer, offset int64, whence int32) int64) *AVIOContext {
     cb4 := syscall.NewCallbackCDecl(read_packet)
     cb5 := syscall.NewCallbackCDecl(write_packet)
     cb6 := syscall.NewCallbackCDecl(seek)
-    return (*AVIOContext)(unsafe.Pointer(C.avio_alloc_context((*C.uchar)(unsafe.Pointer(buffer)), 
-        C.int(buffer_size), C.int(write_flag), opaque, 
-        (*[0]byte)(unsafe.Pointer(cb4)), (*[0]byte)(unsafe.Pointer(cb5)), 
-        (*[0]byte)(unsafe.Pointer(cb6)))))
+    return (*AVIOContext)(unsafe.Pointer(C.avio_alloc_context(
+        (*C.uchar)(unsafe.Pointer(buffer)), C.int(buffer_size), 
+        C.int(write_flag), opaque, (*[0]byte)(unsafe.Pointer(cb4)), 
+        (*[0]byte)(unsafe.Pointer(cb5)), (*[0]byte)(unsafe.Pointer(cb6)))))
 }
 
 /**
@@ -261,39 +332,39 @@ func Avio_alloc_context(
  * into s.
  */
 func Avio_context_free(s **AVIOContext)  {
-    C.avio_context_free((**C.AVIOContext)(unsafe.Pointer(s)))
+    C.avio_context_free((**C.struct_AVIOContext)(unsafe.Pointer(s)))
 }
 
 func Avio_w8(s *AVIOContext, b int32)  {
-    C.avio_w8((*C.AVIOContext)(unsafe.Pointer(s)), C.int(b))
+    C.avio_w8((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.int(b))
 }
 func Avio_write(s *AVIOContext, buf *uint8, size int32)  {
-    C.avio_write((*C.AVIOContext)(unsafe.Pointer(s)), 
+    C.avio_write((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(size))
 }
 func Avio_wl64(s *AVIOContext, val uint64)  {
-    C.avio_wl64((*C.AVIOContext)(unsafe.Pointer(s)), C.ulonglong(val))
+    C.avio_wl64((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.ulonglong(val))
 }
 func Avio_wb64(s *AVIOContext, val uint64)  {
-    C.avio_wb64((*C.AVIOContext)(unsafe.Pointer(s)), C.ulonglong(val))
+    C.avio_wb64((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.ulonglong(val))
 }
 func Avio_wl32(s *AVIOContext, val uint32)  {
-    C.avio_wl32((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wl32((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 func Avio_wb32(s *AVIOContext, val uint32)  {
-    C.avio_wb32((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wb32((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 func Avio_wl24(s *AVIOContext, val uint32)  {
-    C.avio_wl24((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wl24((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 func Avio_wb24(s *AVIOContext, val uint32)  {
-    C.avio_wb24((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wb24((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 func Avio_wl16(s *AVIOContext, val uint32)  {
-    C.avio_wl16((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wl16((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 func Avio_wb16(s *AVIOContext, val uint32)  {
-    C.avio_wb16((*C.AVIOContext)(unsafe.Pointer(s)), C.uint(val))
+    C.avio_wb16((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.uint(val))
 }
 
 /**
@@ -301,7 +372,7 @@ func Avio_wb16(s *AVIOContext, val uint32)  {
  * @return number of bytes written.
  */
 func Avio_put_str(s *AVIOContext, str *byte) int32 {
-    return int32(C.avio_put_str((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_put_str((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(str))))
 }
 
@@ -313,7 +384,7 @@ func Avio_put_str(s *AVIOContext, str *byte) int32 {
  * @return number of bytes written.
  */
 func Avio_put_str16le(s *AVIOContext, str *byte) int32 {
-    return int32(C.avio_put_str16le((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_put_str16le((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(str))))
 }
 
@@ -325,7 +396,7 @@ func Avio_put_str16le(s *AVIOContext, str *byte) int32 {
  * @return number of bytes written.
  */
 func Avio_put_str16be(s *AVIOContext, str *byte) int32 {
-    return int32(C.avio_put_str16be((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_put_str16be((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(str))))
 }
 
@@ -341,7 +412,7 @@ func Avio_put_str16be(s *AVIOContext, str *byte) int32 {
  * @param type the kind of data written starting at the current pos
  */
 func Avio_write_marker(s *AVIOContext, time int64, typex AVIODataMarkerType)  {
-    C.avio_write_marker((*C.AVIOContext)(unsafe.Pointer(s)), C.longlong(time), 
+    C.avio_write_marker((*C.struct_AVIOContext)(unsafe.Pointer(s)), C.longlong(time), 
         C.enum_AVIODataMarkerType(typex))
 }
 
@@ -365,7 +436,7 @@ func Avio_write_marker(s *AVIOContext, time int64, typex AVIODataMarkerType)  {
  * @return new position or AVERROR.
  */
 func Avio_seek(s *AVIOContext, offset int64, whence int32) int64 {
-    return int64(C.avio_seek((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int64(C.avio_seek((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         C.longlong(offset), C.int(whence)))
 }
 
@@ -374,7 +445,7 @@ func Avio_seek(s *AVIOContext, offset int64, whence int32) int64 {
  * @return new position or AVERROR.
  */
 func Avio_skip(s *AVIOContext, offset int64) int64 {
-    return int64(C.avio_skip((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int64(C.avio_skip((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         C.longlong(offset)))
 }
 
@@ -389,7 +460,7 @@ func Avio_skip(s *AVIOContext, offset int64) int64 {
  * @return filesize or AVERROR
  */
 func Avio_size(s *AVIOContext) int64 {
-    return int64(C.avio_size((*C.AVIOContext)(unsafe.Pointer(s))))
+    return int64(C.avio_size((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 
 /**
@@ -397,7 +468,7 @@ func Avio_size(s *AVIOContext) int64 {
  * @return non zero if and only if at end of file or a read error happened when reading.
  */
 func Avio_feof(s *AVIOContext) int32 {
-    return int32(C.avio_feof((*C.AVIOContext)(unsafe.Pointer(s))))
+    return int32(C.avio_feof((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 
 /**
@@ -417,8 +488,8 @@ func Avio_feof(s *AVIOContext) int32 {
  * Usually you don't need to use this function directly but its macro wrapper,
  * avio_print.
  */
-func Avio_print_string_array(s *AVIOContext, strings[] *byte)  {
-    C.avio_print_string_array((*C.AVIOContext)(unsafe.Pointer(s)), 
+func Avio_print_string_array(s *AVIOContext, strings []*byte)  {
+    C.avio_print_string_array((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (**C.char)(unsafe.Pointer(&strings[0])))
 }
 
@@ -442,7 +513,7 @@ func Avio_print_string_array(s *AVIOContext, strings[] *byte)  {
  * read new data, and does not perform any seeks.
  */
 func Avio_flush(s *AVIOContext)  {
-    C.avio_flush((*C.AVIOContext)(unsafe.Pointer(s)))
+    C.avio_flush((*C.struct_AVIOContext)(unsafe.Pointer(s)))
 }
 
 /**
@@ -450,7 +521,7 @@ func Avio_flush(s *AVIOContext)  {
  * @return number of bytes read or AVERROR
  */
 func Avio_read(s *AVIOContext, buf *uint8, size int32) int32 {
-    return int32(C.avio_read((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_read((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(size)))
 }
 
@@ -462,7 +533,7 @@ func Avio_read(s *AVIOContext, buf *uint8, size int32) int32 {
  * @return number of bytes read or AVERROR
  */
 func Avio_read_partial(s *AVIOContext, buf *uint8, size int32) int32 {
-    return int32(C.avio_read_partial((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_read_partial((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.int(size)))
 }
 
@@ -474,31 +545,31 @@ func Avio_read_partial(s *AVIOContext, buf *uint8, size int32) int32 {
  *       necessary
  */
 func          Avio_r8  (s *AVIOContext) int32 {
-    return int32(C.avio_r8((*C.AVIOContext)(unsafe.Pointer(s))))
+    return int32(C.avio_r8((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rl16(s *AVIOContext) uint32 {
-    return uint32(C.avio_rl16((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rl16((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rl24(s *AVIOContext) uint32 {
-    return uint32(C.avio_rl24((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rl24((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rl32(s *AVIOContext) uint32 {
-    return uint32(C.avio_rl32((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rl32((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func     Avio_rl64(s *AVIOContext) uint64 {
-    return uint64(C.avio_rl64((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint64(C.avio_rl64((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rb16(s *AVIOContext) uint32 {
-    return uint32(C.avio_rb16((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rb16((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rb24(s *AVIOContext) uint32 {
-    return uint32(C.avio_rb24((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rb24((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func Avio_rb32(s *AVIOContext) uint32 {
-    return uint32(C.avio_rb32((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint32(C.avio_rb32((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 func     Avio_rb64(s *AVIOContext) uint64 {
-    return uint64(C.avio_rb64((*C.AVIOContext)(unsafe.Pointer(s))))
+    return uint64(C.avio_rb64((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 /**
  * @}
@@ -517,7 +588,7 @@ func     Avio_rb64(s *AVIOContext) uint64 {
  * bytes actually read.
  */
 func Avio_get_str(pb *AVIOContext, maxlen int32, buf *byte, buflen int32) int32 {
-    return int32(C.avio_get_str((*C.AVIOContext)(unsafe.Pointer(pb)), 
+    return int32(C.avio_get_str((*C.struct_AVIOContext)(unsafe.Pointer(pb)), 
         C.int(maxlen), (*C.char)(unsafe.Pointer(buf)), C.int(buflen)))
 }
 
@@ -528,11 +599,11 @@ func Avio_get_str(pb *AVIOContext, maxlen int32, buf *byte, buflen int32) int32 
  * @return number of bytes read (is always <= maxlen)
  */
 func Avio_get_str16le(pb *AVIOContext, maxlen int32, buf *byte, buflen int32) int32 {
-    return int32(C.avio_get_str16le((*C.AVIOContext)(unsafe.Pointer(pb)), 
+    return int32(C.avio_get_str16le((*C.struct_AVIOContext)(unsafe.Pointer(pb)), 
         C.int(maxlen), (*C.char)(unsafe.Pointer(buf)), C.int(buflen)))
 }
 func Avio_get_str16be(pb *AVIOContext, maxlen int32, buf *byte, buflen int32) int32 {
-    return int32(C.avio_get_str16be((*C.AVIOContext)(unsafe.Pointer(pb)), 
+    return int32(C.avio_get_str16be((*C.struct_AVIOContext)(unsafe.Pointer(pb)), 
         C.int(maxlen), (*C.char)(unsafe.Pointer(buf)), C.int(buflen)))
 }
 
@@ -587,7 +658,7 @@ func Avio_get_str16be(pb *AVIOContext, maxlen int32, buf *byte, buflen int32) in
  * AVERROR code in case of failure
  */
 func Avio_open(s **AVIOContext, url *byte, flags int32) int32 {
-    return int32(C.avio_open((**C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_open((**C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(url)), C.int(flags)))
 }
 
@@ -611,10 +682,10 @@ func Avio_open(s **AVIOContext, url *byte, flags int32) int32 {
  */
 func Avio_open2(s **AVIOContext, url *byte, flags int32,
                int_cb *AVIOInterruptCB, options **AVDictionary) int32 {
-    return int32(C.avio_open2((**C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_open2((**C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (*C.char)(unsafe.Pointer(url)), C.int(flags), 
-        (*C.AVIOInterruptCB)(unsafe.Pointer(int_cb)), 
-        (**C.AVDictionary)(unsafe.Pointer(options))))
+        (*C.struct_AVIOInterruptCB)(unsafe.Pointer(int_cb)), 
+        (**C.struct_AVDictionary)(unsafe.Pointer(options))))
 }
 
 /**
@@ -628,7 +699,7 @@ func Avio_open2(s **AVIOContext, url *byte, flags int32,
  * @see avio_closep
  */
 func Avio_close(s *AVIOContext) int32 {
-    return int32(C.avio_close((*C.AVIOContext)(unsafe.Pointer(s))))
+    return int32(C.avio_close((*C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 
 /**
@@ -643,7 +714,7 @@ func Avio_close(s *AVIOContext) int32 {
  * @see avio_close
  */
 func Avio_closep(s **AVIOContext) int32 {
-    return int32(C.avio_closep((**C.AVIOContext)(unsafe.Pointer(s))))
+    return int32(C.avio_closep((**C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 
 
@@ -654,7 +725,7 @@ func Avio_closep(s **AVIOContext) int32 {
  * @return zero if no error.
  */
 func Avio_open_dyn_buf(s **AVIOContext) int32 {
-    return int32(C.avio_open_dyn_buf((**C.AVIOContext)(unsafe.Pointer(s))))
+    return int32(C.avio_open_dyn_buf((**C.struct_AVIOContext)(unsafe.Pointer(s))))
 }
 
 /**
@@ -668,7 +739,7 @@ func Avio_open_dyn_buf(s **AVIOContext) int32 {
  * @return the length of the byte buffer
  */
 func Avio_get_dyn_buf(s *AVIOContext, pbuffer **uint8) int32 {
-    return int32(C.avio_get_dyn_buf((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_get_dyn_buf((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (**C.uchar)(unsafe.Pointer(pbuffer))))
 }
 
@@ -682,7 +753,7 @@ func Avio_get_dyn_buf(s *AVIOContext, pbuffer **uint8) int32 {
  * @return the length of the byte buffer
  */
 func Avio_close_dyn_buf(s *AVIOContext, pbuffer **uint8) int32 {
-    return int32(C.avio_close_dyn_buf((*C.AVIOContext)(unsafe.Pointer(s)), 
+    return int32(C.avio_close_dyn_buf((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
         (**C.uchar)(unsafe.Pointer(pbuffer))))
 }
 
@@ -707,7 +778,8 @@ func Avio_enum_protocols(opaque *unsafe.Pointer, output int32) string {
  * @return A AVClass of input protocol name or NULL
  */
 func Avio_protocol_get_class(name *byte) *AVClass {
-    return (*AVClass)(unsafe.Pointer(C.avio_protocol_get_class((*C.char)(unsafe.Pointer(name)))))
+    return (*AVClass)(unsafe.Pointer(C.avio_protocol_get_class(
+        (*C.char)(unsafe.Pointer(name)))))
 }
 
 /**
@@ -718,7 +790,8 @@ func Avio_protocol_get_class(name *byte) *AVClass {
  * @param pause 1 for pause, 0 for resume
  */
 func     Avio_pause(h *AVIOContext, pause int32) int32 {
-    return int32(C.avio_pause((*C.AVIOContext)(unsafe.Pointer(h)), C.int(pause)))
+    return int32(C.avio_pause((*C.struct_AVIOContext)(unsafe.Pointer(h)), 
+        C.int(pause)))
 }
 
 /**
@@ -742,12 +815,12 @@ func     Avio_pause(h *AVIOContext, pause int32) int32 {
  */
 func Avio_seek_time(h *AVIOContext, stream_index int32,
                        timestamp int64, flags int32) int64 {
-    return int64(C.avio_seek_time((*C.AVIOContext)(unsafe.Pointer(h)), 
+    return int64(C.avio_seek_time((*C.struct_AVIOContext)(unsafe.Pointer(h)), 
         C.int(stream_index), C.longlong(timestamp), C.int(flags)))
 }
 
 /* Avoid a warning. The header can not be included because it breaks c++. */
-type AVBPrint C.struct_AVBPrint
+// type AVBPrint
 
 /**
  * Read contents of h into print buffer, up to max_size bytes, or up to EOF.
@@ -756,7 +829,7 @@ type AVBPrint C.struct_AVBPrint
  * code otherwise
  */
 func Avio_read_to_bprint(h *AVIOContext, pb *AVBPrint, max_size uint64) int32 {
-    return int32(C.avio_read_to_bprint((*C.AVIOContext)(unsafe.Pointer(h)), 
+    return int32(C.avio_read_to_bprint((*C.struct_AVIOContext)(unsafe.Pointer(h)), 
         (*C.struct_AVBPrint)(unsafe.Pointer(pb)), C.ulonglong(max_size)))
 }
 
@@ -768,8 +841,8 @@ func Avio_read_to_bprint(h *AVIOContext, pb *AVBPrint, max_size uint64) int32 {
  *           to an AVERROR on failure
  */
 func Avio_accept(s *AVIOContext, c **AVIOContext) int32 {
-    return int32(C.avio_accept((*C.AVIOContext)(unsafe.Pointer(s)), 
-        (**C.AVIOContext)(unsafe.Pointer(c))))
+    return int32(C.avio_accept((*C.struct_AVIOContext)(unsafe.Pointer(s)), 
+        (**C.struct_AVIOContext)(unsafe.Pointer(c))))
 }
 
 /**
@@ -792,6 +865,6 @@ func Avio_accept(s *AVIOContext, c **AVIOContext) int32 {
  *           < 0 for an AVERROR code
  */
 func Avio_handshake(c *AVIOContext) int32 {
-    return int32(C.avio_handshake((*C.AVIOContext)(unsafe.Pointer(c))))
+    return int32(C.avio_handshake((*C.struct_AVIOContext)(unsafe.Pointer(c))))
 }
                             

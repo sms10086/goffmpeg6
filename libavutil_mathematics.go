@@ -35,34 +35,21 @@ import (
     "unsafe"
 )
 
-const M_E = 2.7182818284590452354
-const M_Ef = 2.7182818284590452354
-const M_LN2 = 0.69314718055994530942
-const M_LN2f = 0.69314718055994530942
-const M_LN10 = 2.30258509299404568402
-const M_LN10f = 2.30258509299404568402
-const M_LOG2_10 = 3.32192809488736234787
-const M_LOG2_10f = 3.32192809488736234787
-const M_PHI = 1.61803398874989484820
-const M_PHIf = 1.61803398874989484820
-const M_PI = 3.14159265358979323846
-const M_PIf = 3.14159265358979323846
-const M_PI_2 = 1.57079632679489661923
-const M_PI_2f = 1.57079632679489661923
-const M_PI_4 = 0.78539816339744830962
-const M_PI_4f = 0.78539816339744830962
-const M_1_PI = 0.31830988618379067154
-const M_1_PIf = 0.31830988618379067154
-const M_2_PI = 0.63661977236758134308
-const M_2_PIf = 0.63661977236758134308
-const M_2_SQRTPI = 1.12837916709551257390
-const M_2_SQRTPIf = 1.12837916709551257390
-const M_SQRT1_2 = 0.70710678118654752440
-const M_SQRT1_2f = 0.70710678118654752440
-const M_SQRT2 = 1.41421356237309504880
-const M_SQRT2f = 1.41421356237309504880
-//const NAN = av_int2float(0x7fc00000)
-//const INFINITY = av_int2float(0x7f800000)
+const M_Ef = 2.7182818284590452354   
+const M_LN2f = 0.69314718055994530942  
+const M_LN10f = 2.30258509299404568402  
+const M_LOG2_10f = 3.32192809488736234787  
+const M_PHIf = 1.61803398874989484820   
+const M_PIf = 3.14159265358979323846  
+const M_PI_2f = 1.57079632679489661923  
+const M_PI_4f = 0.78539816339744830962  
+const M_1_PIf = 0.31830988618379067154  
+const M_2_PIf = 0.63661977236758134308  
+const M_2_SQRTPIf = 1.12837916709551257390  
+const M_SQRT1_2f = 0.70710678118654752440  
+const M_SQRT2f = 1.41421356237309504880  
+//const NAN =             av_int2float(0x7fc00000) 
+//const INFINITY =        av_int2float(0x7f800000) 
 
 
 /**
@@ -81,79 +68,79 @@ const M_SQRT2f = 1.41421356237309504880
                      
 
            
-/* e */
+                                                      
       
             
 /* e */
       
              
-/* log_e 2 */
+                                                            
       
               
 /* log_e 2 */
       
               
-/* log_e 10 */
+                                                             
       
                
 /* log_e 10 */
       
                  
-/* log_2 10 */
+                                                             
       
                   
 /* log_2 10 */
       
              
-/* phi / golden ratio */
+                                                                        
       
               
 /* phi / golden ratio */
       
             
-/* pi */
+                                                       
       
              
 /* pi */
       
               
-/* pi/2 */
+                                                         
       
                
 /* pi/2 */
       
               
-/* pi/4 */
+                                                         
       
                
 /* pi/4 */
       
               
-/* 1/pi */
+                                                         
       
                
 /* 1/pi */
       
               
-/* 2/pi */
+                                                         
       
                
 /* 2/pi */
       
                   
-/* 2/sqrt(pi) */
+                                                               
       
                    
 /* 2/sqrt(pi) */
       
                  
-/* 1/sqrt(2) */
+                                                              
       
                   
 /* 1/sqrt(2) */
       
                
-/* sqrt(2) */
+                                                            
       
                 
 /* sqrt(2) */
@@ -174,7 +161,16 @@ const M_SQRT2f = 1.41421356237309504880
 /**
  * Rounding methods.
  */
-type AVRounding C.enum_AVRounding
+type AVRounding int32
+const (
+    AV_ROUND_ZERO AVRounding = 0 + iota
+    AV_ROUND_INF = 1
+    AV_ROUND_DOWN = 2
+    AV_ROUND_UP = 3
+    AV_ROUND_NEAR_INF = 5
+    AV_ROUND_PASS_MINMAX = 8192
+)
+
 
 /**
  * Compute the greatest common divisor of two integer operands.
@@ -226,8 +222,9 @@ func Av_rescale_rnd(a int64, b int64, c int64, rnd AVRounding)  int64 {
  * @see av_rescale(), av_rescale_rnd(), av_rescale_q_rnd()
  */
 func Av_rescale_q(a int64, bq AVRational, cq AVRational)  int64 {
-    return int64(C.av_rescale_q(C.longlong(a), C.AVRational(bq), 
-        C.AVRational(cq)))
+    return int64(C.av_rescale_q(C.longlong(a), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&bq)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&cq))))
 }
 
 /**
@@ -239,8 +236,9 @@ func Av_rescale_q(a int64, bq AVRational, cq AVRational)  int64 {
  */
 func Av_rescale_q_rnd(a int64, bq AVRational, cq AVRational,
                          rnd AVRounding)  int64 {
-    return int64(C.av_rescale_q_rnd(C.longlong(a), C.AVRational(bq), 
-        C.AVRational(cq), C.enum_AVRounding(rnd)))
+    return int64(C.av_rescale_q_rnd(C.longlong(a), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&bq)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&cq)), C.enum_AVRounding(rnd)))
 }
 
 /**
@@ -256,8 +254,9 @@ func Av_rescale_q_rnd(a int64, bq AVRational, cq AVRational,
  * the `int64_t` range when represented in the other's timebase.
  */
 func Av_compare_ts(ts_a int64, tb_a AVRational, ts_b int64, tb_b AVRational) int32 {
-    return int32(C.av_compare_ts(C.longlong(ts_a), C.AVRational(tb_a), 
-        C.longlong(ts_b), C.AVRational(tb_b)))
+    return int32(C.av_compare_ts(C.longlong(ts_a), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&tb_a)), C.longlong(ts_b), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&tb_b))))
 }
 
 /**
@@ -280,8 +279,7 @@ func Av_compare_ts(ts_a int64, tb_a AVRational, ts_b int64, tb_b AVRational) int
  *         - zero             if `a % mod == b % mod`
  */
 func Av_compare_mod(a uint64, b uint64, mod uint64) int64 {
-    return int64(C.av_compare_mod(C.ulonglong(a), C.ulonglong(b), 
-        C.ulonglong(mod)))
+    return int64(C.av_compare_mod(C.ulonglong(a), C.ulonglong(b), C.ulonglong(mod)))
 }
 
 /**
@@ -310,9 +308,10 @@ func Av_compare_mod(a uint64, b uint64, mod uint64) int64 {
  *       seconds.
  */
 func Av_rescale_delta(in_tb AVRational, in_ts int64,  fs_tb AVRational, duration int32, last *int64, out_tb AVRational) int64 {
-    return int64(C.av_rescale_delta(C.AVRational(in_tb), C.longlong(in_ts), 
-        C.AVRational(fs_tb), C.int(duration), 
-        (*C.longlong)(unsafe.Pointer(last)), C.AVRational(out_tb)))
+    return int64(C.av_rescale_delta(*(*C.struct_AVRational)(unsafe.Pointer(&in_tb)), 
+        C.longlong(in_ts), *(*C.struct_AVRational)(unsafe.Pointer(&fs_tb)), 
+        C.int(duration), (*C.longlong)(unsafe.Pointer(last)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&out_tb))))
 }
 
 /**
@@ -327,8 +326,9 @@ func Av_rescale_delta(in_tb AVRational, in_ts int64,  fs_tb AVRational, duration
  * @param[in] inc_tb Time base of `inc`
  */
 func Av_add_stable(ts_tb AVRational, ts int64, inc_tb AVRational, inc int64) int64 {
-    return int64(C.av_add_stable(C.AVRational(ts_tb), C.longlong(ts), 
-        C.AVRational(inc_tb), C.longlong(inc)))
+    return int64(C.av_add_stable(*(*C.struct_AVRational)(unsafe.Pointer(&ts_tb)), 
+        C.longlong(ts), *(*C.struct_AVRational)(unsafe.Pointer(&inc_tb)), 
+        C.longlong(inc)))
 }
 
 /**

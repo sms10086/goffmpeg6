@@ -64,7 +64,7 @@ import (
  */
 func Av_parse_ratio(q *AVRational, str *byte, max int32,
                    log_offset int32, log_ctx unsafe.Pointer) int32 {
-    return int32(C.av_parse_ratio((*C.AVRational)(unsafe.Pointer(q)), 
+    return int32(C.av_parse_ratio((*C.struct_AVRational)(unsafe.Pointer(q)), 
         (*C.char)(unsafe.Pointer(str)), C.int(max), C.int(log_offset), log_ctx))
 }
 
@@ -96,7 +96,7 @@ func Av_parse_video_size(width_ptr *int32, height_ptr *int32, str *byte) int32 {
  * @return >= 0 on success, a negative error code otherwise
  */
 func Av_parse_video_rate(rate *AVRational, str *byte) int32 {
-    return int32(C.av_parse_video_rate((*C.AVRational)(unsafe.Pointer(rate)), 
+    return int32(C.av_parse_video_rate((*C.struct_AVRational)(unsafe.Pointer(rate)), 
         (*C.char)(unsafe.Pointer(str))))
 }
 
@@ -189,9 +189,8 @@ func Av_parse_time(timeval *int64, timestr *byte, duration int32) int32 {
  * Return 1 if found.
  */
 func Av_find_info_tag(arg *byte, arg_size int32, tag1 *byte, info *byte) int32 {
-    return int32(C.av_find_info_tag((*C.char)(unsafe.Pointer(arg)), 
-        C.int(arg_size), (*C.char)(unsafe.Pointer(tag1)), 
-        (*C.char)(unsafe.Pointer(info))))
+    return int32(C.av_find_info_tag((*C.char)(unsafe.Pointer(arg)), C.int(arg_size), 
+        (*C.char)(unsafe.Pointer(tag1)), (*C.char)(unsafe.Pointer(info))))
 }
 
 /**

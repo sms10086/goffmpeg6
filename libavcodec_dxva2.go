@@ -25,12 +25,6 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavcodec
-//#include <stdint.h>
-//#include <d3d9.h>
-//#include <dxva2api.h>
-//#include "libavcodec/dxva2.h"
-import "C"
 
 //const FF_DXVA2_WORKAROUND_SCALING_LIST_ZIGZAG = 1
 //const FF_DXVA2_WORKAROUND_INTEL_CLEARVIDEO = 2
@@ -70,7 +64,15 @@ import "C"
  *
  * The application must make it available as AVCodecContext.hwaccel_context.
  */
-type dxva_context C.struct_dxva_context
+type dxva_context struct {
+    Decoder *IDirectXVideoDecoder
+    Cfg *DXVA2_ConfigPictureDecode
+    Surface_count uint32
+    Surface *LPDIRECT3DSURFACE9
+    Workaround uint64
+    Report_id uint32
+}
+
 
 /**
  * @}

@@ -72,7 +72,11 @@ import (
 /**
  * Rational number (pair of numerator and denominator).
  */
-type AVRational C.struct_AVRational
+type AVRational struct {
+    Num int32
+    Den int32
+}
+
 
 /**
  * Create an AVRational.
@@ -131,7 +135,9 @@ func Av_reduce(dst_num *int32, dst_den *int32, num int64, den int64, max int64) 
  * @return b*c
  */
 func Av_mul_q(b AVRational, c AVRational)  AVRational {
-    return AVRational(C.av_mul_q(C.AVRational(b), C.AVRational(c)))
+    _ret := C.av_mul_q(*(*C.struct_AVRational)(unsafe.Pointer(&b)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&c)))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**
@@ -141,7 +147,9 @@ func Av_mul_q(b AVRational, c AVRational)  AVRational {
  * @return b/c
  */
 func Av_div_q(b AVRational, c AVRational)  AVRational {
-    return AVRational(C.av_div_q(C.AVRational(b), C.AVRational(c)))
+    _ret := C.av_div_q(*(*C.struct_AVRational)(unsafe.Pointer(&b)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&c)))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**
@@ -151,7 +159,9 @@ func Av_div_q(b AVRational, c AVRational)  AVRational {
  * @return b+c
  */
 func Av_add_q(b AVRational, c AVRational)  AVRational {
-    return AVRational(C.av_add_q(C.AVRational(b), C.AVRational(c)))
+    _ret := C.av_add_q(*(*C.struct_AVRational)(unsafe.Pointer(&b)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&c)))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**
@@ -161,7 +171,9 @@ func Av_add_q(b AVRational, c AVRational)  AVRational {
  * @return b-c
  */
 func Av_sub_q(b AVRational, c AVRational)  AVRational {
-    return AVRational(C.av_sub_q(C.AVRational(b), C.AVRational(c)))
+    _ret := C.av_sub_q(*(*C.struct_AVRational)(unsafe.Pointer(&b)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&c)))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**
@@ -183,7 +195,8 @@ func Av_sub_q(b AVRational, c AVRational)  AVRational {
  * @see av_q2d()
  */
 func Av_d2q(d float64, max int32)  AVRational {
-    return AVRational(C.av_d2q(C.double(d), C.int(max)))
+    _ret := C.av_d2q(C.double(d), C.int(max))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**
@@ -198,8 +211,9 @@ func Av_d2q(d float64, max int32)  AVRational {
  *         - 0 if they have the same distance
  */
 func Av_nearer_q(q AVRational, q1 AVRational, q2 AVRational) int32 {
-    return int32(C.av_nearer_q(C.AVRational(q), C.AVRational(q1), 
-        C.AVRational(q2)))
+    return int32(C.av_nearer_q(*(*C.struct_AVRational)(unsafe.Pointer(&q)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&q1)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&q2))))
 }
 
 /**
@@ -210,8 +224,8 @@ func Av_nearer_q(q AVRational, q1 AVRational, q2 AVRational) int32 {
  * @return Index of the nearest value found in the array
  */
 func Av_find_nearest_q_idx(q AVRational, q_list *AVRational) int32 {
-    return int32(C.av_find_nearest_q_idx(C.AVRational(q), 
-        (*C.AVRational)(unsafe.Pointer(q_list))))
+    return int32(C.av_find_nearest_q_idx(*(*C.struct_AVRational)(unsafe.Pointer(&q)), 
+        (*C.struct_AVRational)(unsafe.Pointer(q_list))))
 }
 
 /**
@@ -224,7 +238,7 @@ func Av_find_nearest_q_idx(q AVRational, q_list *AVRational) int32 {
  * @note The returned value is platform-indepedant.
  */
 func Av_q2intfloat(q AVRational) uint32 {
-    return uint32(C.av_q2intfloat(C.AVRational(q)))
+    return uint32(C.av_q2intfloat(*(*C.struct_AVRational)(unsafe.Pointer(&q))))
 }
 
 /**
@@ -232,8 +246,10 @@ func Av_q2intfloat(q AVRational) uint32 {
  * If the resulting denominator is larger than max_den, return def.
  */
 func Av_gcd_q(a AVRational, b AVRational, max_den int32, def AVRational) AVRational {
-    return AVRational(C.av_gcd_q(C.AVRational(a), C.AVRational(b), 
-        C.int(max_den), C.AVRational(def)))
+    _ret := C.av_gcd_q(*(*C.struct_AVRational)(unsafe.Pointer(&a)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&b)), C.int(max_den), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&def)))
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 /**

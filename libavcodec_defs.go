@@ -32,14 +32,14 @@ import (
 )
 
 const AV_INPUT_BUFFER_PADDING_SIZE = 64
-const AV_EF_CRCCHECK = (1<<0)
-const AV_EF_BITSTREAM = (1<<1)
-const AV_EF_BUFFER = (1<<2)
-const AV_EF_EXPLODE = (1<<3)
-const AV_EF_IGNORE_ERR = (1<<15)
-const AV_EF_CAREFUL = (1<<16)
-const AV_EF_COMPLIANT = (1<<17)
-const AV_EF_AGGRESSIVE = (1<<18)
+const AV_EF_CRCCHECK =        (1<<0) 
+const AV_EF_BITSTREAM =       (1<<1)    
+const AV_EF_BUFFER =          (1<<2)    
+const AV_EF_EXPLODE =         (1<<3)    
+const AV_EF_IGNORE_ERR =      (1<<15)   
+const AV_EF_CAREFUL =         (1<<16)   
+const AV_EF_COMPLIANT =       (1<<17)   
+const AV_EF_AGGRESSIVE =      (1<<18)   
 const FF_COMPLIANCE_VERY_STRICT = 2
 const FF_COMPLIANCE_STRICT = 1
 const FF_COMPLIANCE_NORMAL = 0
@@ -79,22 +79,22 @@ const AV_PROFILE_MPEG2_SS = 2
 const AV_PROFILE_MPEG2_SNR_SCALABLE = 3
 const AV_PROFILE_MPEG2_MAIN = 4
 const AV_PROFILE_MPEG2_SIMPLE = 5
-const AV_PROFILE_H264_CONSTRAINED = (1<<9)
-const AV_PROFILE_H264_INTRA = (1<<11)
+const AV_PROFILE_H264_CONSTRAINED =   (1<<9)   
+const AV_PROFILE_H264_INTRA =         (1<<11)  
 const AV_PROFILE_H264_BASELINE = 66
-const AV_PROFILE_H264_CONSTRAINED_BASELINE = (66|AV_PROFILE_H264_CONSTRAINED)
+const AV_PROFILE_H264_CONSTRAINED_BASELINE =  (66|AV_PROFILE_H264_CONSTRAINED) 
 const AV_PROFILE_H264_MAIN = 77
 const AV_PROFILE_H264_EXTENDED = 88
 const AV_PROFILE_H264_HIGH = 100
 const AV_PROFILE_H264_HIGH_10 = 110
-const AV_PROFILE_H264_HIGH_10_INTRA = (110|AV_PROFILE_H264_INTRA)
+const AV_PROFILE_H264_HIGH_10_INTRA =         (110|AV_PROFILE_H264_INTRA) 
 const AV_PROFILE_H264_MULTIVIEW_HIGH = 118
 const AV_PROFILE_H264_HIGH_422 = 122
-const AV_PROFILE_H264_HIGH_422_INTRA = (122|AV_PROFILE_H264_INTRA)
+const AV_PROFILE_H264_HIGH_422_INTRA =        (122|AV_PROFILE_H264_INTRA) 
 const AV_PROFILE_H264_STEREO_HIGH = 128
 const AV_PROFILE_H264_HIGH_444 = 144
 const AV_PROFILE_H264_HIGH_444_PREDICTIVE = 244
-const AV_PROFILE_H264_HIGH_444_INTRA = (244|AV_PROFILE_H264_INTRA)
+const AV_PROFILE_H264_HIGH_444_INTRA =        (244|AV_PROFILE_H264_INTRA) 
 const AV_PROFILE_H264_CAVLC_444 = 44
 const AV_PROFILE_VC1_SIMPLE = 0
 const AV_PROFILE_VC1_MAIN = 1
@@ -135,11 +135,11 @@ const AV_PROFILE_VVC_MAIN_10_444 = 33
 const AV_PROFILE_AV1_MAIN = 0
 const AV_PROFILE_AV1_HIGH = 1
 const AV_PROFILE_AV1_PROFESSIONAL = 2
-const AV_PROFILE_MJPEG_HUFFMAN_BASELINE_DCT = 0xc0
-const AV_PROFILE_MJPEG_HUFFMAN_EXTENDED_SEQUENTIAL_DCT = 0xc1
-const AV_PROFILE_MJPEG_HUFFMAN_PROGRESSIVE_DCT = 0xc2
-const AV_PROFILE_MJPEG_HUFFMAN_LOSSLESS = 0xc3
-const AV_PROFILE_MJPEG_JPEG_LS = 0xf7
+const AV_PROFILE_MJPEG_HUFFMAN_BASELINE_DCT =             0xc0 
+const AV_PROFILE_MJPEG_HUFFMAN_EXTENDED_SEQUENTIAL_DCT =  0xc1 
+const AV_PROFILE_MJPEG_HUFFMAN_PROGRESSIVE_DCT =          0xc2 
+const AV_PROFILE_MJPEG_HUFFMAN_LOSSLESS =                 0xc3 
+const AV_PROFILE_MJPEG_JPEG_LS =                          0xf7 
 const AV_PROFILE_SBC_MSBC = 1
 const AV_PROFILE_PRORES_PROXY = 0
 const AV_PROFILE_PRORES_LT = 1
@@ -334,28 +334,73 @@ const AV_LEVEL_UNKNOWN = -99
 
 
 
-type AVFieldOrder C.enum_AVFieldOrder
+type AVFieldOrder int32
+const (
+    AV_FIELD_UNKNOWN AVFieldOrder = iota
+    AV_FIELD_PROGRESSIVE
+    AV_FIELD_TT
+    AV_FIELD_BB
+    AV_FIELD_TB
+    AV_FIELD_BT
+)
+
 
 /**
  * @ingroup lavc_decoding
  */
-type AVDiscard C.enum_AVDiscard
+type AVDiscard int32
+const (
+    AVDISCARD_NONE AVDiscard = -16 + iota
+    AVDISCARD_DEFAULT = 0
+    AVDISCARD_NONREF = 8
+    AVDISCARD_BIDIR = 16
+    AVDISCARD_NONINTRA = 24
+    AVDISCARD_NONKEY = 32
+    AVDISCARD_ALL = 48
+)
 
-type AVAudioServiceType C.enum_AVAudioServiceType
+
+type AVAudioServiceType int32
+const (
+    AV_AUDIO_SERVICE_TYPE_MAIN AVAudioServiceType = 0 + iota
+    AV_AUDIO_SERVICE_TYPE_EFFECTS = 1
+    AV_AUDIO_SERVICE_TYPE_VISUALLY_IMPAIRED = 2
+    AV_AUDIO_SERVICE_TYPE_HEARING_IMPAIRED = 3
+    AV_AUDIO_SERVICE_TYPE_DIALOGUE = 4
+    AV_AUDIO_SERVICE_TYPE_COMMENTARY = 5
+    AV_AUDIO_SERVICE_TYPE_EMERGENCY = 6
+    AV_AUDIO_SERVICE_TYPE_VOICE_OVER = 7
+    AV_AUDIO_SERVICE_TYPE_KARAOKE = 8
+    AV_AUDIO_SERVICE_TYPE_NB = 8 + iota - 8
+)
+
 
 /**
  * Pan Scan area.
  * This specifies the area which should be displayed.
  * Note there may be multiple such areas for one frame.
  */
-type AVPanScan C.struct_AVPanScan
+type AVPanScan struct {
+    Id int32
+    Width int32
+    Height int32
+    Position[3] [2]int16
+}
+
 
 /**
  * This structure describes the bitrate properties of an encoded bitstream. It
  * roughly corresponds to a subset the VBV parameters for MPEG-2 or HRD
  * parameters for H.264/HEVC.
  */
-type AVCPBProperties C.struct_AVCPBProperties
+type AVCPBProperties struct {
+    Max_bitrate int64
+    Min_bitrate int64
+    Avg_bitrate int64
+    Buffer_size int64
+    Vbv_delay uint64
+}
+
 
 /**
  * Allocate a CPB properties structure and initialize its fields to default
@@ -376,7 +421,11 @@ func Av_cpb_properties_alloc(size *uint64) *AVCPBProperties {
  * production time. The definition follows the Producer Reference Time ('prft')
  * as defined in ISO/IEC 14496-12
  */
-type AVProducerReferenceTime C.struct_AVProducerReferenceTime
+type AVProducerReferenceTime struct {
+    Wallclock int64
+    Flags int32
+}
+
 
 /**
  * Encode extradata length to a buffer. Used by xiph codecs.

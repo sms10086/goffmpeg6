@@ -60,7 +60,9 @@ import (
 
 //extern const int av_ripemd_size;
 
-type AVRIPEMD C.struct_AVRIPEMD
+type AVRIPEMD struct {
+}
+
 
 /**
  * Allocate an AVRIPEMD context.

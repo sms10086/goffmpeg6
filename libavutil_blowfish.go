@@ -48,7 +48,11 @@ const AV_BF_ROUNDS = 16
 
 
 
-type AVBlowfish C.struct_AVBlowfish
+type AVBlowfish struct {
+    P [AV_BF_ROUNDS+2]uint32
+    S[4] [256]uint32
+}
+
 
 /**
  * Allocate an AVBlowfish context.

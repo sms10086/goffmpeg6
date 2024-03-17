@@ -33,8 +33,8 @@ import (
     "unsafe"
 )
 
-const AES_CTR_KEY_SIZE = (16)
-const AES_CTR_IV_SIZE = (8)
+const AES_CTR_KEY_SIZE = 16
+const AES_CTR_IV_SIZE = 8
 
 
                         
@@ -53,7 +53,9 @@ const AES_CTR_IV_SIZE = (8)
 
 
 
-type AVAESCTR C.struct_AVAESCTR
+type AVAESCTR struct {
+}
+
 
 /**
  * Allocate an AVAESCTR context.
@@ -100,7 +102,8 @@ func Av_aes_ctr_crypt(a *AVAESCTR, dst *uint8, src *uint8, size int32)  {
  * Get the current iv
  */
 func Av_aes_ctr_get_iv(a *AVAESCTR) *uint8 {
-    return (*uint8)(unsafe.Pointer(C.av_aes_ctr_get_iv((*C.struct_AVAESCTR)(unsafe.Pointer(a)))))
+    return (*uint8)(unsafe.Pointer(C.av_aes_ctr_get_iv(
+        (*C.struct_AVAESCTR)(unsafe.Pointer(a)))))
 }
 
 /**

@@ -41,23 +41,23 @@ const SWS_FAST_BILINEAR = 1
 const SWS_BILINEAR = 2
 const SWS_BICUBIC = 4
 const SWS_X = 8
-const SWS_POINT = 0x10
-const SWS_AREA = 0x20
-const SWS_BICUBLIN = 0x40
-const SWS_GAUSS = 0x80
-const SWS_SINC = 0x100
-const SWS_LANCZOS = 0x200
-const SWS_SPLINE = 0x400
-const SWS_SRC_V_CHR_DROP_MASK = 0x30000
+const SWS_POINT =           0x10 
+const SWS_AREA =            0x20 
+const SWS_BICUBLIN =        0x40 
+const SWS_GAUSS =           0x80 
+const SWS_SINC =           0x100 
+const SWS_LANCZOS =        0x200 
+const SWS_SPLINE =         0x400 
+const SWS_SRC_V_CHR_DROP_MASK =      0x30000 
 const SWS_SRC_V_CHR_DROP_SHIFT = 16
 const SWS_PARAM_DEFAULT = 123456
-const SWS_PRINT_INFO = 0x1000
-const SWS_FULL_CHR_H_INT = 0x2000
-const SWS_FULL_CHR_H_INP = 0x4000
-const SWS_DIRECT_BGR = 0x8000
-const SWS_ACCURATE_RND = 0x40000
-const SWS_BITEXACT = 0x80000
-const SWS_ERROR_DIFFUSION = 0x800000
+const SWS_PRINT_INFO =               0x1000 
+const SWS_FULL_CHR_H_INT =     0x2000 
+const SWS_FULL_CHR_H_INP =     0x4000 
+const SWS_DIRECT_BGR =         0x8000 
+const SWS_ACCURATE_RND =       0x40000 
+const SWS_BITEXACT =           0x80000 
+const SWS_ERROR_DIFFUSION =   0x800000 
 const SWS_MAX_REDUCE_CUTOFF = 0.002
 const SWS_CS_ITU709 = 1
 const SWS_CS_FCC = 4
@@ -172,12 +172,24 @@ func Sws_getCoefficients(colorspace int32) *int32 {
 
 // when used for filters they must have an odd number of elements
 // coeffs cannot be shared between vectors
-type SwsVector C.struct_SwsVector
+type SwsVector struct {
+    Coeff *float64
+    Length int32
+}
+
 
 // vectors can be shared
-type SwsFilter C.struct_SwsFilter
+type SwsFilter struct {
+    LumH *SwsVector
+    LumV *SwsVector
+    ChrH *SwsVector
+    ChrV *SwsVector
+}
 
-type SwsContext C.struct_SwsContext
+
+type SwsContext struct {
+}
+
 
 /**
  * Return a positive value if pix_fmt is a supported input format, 0
@@ -201,8 +213,7 @@ func Sws_isSupportedOutput(pix_fmt AVPixelFormat) int32 {
  * supported, 0 otherwise.
  */
 func Sws_isSupportedEndiannessConversion(pix_fmt AVPixelFormat) int32 {
-    return int32(C.sws_isSupportedEndiannessConversion(
-        C.enum_AVPixelFormat(pix_fmt)))
+    return int32(C.sws_isSupportedEndiannessConversion(C.enum_AVPixelFormat(pix_fmt)))
 }
 
 /**
@@ -223,8 +234,8 @@ func Sws_alloc_context() *SwsContext {
 func Sws_init_context(sws_context *SwsContext, srcFilter *SwsFilter, dstFilter *SwsFilter) int32 {
     return int32(C.sws_init_context(
         (*C.struct_SwsContext)(unsafe.Pointer(sws_context)), 
-        (*C.SwsFilter)(unsafe.Pointer(srcFilter)), 
-        (*C.SwsFilter)(unsafe.Pointer(dstFilter))))
+        (*C.struct_SwsFilter)(unsafe.Pointer(srcFilter)), 
+        (*C.struct_SwsFilter)(unsafe.Pointer(dstFilter))))
 }
 
 /**
@@ -263,8 +274,8 @@ func Sws_getContext(srcW int32, srcH int32, srcFormat AVPixelFormat,
     return (*SwsContext)(unsafe.Pointer(C.sws_getContext(C.int(srcW), C.int(srcH), 
         C.enum_AVPixelFormat(srcFormat), C.int(dstW), C.int(dstH), 
         C.enum_AVPixelFormat(dstFormat), C.int(flags), 
-        (*C.SwsFilter)(unsafe.Pointer(srcFilter)), 
-        (*C.SwsFilter)(unsafe.Pointer(dstFilter)), 
+        (*C.struct_SwsFilter)(unsafe.Pointer(srcFilter)), 
+        (*C.struct_SwsFilter)(unsafe.Pointer(dstFilter)), 
         (*C.double)(unsafe.Pointer(param)))))
 }
 
@@ -294,9 +305,9 @@ func Sws_getContext(srcW int32, srcH int32, srcFormat AVPixelFormat,
  *                  the destination image
  * @return          the height of the output slice
  */
-func Sws_scale(c *SwsContext, srcSlice[] *uint8,
-              srcStride[] int32, srcSliceY int32, srcSliceH int32,
-              dst[] *uint8, dstStride[] int32) int32 {
+func Sws_scale(c *SwsContext, srcSlice []*uint8,
+              srcStride []int32, srcSliceY int32, srcSliceH int32,
+              dst []*uint8, dstStride []int32) int32 {
     return int32(C.sws_scale((*C.struct_SwsContext)(unsafe.Pointer(c)), 
         (**C.uchar)(unsafe.Pointer(&srcSlice[0])), 
         (*C.int)(unsafe.Pointer(&srcStride[0])), C.int(srcSliceY), 
@@ -322,7 +333,8 @@ func Sws_scale(c *SwsContext, srcSlice[] *uint8,
  */
 func Sws_scale_frame(c *SwsContext, dst *AVFrame, src *AVFrame) int32 {
     return int32(C.sws_scale_frame((*C.struct_SwsContext)(unsafe.Pointer(c)), 
-        (*C.AVFrame)(unsafe.Pointer(dst)), (*C.AVFrame)(unsafe.Pointer(src))))
+        (*C.struct_AVFrame)(unsafe.Pointer(dst)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(src))))
 }
 
 /**
@@ -352,7 +364,8 @@ func Sws_scale_frame(c *SwsContext, dst *AVFrame, src *AVFrame) int32 {
  */
 func Sws_frame_start(c *SwsContext, dst *AVFrame, src *AVFrame) int32 {
     return int32(C.sws_frame_start((*C.struct_SwsContext)(unsafe.Pointer(c)), 
-        (*C.AVFrame)(unsafe.Pointer(dst)), (*C.AVFrame)(unsafe.Pointer(src))))
+        (*C.struct_AVFrame)(unsafe.Pointer(dst)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(src))))
 }
 
 /**
@@ -434,8 +447,8 @@ func Sws_receive_slice_alignment(c *SwsContext) uint32 {
  * @return A negative error code on error, non negative otherwise.
  *         If `LIBSWSCALE_VERSION_MAJOR < 7`, returns -1 if not supported.
  */
-func Sws_setColorspaceDetails(c *SwsContext, inv_table[4] int32,
-                             srcRange int32, table[4] int32, dstRange int32,
+func Sws_setColorspaceDetails(c *SwsContext, inv_table [4]int32,
+                             srcRange int32, table [4]int32, dstRange int32,
                              brightness int32, contrast int32, saturation int32) int32 {
     return int32(C.sws_setColorspaceDetails(
         (*C.struct_SwsContext)(unsafe.Pointer(c)), 
@@ -471,25 +484,26 @@ func Sws_allocVec(length int32) *SwsVector {
  * quality = 3 is high quality, lower is lower quality.
  */
 func Sws_getGaussianVec(variance float64, quality float64) *SwsVector {
-    return (*SwsVector)(unsafe.Pointer(C.sws_getGaussianVec(C.double(variance), C.double(quality))))
+    return (*SwsVector)(unsafe.Pointer(C.sws_getGaussianVec(C.double(variance), 
+        C.double(quality))))
 }
 
 /**
  * Scale all the coefficients of a by the scalar value.
  */
 func Sws_scaleVec(a *SwsVector, scalar float64)  {
-    C.sws_scaleVec((*C.SwsVector)(unsafe.Pointer(a)), C.double(scalar))
+    C.sws_scaleVec((*C.struct_SwsVector)(unsafe.Pointer(a)), C.double(scalar))
 }
 
 /**
  * Scale all the coefficients of a so that their sum equals height.
  */
 func Sws_normalizeVec(a *SwsVector, height float64)  {
-    C.sws_normalizeVec((*C.SwsVector)(unsafe.Pointer(a)), C.double(height))
+    C.sws_normalizeVec((*C.struct_SwsVector)(unsafe.Pointer(a)), C.double(height))
 }
 
 func Sws_freeVec(a *SwsVector)  {
-    C.sws_freeVec((*C.SwsVector)(unsafe.Pointer(a)))
+    C.sws_freeVec((*C.struct_SwsVector)(unsafe.Pointer(a)))
 }
 
 func Sws_getDefaultFilter(lumaGBlur float32, chromaGBlur float32,
@@ -501,7 +515,7 @@ func Sws_getDefaultFilter(lumaGBlur float32, chromaGBlur float32,
         C.float(chromaHShift), C.float(chromaVShift), C.int(verbose))))
 }
 func Sws_freeFilter(filter *SwsFilter)  {
-    C.sws_freeFilter((*C.SwsFilter)(unsafe.Pointer(filter)))
+    C.sws_freeFilter((*C.struct_SwsFilter)(unsafe.Pointer(filter)))
 }
 
 /**
@@ -525,8 +539,8 @@ func Sws_getCachedContext(context *SwsContext,
         (*C.struct_SwsContext)(unsafe.Pointer(context)), C.int(srcW), 
         C.int(srcH), C.enum_AVPixelFormat(srcFormat), C.int(dstW), C.int(dstH), 
         C.enum_AVPixelFormat(dstFormat), C.int(flags), 
-        (*C.SwsFilter)(unsafe.Pointer(srcFilter)), 
-        (*C.SwsFilter)(unsafe.Pointer(dstFilter)), 
+        (*C.struct_SwsFilter)(unsafe.Pointer(srcFilter)), 
+        (*C.struct_SwsFilter)(unsafe.Pointer(dstFilter)), 
         (*C.double)(unsafe.Pointer(param)))))
 }
 

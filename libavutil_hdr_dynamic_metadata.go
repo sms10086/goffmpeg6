@@ -44,19 +44,53 @@ const AV_HDR_PLUS_MAX_PAYLOAD_SIZE = 907
 /**
  * Option for overlapping elliptical pixel selectors in an image.
  */
-type AVHDRPlusOverlapProcessOption C.enum_AVHDRPlusOverlapProcessOption
+type AVHDRPlusOverlapProcessOption int32
+const (
+    AV_HDR_PLUS_OVERLAP_PROCESS_WEIGHTED_AVERAGING AVHDRPlusOverlapProcessOption = 0 + iota
+    AV_HDR_PLUS_OVERLAP_PROCESS_LAYERING = 1
+)
+
 
 /**
  * Represents the percentile at a specific percentage in
  * a distribution.
  */
-type AVHDRPlusPercentile C.struct_AVHDRPlusPercentile
+type AVHDRPlusPercentile struct {
+    Percentage uint8
+    Percentile AVRational
+}
+
 
 /**
  * Color transform parameters at a processing window in a dynamic metadata for
  * SMPTE 2094-40.
  */
-type AVHDRPlusColorTransformParams C.struct_AVHDRPlusColorTransformParams
+type AVHDRPlusColorTransformParams struct {
+    Window_upper_left_corner_x AVRational
+    Window_upper_left_corner_y AVRational
+    Window_lower_right_corner_x AVRational
+    Window_lower_right_corner_y AVRational
+    Center_of_ellipse_x uint16
+    Center_of_ellipse_y uint16
+    Rotation_angle uint8
+    Semimajor_axis_internal_ellipse uint16
+    Semimajor_axis_external_ellipse uint16
+    Semiminor_axis_external_ellipse uint16
+    Overlap_process_option AVHDRPlusOverlapProcessOption
+    Maxscl [3]AVRational
+    Average_maxrgb AVRational
+    Num_distribution_maxrgb_percentiles uint8
+    Distribution_maxrgb [15]AVHDRPlusPercentile
+    Fraction_bright_pixels AVRational
+    Tone_mapping_flag uint8
+    Knee_point_x AVRational
+    Knee_point_y AVRational
+    Num_bezier_curve_anchors uint8
+    Bezier_curve_anchors [15]AVRational
+    Color_saturation_mapping_flag uint8
+    Color_saturation_weight AVRational
+}
+
 
 /**
  * This struct represents dynamic metadata for color volume transform -
@@ -69,7 +103,22 @@ type AVHDRPlusColorTransformParams C.struct_AVHDRPlusColorTransformParams
  * av_dynamic_hdr_plus_alloc() and its size is not a part of
  * the public ABI.
  */
-type AVDynamicHDRPlus C.struct_AVDynamicHDRPlus
+type AVDynamicHDRPlus struct {
+    Itu_t_t35_country_code uint8
+    Application_version uint8
+    Num_windows uint8
+    Params [3]AVHDRPlusColorTransformParams
+    Targeted_system_display_maximum_luminance AVRational
+    Targeted_system_display_actual_peak_luminance_flag uint8
+    Num_rows_targeted_system_display_actual_peak_luminance uint8
+    Num_cols_targeted_system_display_actual_peak_luminance uint8
+    Targeted_system_display_actual_peak_luminance[25] [25]AVRational
+    Mastering_display_actual_peak_luminance_flag uint8
+    Num_rows_mastering_display_actual_peak_luminance uint8
+    Num_cols_mastering_display_actual_peak_luminance uint8
+    Mastering_display_actual_peak_luminance[25] [25]AVRational
+}
+
 
 /**
  * Allocate an AVDynamicHDRPlus structure and set its fields to
@@ -92,7 +141,7 @@ func Av_dynamic_hdr_plus_alloc(size *uint64) *AVDynamicHDRPlus {
  */
 func Av_dynamic_hdr_plus_create_side_data(frame *AVFrame) *AVDynamicHDRPlus {
     return (*AVDynamicHDRPlus)(unsafe.Pointer(C.av_dynamic_hdr_plus_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
 /**
@@ -108,7 +157,7 @@ func Av_dynamic_hdr_plus_create_side_data(frame *AVFrame) *AVDynamicHDRPlus {
 func Av_dynamic_hdr_plus_from_t35(s *AVDynamicHDRPlus, data *uint8,
                                  size uint64) int32 {
     return int32(C.av_dynamic_hdr_plus_from_t35(
-        (*C.AVDynamicHDRPlus)(unsafe.Pointer(s)), 
+        (*C.struct_AVDynamicHDRPlus)(unsafe.Pointer(s)), 
         (*C.uchar)(unsafe.Pointer(data)), C.ulonglong(size)))
 }
 
@@ -132,7 +181,7 @@ func Av_dynamic_hdr_plus_from_t35(s *AVDynamicHDRPlus, data *uint8,
  */
 func Av_dynamic_hdr_plus_to_t35(s *AVDynamicHDRPlus, data **uint8, size *uint64) int32 {
     return int32(C.av_dynamic_hdr_plus_to_t35(
-        (*C.AVDynamicHDRPlus)(unsafe.Pointer(s)), 
+        (*C.struct_AVDynamicHDRPlus)(unsafe.Pointer(s)), 
         (**C.uchar)(unsafe.Pointer(data)), (*C.ulonglong)(unsafe.Pointer(size))))
 }
 

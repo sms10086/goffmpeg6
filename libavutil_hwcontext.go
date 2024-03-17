@@ -42,9 +42,26 @@ import (
                 
                    
 
-type AVHWDeviceType C.enum_AVHWDeviceType
+type AVHWDeviceType int32
+const (
+    AV_HWDEVICE_TYPE_NONE AVHWDeviceType = iota
+    AV_HWDEVICE_TYPE_VDPAU
+    AV_HWDEVICE_TYPE_CUDA
+    AV_HWDEVICE_TYPE_VAAPI
+    AV_HWDEVICE_TYPE_DXVA2
+    AV_HWDEVICE_TYPE_QSV
+    AV_HWDEVICE_TYPE_VIDEOTOOLBOX
+    AV_HWDEVICE_TYPE_D3D11VA
+    AV_HWDEVICE_TYPE_DRM
+    AV_HWDEVICE_TYPE_OPENCL
+    AV_HWDEVICE_TYPE_MEDIACODEC
+    AV_HWDEVICE_TYPE_VULKAN
+)
 
-type AVHWDeviceInternal C.struct_AVHWDeviceInternal
+
+type AVHWDeviceInternal struct {
+}
+
 
 /**
  * This struct aggregates all the (hardware/vendor-specific) "high-level" state,
@@ -63,9 +80,19 @@ type AVHWDeviceInternal C.struct_AVHWDeviceInternal
  * optionally invoking a user-specified callback for uninitializing the hardware
  * state.
  */
-type AVHWDeviceContext C.struct_AVHWDeviceContext
+type AVHWDeviceContext struct {
+    Av_class *AVClass
+    Internal *AVHWDeviceInternal
+    Type AVHWDeviceType
+    Hwctx unsafe.Pointer
+    Free uintptr
+    User_opaque unsafe.Pointer
+}
 
-type AVHWFramesInternal C.struct_AVHWFramesInternal
+
+type AVHWFramesInternal struct {
+}
+
 
 /**
  * This struct describes a set or pool of "hardware" frames (i.e. those with
@@ -77,7 +104,22 @@ type AVHWFramesInternal C.struct_AVHWFramesInternal
  * yields a reference, whose data field points to the actual AVHWFramesContext
  * struct.
  */
-type AVHWFramesContext C.struct_AVHWFramesContext
+type AVHWFramesContext struct {
+    Av_class *AVClass
+    Internal *AVHWFramesInternal
+    Device_ref *AVBufferRef
+    Device_ctx *AVHWDeviceContext
+    Hwctx unsafe.Pointer
+    Free uintptr
+    User_opaque unsafe.Pointer
+    Pool *AVBufferPool
+    Initial_pool_size int32
+    Format AVPixelFormat
+    Sw_format AVPixelFormat
+    Width int32
+    Height int32
+}
+
 
 /**
  * Look up an AVHWDeviceType by name.
@@ -110,8 +152,7 @@ func Av_hwdevice_get_type_name(typex AVHWDeviceType) string {
  *         AV_HWDEVICE_TYPE_NONE if there are no more.
  */
 func Av_hwdevice_iterate_types(prev AVHWDeviceType) AVHWDeviceType {
-    return AVHWDeviceType(C.av_hwdevice_iterate_types(
-        C.enum_AVHWDeviceType(prev)))
+    return AVHWDeviceType(C.av_hwdevice_iterate_types(C.enum_AVHWDeviceType(prev)))
 }
 
 /**
@@ -122,7 +163,8 @@ func Av_hwdevice_iterate_types(prev AVHWDeviceType) AVHWDeviceType {
  *         on failure.
  */
 func Av_hwdevice_ctx_alloc(typex AVHWDeviceType) *AVBufferRef {
-    return (*AVBufferRef)(unsafe.Pointer(C.av_hwdevice_ctx_alloc(C.enum_AVHWDeviceType(typex))))
+    return (*AVBufferRef)(unsafe.Pointer(C.av_hwdevice_ctx_alloc(
+        C.enum_AVHWDeviceType(typex))))
 }
 
 /**
@@ -134,7 +176,7 @@ func Av_hwdevice_ctx_alloc(typex AVHWDeviceType) *AVBufferRef {
  * @return 0 on success, a negative AVERROR code on failure
  */
 func Av_hwdevice_ctx_init(ref *AVBufferRef) int32 {
-    return int32(C.av_hwdevice_ctx_init((*C.AVBufferRef)(unsafe.Pointer(ref))))
+    return int32(C.av_hwdevice_ctx_init((*C.struct_AVBufferRef)(unsafe.Pointer(ref))))
 }
 
 /**
@@ -165,9 +207,9 @@ func Av_hwdevice_ctx_init(ref *AVBufferRef) int32 {
 func Av_hwdevice_ctx_create(device_ctx **AVBufferRef, typex AVHWDeviceType,
                            device *byte, opts *AVDictionary, flags int32) int32 {
     return int32(C.av_hwdevice_ctx_create(
-        (**C.AVBufferRef)(unsafe.Pointer(device_ctx)), 
+        (**C.struct_AVBufferRef)(unsafe.Pointer(device_ctx)), 
         C.enum_AVHWDeviceType(typex), (*C.char)(unsafe.Pointer(device)), 
-        (*C.AVDictionary)(unsafe.Pointer(opts)), C.int(flags)))
+        (*C.struct_AVDictionary)(unsafe.Pointer(opts)), C.int(flags)))
 }
 
 /**
@@ -195,8 +237,9 @@ func Av_hwdevice_ctx_create_derived(dst_ctx **AVBufferRef,
                                    typex AVHWDeviceType,
                                    src_ctx *AVBufferRef, flags int32) int32 {
     return int32(C.av_hwdevice_ctx_create_derived(
-        (**C.AVBufferRef)(unsafe.Pointer(dst_ctx)), C.enum_AVHWDeviceType(typex), 
-        (*C.AVBufferRef)(unsafe.Pointer(src_ctx)), C.int(flags)))
+        (**C.struct_AVBufferRef)(unsafe.Pointer(dst_ctx)), 
+        C.enum_AVHWDeviceType(typex), 
+        (*C.struct_AVBufferRef)(unsafe.Pointer(src_ctx)), C.int(flags)))
 }
 
 /**
@@ -220,9 +263,10 @@ func Av_hwdevice_ctx_create_derived_opts(dst_ctx **AVBufferRef,
                                         src_ctx *AVBufferRef,
                                         options *AVDictionary, flags int32) int32 {
     return int32(C.av_hwdevice_ctx_create_derived_opts(
-        (**C.AVBufferRef)(unsafe.Pointer(dst_ctx)), C.enum_AVHWDeviceType(typex), 
-        (*C.AVBufferRef)(unsafe.Pointer(src_ctx)), 
-        (*C.AVDictionary)(unsafe.Pointer(options)), C.int(flags)))
+        (**C.struct_AVBufferRef)(unsafe.Pointer(dst_ctx)), 
+        C.enum_AVHWDeviceType(typex), 
+        (*C.struct_AVBufferRef)(unsafe.Pointer(src_ctx)), 
+        (*C.struct_AVDictionary)(unsafe.Pointer(options)), C.int(flags)))
 }
 
 /**
@@ -236,7 +280,7 @@ func Av_hwdevice_ctx_create_derived_opts(dst_ctx **AVBufferRef,
  */
 func Av_hwframe_ctx_alloc(device_ctx *AVBufferRef) *AVBufferRef {
     return (*AVBufferRef)(unsafe.Pointer(C.av_hwframe_ctx_alloc(
-        (*C.AVBufferRef)(unsafe.Pointer(device_ctx)))))
+        (*C.struct_AVBufferRef)(unsafe.Pointer(device_ctx)))))
 }
 
 /**
@@ -248,7 +292,7 @@ func Av_hwframe_ctx_alloc(device_ctx *AVBufferRef) *AVBufferRef {
  * @return 0 on success, a negative AVERROR code on failure
  */
 func Av_hwframe_ctx_init(ref *AVBufferRef) int32 {
-    return int32(C.av_hwframe_ctx_init((*C.AVBufferRef)(unsafe.Pointer(ref))))
+    return int32(C.av_hwframe_ctx_init((*C.struct_AVBufferRef)(unsafe.Pointer(ref))))
 }
 
 /**
@@ -262,8 +306,8 @@ func Av_hwframe_ctx_init(ref *AVBufferRef) int32 {
  */
 func Av_hwframe_get_buffer(hwframe_ctx *AVBufferRef, frame *AVFrame, flags int32) int32 {
     return int32(C.av_hwframe_get_buffer(
-        (*C.AVBufferRef)(unsafe.Pointer(hwframe_ctx)), 
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
+        (*C.struct_AVBufferRef)(unsafe.Pointer(hwframe_ctx)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), C.int(flags)))
 }
 
 /**
@@ -296,11 +340,16 @@ func Av_hwframe_get_buffer(hwframe_ctx *AVBufferRef, frame *AVFrame, flags int32
  * @return 0 on success, a negative AVERROR error code on failure.
  */
 func Av_hwframe_transfer_data(dst *AVFrame, src *AVFrame, flags int32) int32 {
-    return int32(C.av_hwframe_transfer_data((*C.AVFrame)(unsafe.Pointer(dst)), 
-        (*C.AVFrame)(unsafe.Pointer(src)), C.int(flags)))
+    return int32(C.av_hwframe_transfer_data((*C.struct_AVFrame)(unsafe.Pointer(dst)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(src)), C.int(flags)))
 }
 
-type AVHWFrameTransferDirection C.enum_AVHWFrameTransferDirection
+type AVHWFrameTransferDirection int32
+const (
+    AV_HWFRAME_TRANSFER_DIRECTION_FROM AVHWFrameTransferDirection = iota
+    AV_HWFRAME_TRANSFER_DIRECTION_TO
+)
+
 
 /**
  * Get a list of possible source or target formats usable in
@@ -321,7 +370,7 @@ func Av_hwframe_transfer_get_formats(hwframe_ctx *AVBufferRef,
                                     dir AVHWFrameTransferDirection,
                                     formats **AVPixelFormat, flags int32) int32 {
     return int32(C.av_hwframe_transfer_get_formats(
-        (*C.AVBufferRef)(unsafe.Pointer(hwframe_ctx)), 
+        (*C.struct_AVBufferRef)(unsafe.Pointer(hwframe_ctx)), 
         C.enum_AVHWFrameTransferDirection(dir), 
         (**C.enum_AVPixelFormat)(unsafe.Pointer(formats)), C.int(flags)))
 }
@@ -333,7 +382,15 @@ func Av_hwframe_transfer_get_formats(hwframe_ctx *AVBufferRef,
  * by av_hwdevice_get_hwframe_constraints() and must be freed by
  * av_hwframe_constraints_free() after use.
  */
-type AVHWFramesConstraints C.struct_AVHWFramesConstraints
+type AVHWFramesConstraints struct {
+    Valid_hw_formats *AVPixelFormat
+    Valid_sw_formats *AVPixelFormat
+    Min_width int32
+    Min_height int32
+    Max_width int32
+    Max_height int32
+}
+
 
 /**
  * Allocate a HW-specific configuration structure for a given HW device.
@@ -347,7 +404,7 @@ type AVHWFramesConstraints C.struct_AVHWFramesConstraints
  */
 func Av_hwdevice_hwconfig_alloc(device_ctx *AVBufferRef) unsafe.Pointer {
     return (unsafe.Pointer)(unsafe.Pointer(C.av_hwdevice_hwconfig_alloc(
-        (*C.AVBufferRef)(unsafe.Pointer(device_ctx)))))
+        (*C.struct_AVBufferRef)(unsafe.Pointer(device_ctx)))))
 }
 
 /**
@@ -365,7 +422,7 @@ func Av_hwdevice_hwconfig_alloc(device_ctx *AVBufferRef) unsafe.Pointer {
 func Av_hwdevice_get_hwframe_constraints(ref *AVBufferRef,
                                                            hwconfig unsafe.Pointer) *AVHWFramesConstraints {
     return (*AVHWFramesConstraints)(unsafe.Pointer(C.av_hwdevice_get_hwframe_constraints(
-        (*C.AVBufferRef)(unsafe.Pointer(ref)), hwconfig)))
+        (*C.struct_AVBufferRef)(unsafe.Pointer(ref)), hwconfig)))
 }
 
 /**
@@ -375,13 +432,19 @@ func Av_hwdevice_get_hwframe_constraints(ref *AVBufferRef,
  */
 func Av_hwframe_constraints_free(constraints **AVHWFramesConstraints)  {
     C.av_hwframe_constraints_free(
-        (**C.AVHWFramesConstraints)(unsafe.Pointer(constraints)))
+        (**C.struct_AVHWFramesConstraints)(unsafe.Pointer(constraints)))
 }
 
 
 /**
  * Flags to apply to frame mappings.
  */
+const (
+    AV_HWFRAME_MAP_READ  = 1<<0 + iota
+    AV_HWFRAME_MAP_WRITE = 1<<1
+    AV_HWFRAME_MAP_OVERWRITE = 1<<2
+    AV_HWFRAME_MAP_DIRECT = 1<<3
+)
 
 
 /**
@@ -425,8 +488,8 @@ func Av_hwframe_constraints_free(constraints **AVHWFramesConstraints)  {
  * @return Zero on success, negative AVERROR code on failure.
  */
 func Av_hwframe_map(dst *AVFrame, src *AVFrame, flags int32) int32 {
-    return int32(C.av_hwframe_map((*C.AVFrame)(unsafe.Pointer(dst)), 
-        (*C.AVFrame)(unsafe.Pointer(src)), C.int(flags)))
+    return int32(C.av_hwframe_map((*C.struct_AVFrame)(unsafe.Pointer(dst)), 
+        (*C.struct_AVFrame)(unsafe.Pointer(src)), C.int(flags)))
 }
 
 
@@ -454,10 +517,10 @@ func Av_hwframe_ctx_create_derived(derived_frame_ctx **AVBufferRef,
                                   source_frame_ctx *AVBufferRef,
                                   flags int32) int32 {
     return int32(C.av_hwframe_ctx_create_derived(
-        (**C.AVBufferRef)(unsafe.Pointer(derived_frame_ctx)), 
+        (**C.struct_AVBufferRef)(unsafe.Pointer(derived_frame_ctx)), 
         C.enum_AVPixelFormat(format), 
-        (*C.AVBufferRef)(unsafe.Pointer(derived_device_ctx)), 
-        (*C.AVBufferRef)(unsafe.Pointer(source_frame_ctx)), C.int(flags)))
+        (*C.struct_AVBufferRef)(unsafe.Pointer(derived_device_ctx)), 
+        (*C.struct_AVBufferRef)(unsafe.Pointer(source_frame_ctx)), C.int(flags)))
 }
 
                                

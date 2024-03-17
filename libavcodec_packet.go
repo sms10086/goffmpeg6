@@ -38,12 +38,12 @@ import (
     "unsafe"
 )
 
-//const AV_PKT_DATA_QUALITY_FACTOR = AV_PKT_DATA_QUALITY_STATS
-const AV_PKT_FLAG_KEY = 0x0001
-const AV_PKT_FLAG_CORRUPT = 0x0002
-const AV_PKT_FLAG_DISCARD = 0x0004
-const AV_PKT_FLAG_TRUSTED = 0x0008
-const AV_PKT_FLAG_DISPOSABLE = 0x0010
+//const AV_PKT_DATA_QUALITY_FACTOR =  AV_PKT_DATA_QUALITY_STATS  
+const AV_PKT_FLAG_KEY =      0x0001  
+const AV_PKT_FLAG_CORRUPT =  0x0002  
+const AV_PKT_FLAG_DISCARD =    0x0004 
+const AV_PKT_FLAG_TRUSTED =    0x0008 
+const AV_PKT_FLAG_DISPOSABLE =  0x0010 
 
 
                         
@@ -66,7 +66,43 @@ const AV_PKT_FLAG_DISPOSABLE = 0x0010
  * Types and functions for working with AVPacketSideData.
  * @{
  */
-type AVPacketSideDataType C.enum_AVPacketSideDataType
+type AVPacketSideDataType int32
+const (
+    AV_PKT_DATA_PALETTE AVPacketSideDataType = iota
+    AV_PKT_DATA_NEW_EXTRADATA
+    AV_PKT_DATA_PARAM_CHANGE
+    AV_PKT_DATA_H263_MB_INFO
+    AV_PKT_DATA_REPLAYGAIN
+    AV_PKT_DATA_DISPLAYMATRIX
+    AV_PKT_DATA_STEREO3D
+    AV_PKT_DATA_AUDIO_SERVICE_TYPE
+    AV_PKT_DATA_QUALITY_STATS
+    AV_PKT_DATA_FALLBACK_TRACK
+    AV_PKT_DATA_CPB_PROPERTIES
+    AV_PKT_DATA_SKIP_SAMPLES
+    AV_PKT_DATA_JP_DUALMONO
+    AV_PKT_DATA_STRINGS_METADATA
+    AV_PKT_DATA_SUBTITLE_POSITION
+    AV_PKT_DATA_MATROSKA_BLOCKADDITIONAL
+    AV_PKT_DATA_WEBVTT_IDENTIFIER
+    AV_PKT_DATA_WEBVTT_SETTINGS
+    AV_PKT_DATA_METADATA_UPDATE
+    AV_PKT_DATA_MPEGTS_STREAM_ID
+    AV_PKT_DATA_MASTERING_DISPLAY_METADATA
+    AV_PKT_DATA_SPHERICAL
+    AV_PKT_DATA_CONTENT_LIGHT_LEVEL
+    AV_PKT_DATA_A53_CC
+    AV_PKT_DATA_ENCRYPTION_INIT_INFO
+    AV_PKT_DATA_ENCRYPTION_INFO
+    AV_PKT_DATA_AFD
+    AV_PKT_DATA_PRFT
+    AV_PKT_DATA_ICC_PROFILE
+    AV_PKT_DATA_DOVI_CONF
+    AV_PKT_DATA_S12M_TIMECODE
+    AV_PKT_DATA_DYNAMIC_HDR10_PLUS
+    AV_PKT_DATA_NB
+)
+
 
 //DEPRECATED
 
@@ -97,7 +133,12 @@ type AVPacketSideDataType C.enum_AVPacketSideDataType
  * depending on media type and codec. Refer to @ref AVPacketSideDataType for a
  * list of defined types and where they may be found or used.
  */
-type AVPacketSideData C.struct_AVPacketSideData
+type AVPacketSideData struct {
+    Data *uint8
+    Size uint64
+    Type AVPacketSideDataType
+}
+
 
 /**
  * Allocate a new packet side data.
@@ -117,7 +158,7 @@ func Av_packet_side_data_new(psd **AVPacketSideData, pnb_sd *int32,
                                           typex AVPacketSideDataType,
                                           size uint64, flags int32) *AVPacketSideData {
     return (*AVPacketSideData)(unsafe.Pointer(C.av_packet_side_data_new(
-        (**C.AVPacketSideData)(unsafe.Pointer(psd)), 
+        (**C.struct_AVPacketSideData)(unsafe.Pointer(psd)), 
         (*C.int)(unsafe.Pointer(pnb_sd)), C.enum_AVPacketSideDataType(typex), 
         C.ulonglong(size), C.int(flags))))
 }
@@ -145,7 +186,7 @@ func Av_packet_side_data_add(sd **AVPacketSideData, nb_sd *int32,
                                           typex AVPacketSideDataType,
                                           data unsafe.Pointer, size uint64, flags int32) *AVPacketSideData {
     return (*AVPacketSideData)(unsafe.Pointer(C.av_packet_side_data_add(
-        (**C.AVPacketSideData)(unsafe.Pointer(sd)), 
+        (**C.struct_AVPacketSideData)(unsafe.Pointer(sd)), 
         (*C.int)(unsafe.Pointer(nb_sd)), C.enum_AVPacketSideDataType(typex), 
         data, C.ulonglong(size), C.int(flags))))
 }
@@ -163,7 +204,7 @@ func Av_packet_side_data_get(sd *AVPacketSideData,
                                                 nb_sd int32,
                                                 typex AVPacketSideDataType) *AVPacketSideData {
     return (*AVPacketSideData)(unsafe.Pointer(C.av_packet_side_data_get(
-        (*C.AVPacketSideData)(unsafe.Pointer(sd)), C.int(nb_sd), 
+        (*C.struct_AVPacketSideData)(unsafe.Pointer(sd)), C.int(nb_sd), 
         C.enum_AVPacketSideDataType(typex))))
 }
 
@@ -178,7 +219,7 @@ func Av_packet_side_data_get(sd *AVPacketSideData,
  */
 func Av_packet_side_data_remove(sd *AVPacketSideData, nb_sd *int32,
                                 typex AVPacketSideDataType)  {
-    C.av_packet_side_data_remove((*C.AVPacketSideData)(unsafe.Pointer(sd)), 
+    C.av_packet_side_data_remove((*C.struct_AVPacketSideData)(unsafe.Pointer(sd)), 
         (*C.int)(unsafe.Pointer(nb_sd)), C.enum_AVPacketSideDataType(typex))
 }
 
@@ -192,7 +233,7 @@ func Av_packet_side_data_remove(sd *AVPacketSideData, nb_sd *int32,
  *              the array. Will be set to 0 upon return.
  */
 func Av_packet_side_data_free(sd **AVPacketSideData, nb_sd *int32)  {
-    C.av_packet_side_data_free((**C.AVPacketSideData)(unsafe.Pointer(sd)), 
+    C.av_packet_side_data_free((**C.struct_AVPacketSideData)(unsafe.Pointer(sd)), 
         (*C.int)(unsafe.Pointer(nb_sd)))
 }
 
@@ -241,14 +282,31 @@ func Av_packet_side_data_name(typex AVPacketSideDataType) string {
  * @see av_packet_ref
  * @see av_packet_unref
  */
-type AVPacket C.struct_AVPacket
+type AVPacket struct {
+    Buf *AVBufferRef
+    Pts int64
+    Dts int64
+    Data *uint8
+    Size int32
+    Stream_index int32
+    Flags int32
+    Side_data *AVPacketSideData
+    Side_data_elems int32
+    Duration int64
+    Pos int64
+    Opaque unsafe.Pointer
+    Opaque_ref *AVBufferRef
+    Time_base AVRational
+}
+
 
                       
-                    
-                             
-                 
-                              
-               
+
+type AVPacketList struct {
+    Pkt AVPacket
+    Next *AVPacketList
+}
+
       
 
 ///< The packet contains a keyframe
@@ -272,7 +330,14 @@ type AVPacket C.struct_AVPacket
  */
 
 
-type AVSideDataParamChangeFlags C.enum_AVSideDataParamChangeFlags
+type AVSideDataParamChangeFlags int32
+const (
+    AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT AVSideDataParamChangeFlags = 0x0001 + iota
+    AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_LAYOUT = 0x0002
+    AV_SIDE_DATA_PARAM_CHANGE_SAMPLE_RATE = 0x0004
+    AV_SIDE_DATA_PARAM_CHANGE_DIMENSIONS = 0x0008
+)
+
 
 /**
  * Allocate an AVPacket and set its fields to default values.  The resulting
@@ -300,7 +365,8 @@ func Av_packet_alloc() *AVPacket {
  * @see av_packet_ref
  */
 func Av_packet_clone(src *AVPacket) *AVPacket {
-    return (*AVPacket)(unsafe.Pointer(C.av_packet_clone((*C.AVPacket)(unsafe.Pointer(src)))))
+    return (*AVPacket)(unsafe.Pointer(C.av_packet_clone(
+        (*C.struct_AVPacket)(unsafe.Pointer(src)))))
 }
 
 /**
@@ -311,26 +377,28 @@ func Av_packet_clone(src *AVPacket) *AVPacket {
  * @note passing NULL is a no-op.
  */
 func Av_packet_free(pkt **AVPacket)  {
-    C.av_packet_free((**C.AVPacket)(unsafe.Pointer(pkt)))
+    C.av_packet_free((**C.struct_AVPacket)(unsafe.Pointer(pkt)))
 }
 
                       
-   
-                                                              
-  
-                                                                        
-                          
-  
-                    
-  
-                       
-                       
-  
-                                                              
-                                                                      
-   
-                    
-                                   
+/**
+ * Initialize optional fields of a packet with default values.
+ *
+ * Note, this does not touch the data and size members, which have to be
+ * initialized separately.
+ *
+ * @param pkt packet
+ *
+ * @see av_packet_alloc
+ * @see av_packet_unref
+ *
+ * @deprecated This function is deprecated. Once it's removed,
+               sizeof(AVPacket) will not be a part of the ABI anymore.
+ */
+
+func Av_init_packet(pkt *AVPacket)  {
+    C.av_init_packet((*C.struct_AVPacket)(unsafe.Pointer(pkt)))
+}
       
 
 /**
@@ -342,7 +410,8 @@ func Av_packet_free(pkt **AVPacket)  {
  * @return 0 if OK, AVERROR_xxx otherwise
  */
 func Av_new_packet(pkt *AVPacket, size int32) int32 {
-    return int32(C.av_new_packet((*C.AVPacket)(unsafe.Pointer(pkt)), C.int(size)))
+    return int32(C.av_new_packet((*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
+        C.int(size)))
 }
 
 /**
@@ -352,7 +421,7 @@ func Av_new_packet(pkt *AVPacket, size int32) int32 {
  * @param size new size
  */
 func Av_shrink_packet(pkt *AVPacket, size int32)  {
-    C.av_shrink_packet((*C.AVPacket)(unsafe.Pointer(pkt)), C.int(size))
+    C.av_shrink_packet((*C.struct_AVPacket)(unsafe.Pointer(pkt)), C.int(size))
 }
 
 /**
@@ -362,7 +431,7 @@ func Av_shrink_packet(pkt *AVPacket, size int32)  {
  * @param grow_by number of bytes by which to increase the size of the packet
  */
 func Av_grow_packet(pkt *AVPacket, grow_by int32) int32 {
-    return int32(C.av_grow_packet((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return int32(C.av_grow_packet((*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         C.int(grow_by)))
 }
 
@@ -380,7 +449,7 @@ func Av_grow_packet(pkt *AVPacket, grow_by int32) int32 {
  * @return 0 on success, a negative AVERROR on error
  */
 func Av_packet_from_data(pkt *AVPacket, data *uint8, size int32) int32 {
-    return int32(C.av_packet_from_data((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return int32(C.av_packet_from_data((*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         (*C.uchar)(unsafe.Pointer(data)), C.int(size)))
 }
 
@@ -394,7 +463,8 @@ func Av_packet_from_data(pkt *AVPacket, data *uint8, size int32) int32 {
  */
 func Av_packet_new_side_data(pkt *AVPacket, typex AVPacketSideDataType,
                                  size uint64) *uint8 {
-    return (*uint8)(unsafe.Pointer(C.av_packet_new_side_data((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return (*uint8)(unsafe.Pointer(C.av_packet_new_side_data(
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         C.enum_AVPacketSideDataType(typex), C.ulonglong(size))))
 }
 
@@ -413,7 +483,7 @@ func Av_packet_new_side_data(pkt *AVPacket, typex AVPacketSideDataType,
  */
 func Av_packet_add_side_data(pkt *AVPacket, typex AVPacketSideDataType,
                             data *uint8, size uint64) int32 {
-    return int32(C.av_packet_add_side_data((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return int32(C.av_packet_add_side_data((*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         C.enum_AVPacketSideDataType(typex), (*C.uchar)(unsafe.Pointer(data)), 
         C.ulonglong(size)))
 }
@@ -428,7 +498,8 @@ func Av_packet_add_side_data(pkt *AVPacket, typex AVPacketSideDataType,
  */
 func Av_packet_shrink_side_data(pkt *AVPacket, typex AVPacketSideDataType,
                                size uint64) int32 {
-    return int32(C.av_packet_shrink_side_data((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return int32(C.av_packet_shrink_side_data(
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         C.enum_AVPacketSideDataType(typex), C.ulonglong(size)))
 }
 
@@ -443,7 +514,8 @@ func Av_packet_shrink_side_data(pkt *AVPacket, typex AVPacketSideDataType,
  */
 func Av_packet_get_side_data(pkt *AVPacket, typex AVPacketSideDataType,
                                  size *uint64) *uint8 {
-    return (*uint8)(unsafe.Pointer(C.av_packet_get_side_data((*C.AVPacket)(unsafe.Pointer(pkt)), 
+    return (*uint8)(unsafe.Pointer(C.av_packet_get_side_data(
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
         C.enum_AVPacketSideDataType(typex), (*C.ulonglong)(unsafe.Pointer(size)))))
 }
 
@@ -456,7 +528,7 @@ func Av_packet_get_side_data(pkt *AVPacket, typex AVPacketSideDataType,
  */
 func Av_packet_pack_dictionary(dict *AVDictionary, size *uint64) *uint8 {
     return (*uint8)(unsafe.Pointer(C.av_packet_pack_dictionary(
-        (*C.AVDictionary)(unsafe.Pointer(dict)), 
+        (*C.struct_AVDictionary)(unsafe.Pointer(dict)), 
         (*C.ulonglong)(unsafe.Pointer(size)))))
 }
 /**
@@ -470,7 +542,7 @@ func Av_packet_pack_dictionary(dict *AVDictionary, size *uint64) *uint8 {
 func Av_packet_unpack_dictionary(data *uint8, size uint64,
                                 dict **AVDictionary) int32 {
     return int32(C.av_packet_unpack_dictionary((*C.uchar)(unsafe.Pointer(data)), 
-        C.ulonglong(size), (**C.AVDictionary)(unsafe.Pointer(dict))))
+        C.ulonglong(size), (**C.struct_AVDictionary)(unsafe.Pointer(dict))))
 }
 
 /**
@@ -480,7 +552,7 @@ func Av_packet_unpack_dictionary(data *uint8, size uint64,
  * @param pkt packet
  */
 func Av_packet_free_side_data(pkt *AVPacket)  {
-    C.av_packet_free_side_data((*C.AVPacket)(unsafe.Pointer(pkt)))
+    C.av_packet_free_side_data((*C.struct_AVPacket)(unsafe.Pointer(pkt)))
 }
 
 /**
@@ -501,8 +573,8 @@ func Av_packet_free_side_data(pkt *AVPacket)  {
  *         will be blank (as if returned by av_packet_alloc()).
  */
 func Av_packet_ref(dst *AVPacket, src *AVPacket) int32 {
-    return int32(C.av_packet_ref((*C.AVPacket)(unsafe.Pointer(dst)), 
-        (*C.AVPacket)(unsafe.Pointer(src))))
+    return int32(C.av_packet_ref((*C.struct_AVPacket)(unsafe.Pointer(dst)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(src))))
 }
 
 /**
@@ -514,7 +586,7 @@ func Av_packet_ref(dst *AVPacket, src *AVPacket) int32 {
  * @param pkt The packet to be unreferenced.
  */
 func Av_packet_unref(pkt *AVPacket)  {
-    C.av_packet_unref((*C.AVPacket)(unsafe.Pointer(pkt)))
+    C.av_packet_unref((*C.struct_AVPacket)(unsafe.Pointer(pkt)))
 }
 
 /**
@@ -526,8 +598,8 @@ func Av_packet_unref(pkt *AVPacket)  {
  * @param dst Destination packet
  */
 func Av_packet_move_ref(dst *AVPacket, src *AVPacket)  {
-    C.av_packet_move_ref((*C.AVPacket)(unsafe.Pointer(dst)), 
-        (*C.AVPacket)(unsafe.Pointer(src)))
+    C.av_packet_move_ref((*C.struct_AVPacket)(unsafe.Pointer(dst)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(src)))
 }
 
 /**
@@ -542,8 +614,8 @@ func Av_packet_move_ref(dst *AVPacket, src *AVPacket)  {
  * @return 0 on success AVERROR on failure.
  */
 func Av_packet_copy_props(dst *AVPacket, src *AVPacket) int32 {
-    return int32(C.av_packet_copy_props((*C.AVPacket)(unsafe.Pointer(dst)), 
-        (*C.AVPacket)(unsafe.Pointer(src))))
+    return int32(C.av_packet_copy_props((*C.struct_AVPacket)(unsafe.Pointer(dst)), 
+        (*C.struct_AVPacket)(unsafe.Pointer(src))))
 }
 
 /**
@@ -561,7 +633,8 @@ func Av_packet_copy_props(dst *AVPacket, src *AVPacket) int32 {
  *         packet is unchanged.
  */
 func Av_packet_make_refcounted(pkt *AVPacket) int32 {
-    return int32(C.av_packet_make_refcounted((*C.AVPacket)(unsafe.Pointer(pkt))))
+    return int32(C.av_packet_make_refcounted(
+        (*C.struct_AVPacket)(unsafe.Pointer(pkt))))
 }
 
 /**
@@ -574,7 +647,7 @@ func Av_packet_make_refcounted(pkt *AVPacket) int32 {
  *         packet is unchanged.
  */
 func Av_packet_make_writable(pkt *AVPacket) int32 {
-    return int32(C.av_packet_make_writable((*C.AVPacket)(unsafe.Pointer(pkt))))
+    return int32(C.av_packet_make_writable((*C.struct_AVPacket)(unsafe.Pointer(pkt))))
 }
 
 /**
@@ -589,8 +662,9 @@ func Av_packet_make_writable(pkt *AVPacket) int32 {
  *               converted
  */
 func Av_packet_rescale_ts(pkt *AVPacket, tb_src AVRational, tb_dst AVRational)  {
-    C.av_packet_rescale_ts((*C.AVPacket)(unsafe.Pointer(pkt)), 
-        C.AVRational(tb_src), C.AVRational(tb_dst))
+    C.av_packet_rescale_ts((*C.struct_AVPacket)(unsafe.Pointer(pkt)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&tb_src)), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&tb_dst)))
 }
 
 /**

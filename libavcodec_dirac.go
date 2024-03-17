@@ -77,11 +77,60 @@ const MAX_DWT_LEVELS = 5
  * 10.4.1 Table 10.1
  */
 
-type DiracParseCodes C.enum_DiracParseCodes
+type DiracParseCodes int32
+const (
+    DIRAC_PCODE_SEQ_HEADER DiracParseCodes = 0x00 + iota
+    DIRAC_PCODE_END_SEQ = 0x10
+    DIRAC_PCODE_AUX = 0x20
+    DIRAC_PCODE_PAD = 0x30
+    DIRAC_PCODE_PICTURE_CODED = 0x08
+    DIRAC_PCODE_PICTURE_RAW = 0x48
+    DIRAC_PCODE_PICTURE_LOW_DEL = 0xC8
+    DIRAC_PCODE_PICTURE_HQ = 0xE8
+    DIRAC_PCODE_INTER_NOREF_CO1 = 0x0A
+    DIRAC_PCODE_INTER_NOREF_CO2 = 0x09
+    DIRAC_PCODE_INTER_REF_CO1 = 0x0D
+    DIRAC_PCODE_INTER_REF_CO2 = 0x0E
+    DIRAC_PCODE_INTRA_REF_CO = 0x0C
+    DIRAC_PCODE_INTRA_REF_RAW = 0x4C
+    DIRAC_PCODE_INTRA_REF_PICT = 0xCC
+    DIRAC_PCODE_MAGIC = 0x42424344
+)
 
-type DiracVersionInfo C.struct_DiracVersionInfo
 
-type AVDiracSeqHeader C.struct_AVDiracSeqHeader
+type DiracVersionInfo struct {
+    Major int32
+    Minor int32
+}
+
+
+type AVDiracSeqHeader struct {
+    Width uint32
+    Height uint32
+    Chroma_format uint8
+    Interlaced uint8
+    Top_field_first uint8
+    Frame_rate_index uint8
+    Aspect_ratio_index uint8
+    Clean_width uint16
+    Clean_height uint16
+    Clean_left_offset uint16
+    Clean_right_offset uint16
+    Pixel_range_index uint8
+    Color_spec_index uint8
+    Profile int32
+    Level int32
+    Framerate AVRational
+    Sample_aspect_ratio AVRational
+    Pix_fmt AVPixelFormat
+    Color_range AVColorRange
+    Color_primaries AVColorPrimaries
+    Color_trc AVColorTransferCharacteristic
+    Colorspace AVColorSpace
+    Version DiracVersionInfo
+    Bit_depth int32
+}
+
 
 /**
  * Parse a Dirac sequence header.
@@ -98,7 +147,7 @@ func Av_dirac_parse_sequence_header(dsh **AVDiracSeqHeader,
                                    buf *uint8, buf_size uint64,
                                    log_ctx unsafe.Pointer) int32 {
     return int32(C.av_dirac_parse_sequence_header(
-        (**C.AVDiracSeqHeader)(unsafe.Pointer(dsh)), 
+        (**C.struct_AVDiracSeqHeader)(unsafe.Pointer(dsh)), 
         (*C.uchar)(unsafe.Pointer(buf)), C.ulonglong(buf_size), log_ctx))
 }
 

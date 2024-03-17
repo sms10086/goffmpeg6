@@ -51,7 +51,15 @@ import (
  * @note The struct should be allocated with av_mastering_display_metadata_alloc()
  *       and its size is not a part of the public ABI.
  */
-type AVMasteringDisplayMetadata C.struct_AVMasteringDisplayMetadata
+type AVMasteringDisplayMetadata struct {
+    Display_primaries[3] [2]AVRational
+    White_point [2]AVRational
+    Min_luminance AVRational
+    Max_luminance AVRational
+    Has_primaries int32
+    Has_luminance int32
+}
+
 
 /**
  * Allocate an AVMasteringDisplayMetadata structure and set its fields to
@@ -73,7 +81,7 @@ func Av_mastering_display_metadata_alloc() *AVMasteringDisplayMetadata {
  */
 func Av_mastering_display_metadata_create_side_data(frame *AVFrame) *AVMasteringDisplayMetadata {
     return (*AVMasteringDisplayMetadata)(unsafe.Pointer(C.av_mastering_display_metadata_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
 /**
@@ -85,7 +93,11 @@ func Av_mastering_display_metadata_create_side_data(frame *AVFrame) *AVMastering
  * @note The struct should be allocated with av_content_light_metadata_alloc()
  *       and its size is not a part of the public ABI.
  */
-type AVContentLightMetadata C.struct_AVContentLightMetadata
+type AVContentLightMetadata struct {
+    MaxCLL uint32
+    MaxFALL uint32
+}
+
 
 /**
  * Allocate an AVContentLightMetadata structure and set its fields to
@@ -108,7 +120,7 @@ func Av_content_light_metadata_alloc(size *uint64) *AVContentLightMetadata {
  */
 func Av_content_light_metadata_create_side_data(frame *AVFrame) *AVContentLightMetadata {
     return (*AVContentLightMetadata)(unsafe.Pointer(C.av_content_light_metadata_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
                                                 

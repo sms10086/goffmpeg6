@@ -43,14 +43,29 @@ import (
                                
                             
 
-type AVVideoEncParamsType C.enum_AVVideoEncParamsType
+type AVVideoEncParamsType int32
+const (
+    AV_VIDEO_ENC_PARAMS_NONE AVVideoEncParamsType = -1 + iota
+    AV_VIDEO_ENC_PARAMS_VP9
+    AV_VIDEO_ENC_PARAMS_H264
+    AV_VIDEO_ENC_PARAMS_MPEG2
+)
+
 
 /**
  * Video encoding parameters for a given frame. This struct is allocated along
  * with an optional array of per-block AVVideoBlockParams descriptors.
  * Must be allocated with av_video_enc_params_alloc().
  */
-type AVVideoEncParams C.struct_AVVideoEncParams
+type AVVideoEncParams struct {
+    Nb_blocks uint32
+    Blocks_offset uint64
+    Block_size uint64
+    Type AVVideoEncParamsType
+    Qp int32
+    Delta_qp[4] [2]int32
+}
+
 
 /**
  * Data structure for storing block-level encoding information.
@@ -60,7 +75,14 @@ type AVVideoEncParams C.struct_AVVideoEncParams
  * sizeof(AVVideoBlockParams) is not a part of the ABI and new fields may be
  * added to it.
  */
-type AVVideoBlockParams C.struct_AVVideoBlockParams
+type AVVideoBlockParams struct {
+    Src_x int32
+    Src_y int32
+    W int32
+    H int32
+    Delta_qp int32
+}
+
 
 /**
  * Get the block at the specified {@code idx}. Must be between 0 and nb_blocks - 1.
@@ -92,8 +114,8 @@ func
 Av_video_enc_params_create_side_data(frame *AVFrame, typex AVVideoEncParamsType,
                                      nb_blocks uint32) *AVVideoEncParams {
     return (*AVVideoEncParams)(unsafe.Pointer(C.av_video_enc_params_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)), C.enum_AVVideoEncParamsType(typex), 
-        C.uint(nb_blocks))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)), 
+        C.enum_AVVideoEncParamsType(typex), C.uint(nb_blocks))))
 }
 
                                       

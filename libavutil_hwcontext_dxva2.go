@@ -21,11 +21,6 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavutil
-//#include <d3d9.h>
-//#include <dxva2api.h>
-//#include "libavutil/hwcontext_dxva2.h"
-import "C"
 
 
 
@@ -49,11 +44,20 @@ import "C"
 /**
  * This struct is allocated as AVHWDeviceContext.hwctx
  */
-type AVDXVA2DeviceContext C.struct_AVDXVA2DeviceContext
+type AVDXVA2DeviceContext struct {
+    Devmgr *IDirect3DDeviceManager9
+}
+
 
 /**
  * This struct is allocated as AVHWFramesContext.hwctx
  */
-type AVDXVA2FramesContext C.struct_AVDXVA2FramesContext
+type AVDXVA2FramesContext struct {
+    Surface_type uint32
+    Surfaces **IDirect3DSurface9
+    Nb_surfaces int32
+    Decoder_to_release *IDirectXVideoDecoder
+}
+
 
                                      

@@ -38,15 +38,51 @@ import (
                    
                    
 
-type AVTXContext C.struct_AVTXContext
+type AVTXContext struct {
+}
 
-type AVComplexFloat C.struct_AVComplexFloat
 
-type AVComplexDouble C.struct_AVComplexDouble
+type AVComplexFloat struct {
+    Re float32
+    Im float32
+}
 
-type AVComplexInt32 C.struct_AVComplexInt32
 
-type AVTXType C.enum_AVTXType
+type AVComplexDouble struct {
+    Re float64
+    Im float64
+}
+
+
+type AVComplexInt32 struct {
+    Re int32
+    Im int32
+}
+
+
+type AVTXType int32
+const (
+    AV_TX_FLOAT_FFT AVTXType = 0 + iota
+    AV_TX_DOUBLE_FFT = 2
+    AV_TX_INT32_FFT = 4
+    AV_TX_FLOAT_MDCT = 1
+    AV_TX_DOUBLE_MDCT = 3
+    AV_TX_INT32_MDCT = 5
+    AV_TX_FLOAT_RDFT = 6
+    AV_TX_DOUBLE_RDFT = 7
+    AV_TX_INT32_RDFT = 8
+    AV_TX_FLOAT_DCT = 9
+    AV_TX_DOUBLE_DCT = 10
+    AV_TX_INT32_DCT = 11
+    AV_TX_FLOAT_DCT_I = 12
+    AV_TX_DOUBLE_DCT_I = 13
+    AV_TX_INT32_DCT_I = 14
+    AV_TX_FLOAT_DST_I = 15
+    AV_TX_DOUBLE_DST_I = 16
+    AV_TX_INT32_DST_I = 17
+    AV_TX_NB = 17 + iota - 17
+)
+
 
 /**
  * Function pointer to a function to perform the transform.
@@ -68,7 +104,15 @@ type av_tx_fn C.av_tx_fn
 /**
  * Flags for av_tx_init()
  */
-type AVTXFlags C.enum_AVTXFlags
+type AVTXFlags int32
+const (
+    AV_TX_INPLACE AVTXFlags = 1<<0 + iota
+    AV_TX_UNALIGNED = 1<<1
+    AV_TX_FULL_IMDCT = 1<<2
+    AV_TX_REAL_TO_REAL = 1<<3
+    AV_TX_REAL_TO_IMAGINARY = 1<<4
+)
+
 
 /**
  * Initialize a transform context with the given configuration
@@ -86,7 +130,7 @@ type AVTXFlags C.enum_AVTXFlags
  */
 func Av_tx_init(ctx **AVTXContext, tx *av_tx_fn, typex AVTXType,
                inv int32, len int32, scale unsafe.Pointer, flags uint64) int32 {
-    return int32(C.av_tx_init((**C.AVTXContext)(unsafe.Pointer(ctx)), 
+    return int32(C.av_tx_init((**C.struct_AVTXContext)(unsafe.Pointer(ctx)), 
         (*C.av_tx_fn)(unsafe.Pointer(tx)), C.enum_AVTXType(typex), C.int(inv), 
         C.int(len), scale, C.ulonglong(flags)))
 }
@@ -95,7 +139,7 @@ func Av_tx_init(ctx **AVTXContext, tx *av_tx_fn, typex AVTXType,
  * Frees a context and sets *ctx to NULL, does nothing when *ctx == NULL.
  */
 func Av_tx_uninit(ctx **AVTXContext)  {
-    C.av_tx_uninit((**C.AVTXContext)(unsafe.Pointer(ctx)))
+    C.av_tx_uninit((**C.struct_AVTXContext)(unsafe.Pointer(ctx)))
 }
 
                         

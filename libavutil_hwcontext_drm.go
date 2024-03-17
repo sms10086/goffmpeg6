@@ -21,11 +21,6 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavutil
-//#include <stddef.h>
-//#include <stdint.h>
-//#include "libavutil/hwcontext_drm.h"
-import "C"
 
 
 
@@ -45,6 +40,9 @@ import "C"
  * added in future.
  */
 
+const (
+    AV_DRM_MAX_PLANES  = 4 + iota
+)
 
 
 /**
@@ -53,7 +51,12 @@ import "C"
  * Describes a single DRM object, addressing it as a PRIME file
  * descriptor.
  */
-type AVDRMObjectDescriptor C.struct_AVDRMObjectDescriptor
+type AVDRMObjectDescriptor struct {
+    Fd int32
+    Size uint64
+    Format_modifier uint64
+}
+
 
 /**
  * DRM plane descriptor.
@@ -61,7 +64,12 @@ type AVDRMObjectDescriptor C.struct_AVDRMObjectDescriptor
  * Describes a single plane of a layer, which is contained within
  * a single object.
  */
-type AVDRMPlaneDescriptor C.struct_AVDRMPlaneDescriptor
+type AVDRMPlaneDescriptor struct {
+    Object_index int32
+    Offset int32
+    Pitch int32
+}
+
 
 /**
  * DRM layer descriptor.
@@ -69,7 +77,12 @@ type AVDRMPlaneDescriptor C.struct_AVDRMPlaneDescriptor
  * Describes a single layer within a frame.  This has the structure
  * defined by its format, and will contain one or more planes.
  */
-type AVDRMLayerDescriptor C.struct_AVDRMLayerDescriptor
+type AVDRMLayerDescriptor struct {
+    Format uint32
+    Nb_planes int32
+    Planes [AV_DRM_MAX_PLANES]AVDRMPlaneDescriptor
+}
+
 
 /**
  * DRM frame descriptor.
@@ -91,13 +104,22 @@ type AVDRMLayerDescriptor C.struct_AVDRMLayerDescriptor
  * increasing plane index must be the same as the order which would
  * be used for the data pointers in the equivalent software format.
  */
-type AVDRMFrameDescriptor C.struct_AVDRMFrameDescriptor
+type AVDRMFrameDescriptor struct {
+    Nb_objects int32
+    Objects [AV_DRM_MAX_PLANES]AVDRMObjectDescriptor
+    Nb_layers int32
+    Layers [AV_DRM_MAX_PLANES]AVDRMLayerDescriptor
+}
+
 
 /**
  * DRM device.
  *
  * Allocated as AVHWDeviceContext.hwctx.
  */
-type AVDRMDeviceContext C.struct_AVDRMDeviceContext
+type AVDRMDeviceContext struct {
+    Fd int32
+}
+
 
                                    

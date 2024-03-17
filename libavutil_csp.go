@@ -61,19 +61,33 @@ import (
  * Struct containing luma coefficients to be used for RGB to YUV/YCoCg, or similar
  * calculations.
  */
-type AVLumaCoefficients C.struct_AVLumaCoefficients
+type AVLumaCoefficients struct {
+    Cr AVRational
+    Cg AVRational
+    Cb AVRational
+}
+
 
 /**
  * Struct containing chromaticity x and y values for the standard CIE 1931
  * chromaticity definition.
  */
-type AVCIExy C.struct_AVCIExy
+type AVCIExy struct {
+    X AVRational
+    Y AVRational
+}
+
 
 /**
  * Struct defining the red, green, and blue primary locations in terms of CIE
  * 1931 chromaticity x and y.
  */
-type AVPrimaryCoefficients C.struct_AVPrimaryCoefficients
+type AVPrimaryCoefficients struct {
+    R AVCIExy
+    G AVCIExy
+    B AVCIExy
+}
+
 
 /**
  * Struct defining white point location in terms of CIE 1931 chromaticity x
@@ -85,7 +99,11 @@ type AVWhitepointCoefficients AVCIExy
  * Struct that contains both white point location and primaries location, providing
  * the complete description of a color gamut.
  */
-type AVColorPrimariesDesc C.struct_AVColorPrimariesDesc
+type AVColorPrimariesDesc struct {
+    Wp AVWhitepointCoefficients
+    Prim AVPrimaryCoefficients
+}
+
 
 /**
  * Function pointer representing a double -> double transfer function that performs
@@ -127,7 +145,7 @@ func Av_csp_primaries_desc_from_id(prm AVColorPrimaries) *AVColorPrimariesDesc {
  */
 func Av_csp_primaries_id_from_desc(prm *AVColorPrimariesDesc) AVColorPrimaries {
     return AVColorPrimaries(C.av_csp_primaries_id_from_desc(
-        (*C.AVColorPrimariesDesc)(unsafe.Pointer(prm))))
+        (*C.struct_AVColorPrimariesDesc)(unsafe.Pointer(prm))))
 }
 
 /**

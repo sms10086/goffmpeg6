@@ -36,7 +36,13 @@ import (
 
                   
 
-type AVFilmGrainParamsType C.enum_AVFilmGrainParamsType
+type AVFilmGrainParamsType int32
+const (
+    AV_FILM_GRAIN_PARAMS_NONE AVFilmGrainParamsType = 0 + iota
+    AV_FILM_GRAIN_PARAMS_AV1
+    AV_FILM_GRAIN_PARAMS_H274
+)
+
 
 /**
  * This structure describes how to handle film grain synthesis for AOM codecs.
@@ -44,7 +50,25 @@ type AVFilmGrainParamsType C.enum_AVFilmGrainParamsType
  * @note The struct must be allocated as part of AVFilmGrainParams using
  *       av_film_grain_params_alloc(). Its size is not a part of the public ABI.
  */
-type AVFilmGrainAOMParams C.struct_AVFilmGrainAOMParams
+type AVFilmGrainAOMParams struct {
+    Num_y_points int32
+    Y_points[14] [2]uint8
+    Chroma_scaling_from_luma int32
+    Num_uv_points [2]int32
+    Uv_points[2][10] [2]uint8
+    Scaling_shift int32
+    Ar_coeff_lag int32
+    Ar_coeffs_y [24]int8
+    Ar_coeffs_uv[2] [25]int8
+    Ar_coeff_shift int32
+    Grain_scale_shift int32
+    Uv_mult [2]int32
+    Uv_mult_luma [2]int32
+    Uv_offset [2]int32
+    Overlap_flag int32
+    Limit_output_range int32
+}
+
 
 /**
  * This structure describes how to handle film grain synthesis for codecs using
@@ -53,7 +77,24 @@ type AVFilmGrainAOMParams C.struct_AVFilmGrainAOMParams
  * @note The struct must be allocated as part of AVFilmGrainParams using
  *       av_film_grain_params_alloc(). Its size is not a part of the public ABI.
  */
-type AVFilmGrainH274Params C.struct_AVFilmGrainH274Params
+type AVFilmGrainH274Params struct {
+    Model_id int32
+    Bit_depth_luma int32
+    Bit_depth_chroma int32
+    Color_range AVColorRange
+    Color_primaries AVColorPrimaries
+    Color_trc AVColorTransferCharacteristic
+    Color_space AVColorSpace
+    Blending_mode_id int32
+    Log2_scale_factor int32
+    Component_model_present [3]int32
+    Num_intensity_intervals [3]uint16
+    Num_model_values [3]uint8
+    Intensity_interval_lower_bound[3] [256]uint8
+    Intensity_interval_upper_bound[3] [256]uint8
+    Comp_model_value[3][256] [6]int16
+}
+
 
 /**
  * This structure describes how to handle film grain synthesis in video
@@ -63,7 +104,12 @@ type AVFilmGrainH274Params C.struct_AVFilmGrainH274Params
  * @note The struct must be allocated with av_film_grain_params_alloc() and
  *       its size is not a part of the public ABI.
  */
-type AVFilmGrainParams C.struct_AVFilmGrainParams
+type AVFilmGrainParams struct {
+    Type AVFilmGrainParamsType
+    Seed uint64
+    Codec AVFilmGrainH274Params
+}
+
 
 /**
  * Allocate an AVFilmGrainParams structure and set its fields to
@@ -87,7 +133,7 @@ func Av_film_grain_params_alloc(size *uint64) *AVFilmGrainParams {
  */
 func Av_film_grain_params_create_side_data(frame *AVFrame) *AVFilmGrainParams {
     return (*AVFilmGrainParams)(unsafe.Pointer(C.av_film_grain_params_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
                                        

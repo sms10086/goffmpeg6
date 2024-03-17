@@ -43,20 +43,63 @@ import (
 /**
  * HDR Vivid three spline params.
  */
-type AVHDRVivid3SplineParams C.struct_AVHDRVivid3SplineParams
+type AVHDRVivid3SplineParams struct {
+    Th_mode int32
+    Th_enable_mb AVRational
+    Th_enable AVRational
+    Th_delta1 AVRational
+    Th_delta2 AVRational
+    Enable_strength AVRational
+}
+
 
 /**
  * Color tone mapping parameters at a processing window in a dynamic metadata for
  * CUVA 005.1:2021.
  */
-type AVHDRVividColorToneMappingParams C.struct_AVHDRVividColorToneMappingParams
+type AVHDRVividColorToneMappingParams struct {
+    Targeted_system_display_maximum_luminance AVRational
+    Base_enable_flag int32
+    Base_param_m_p AVRational
+    Base_param_m_m AVRational
+    Base_param_m_a AVRational
+    Base_param_m_b AVRational
+    Base_param_m_n AVRational
+    Base_param_k1 int32
+    Base_param_k2 int32
+    Base_param_k3 int32
+    Base_param_Delta_enable_mode int32
+    Base_param_Delta AVRational
+    Three_Spline_enable_flag int32
+    Three_Spline_num int32
+    Three_Spline_TH_mode int32
+    Three_Spline_TH_enable_MB AVRational
+    Three_Spline_TH_enable AVRational
+    Three_Spline_TH_Delta1 AVRational
+    Three_Spline_TH_Delta2 AVRational
+    Three_Spline_enable_Strength AVRational
+    Three_spline [2]AVHDRVivid3SplineParams
+}
+
 
 
 /**
  * Color transform parameters at a processing window in a dynamic metadata for
  * CUVA 005.1:2021.
  */
-type AVHDRVividColorTransformParams C.struct_AVHDRVividColorTransformParams
+type AVHDRVividColorTransformParams struct {
+    Minimum_maxrgb AVRational
+    Average_maxrgb AVRational
+    Variance_maxrgb AVRational
+    Maximum_maxrgb AVRational
+    Tone_mapping_mode_flag int32
+    Tone_mapping_param_num int32
+    Tm_params [2]AVHDRVividColorToneMappingParams
+    Color_saturation_mapping_flag int32
+    Color_saturation_num int32
+    Color_saturation_gain [8]AVRational
+}
+
 
 /**
  * This struct represents dynamic metadata for color volume transform -
@@ -69,7 +112,12 @@ type AVHDRVividColorTransformParams C.struct_AVHDRVividColorTransformParams
  * av_dynamic_hdr_vivid_alloc() and its size is not a part of
  * the public ABI.
  */
-type AVDynamicHDRVivid C.struct_AVDynamicHDRVivid
+type AVDynamicHDRVivid struct {
+    System_start_code uint8
+    Num_windows uint8
+    Params [3]AVHDRVividColorTransformParams
+}
+
 
 /**
  * Allocate an AVDynamicHDRVivid structure and set its fields to
@@ -92,7 +140,7 @@ func Av_dynamic_hdr_vivid_alloc(size *uint64) *AVDynamicHDRVivid {
  */
 func Av_dynamic_hdr_vivid_create_side_data(frame *AVFrame) *AVDynamicHDRVivid {
     return (*AVDynamicHDRVivid)(unsafe.Pointer(C.av_dynamic_hdr_vivid_create_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
                                                 

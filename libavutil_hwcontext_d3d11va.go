@@ -21,11 +21,9 @@
 
 package goffmpeg6
 
-//#cgo pkg-config: libavutil
-//#include <d3d11.h>
-//#include <stdint.h>
-//#include "libavutil/hwcontext_d3d11va.h"
-import "C"
+import (
+    "unsafe"
+)
 
 
 
@@ -55,7 +53,16 @@ import "C"
 /**
  * This struct is allocated as AVHWDeviceContext.hwctx
  */
-type AVD3D11VADeviceContext C.struct_AVD3D11VADeviceContext
+type AVD3D11VADeviceContext struct {
+    Device *ID3D11Device
+    Device_context *ID3D11DeviceContext
+    Video_device *ID3D11VideoDevice
+    Video_context *ID3D11VideoContext
+    Lock uintptr
+    Unlock uintptr
+    Lock_ctx unsafe.Pointer
+}
+
 
 /**
  * D3D11 frame descriptor for pool allocation.
@@ -67,11 +74,21 @@ type AVD3D11VADeviceContext C.struct_AVD3D11VADeviceContext
  * This has no use outside of custom allocation, and AVFrame AVBufferRef do not
  * necessarily point to an instance of this struct.
  */
-type AVD3D11FrameDescriptor C.struct_AVD3D11FrameDescriptor
+type AVD3D11FrameDescriptor struct {
+    Texture *ID3D11Texture2D
+    Index uintptr
+}
+
 
 /**
  * This struct is allocated as AVHWFramesContext.hwctx
  */
-type AVD3D11VAFramesContext C.struct_AVD3D11VAFramesContext
+type AVD3D11VAFramesContext struct {
+    Texture *ID3D11Texture2D
+    BindFlags uint32
+    MiscFlags uint32
+    Texture_infos *AVD3D11FrameDescriptor
+}
+
 
                                        

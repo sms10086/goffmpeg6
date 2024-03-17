@@ -42,7 +42,7 @@ const AV_LOG_INFO = 32
 const AV_LOG_VERBOSE = 40
 const AV_LOG_DEBUG = 48
 const AV_LOG_TRACE = 56
-const AV_LOG_MAX_OFFSET = (AV_LOG_TRACE - AV_LOG_QUIET)
+const AV_LOG_MAX_OFFSET = 64
 const AV_LOG_SKIP_REPEATED = 1
 const AV_LOG_PRINT_LEVEL = 2
 
@@ -54,20 +54,54 @@ const AV_LOG_PRINT_LEVEL = 2
                        
                     
 
-type AVClassCategory int
+type AVClassCategory int32
+const (
+    AV_CLASS_CATEGORY_NA AVClassCategory = 0 + iota
+    AV_CLASS_CATEGORY_INPUT
+    AV_CLASS_CATEGORY_OUTPUT
+    AV_CLASS_CATEGORY_MUXER
+    AV_CLASS_CATEGORY_DEMUXER
+    AV_CLASS_CATEGORY_ENCODER
+    AV_CLASS_CATEGORY_DECODER
+    AV_CLASS_CATEGORY_FILTER
+    AV_CLASS_CATEGORY_BITSTREAM_FILTER
+    AV_CLASS_CATEGORY_SWSCALER
+    AV_CLASS_CATEGORY_SWRESAMPLER
+    AV_CLASS_CATEGORY_DEVICE_VIDEO_OUTPUT = 40
+    AV_CLASS_CATEGORY_DEVICE_VIDEO_INPUT = 40 + iota - 11
+    AV_CLASS_CATEGORY_DEVICE_AUDIO_OUTPUT
+    AV_CLASS_CATEGORY_DEVICE_AUDIO_INPUT
+    AV_CLASS_CATEGORY_DEVICE_OUTPUT
+    AV_CLASS_CATEGORY_DEVICE_INPUT
+    AV_CLASS_CATEGORY_NB
+)
 
 
 
 
 
-type AVOptionRanges C.struct_AVOptionRanges
+
+// type AVOptionRanges
 
 /**
  * Describe the class of an AVClass context structure. That is an
  * arbitrary struct of which the first field is a pointer to an
  * AVClass struct (e.g. AVCodecContext, AVFormatContext etc.).
  */
-type AVClass C.struct_AVClass
+type AVClass struct {
+    Class_name *byte
+    Item_name uintptr
+    Option *AVOption
+    Version int32
+    Log_level_offset_offset int32
+    Parent_log_context_offset int32
+    Category AVClassCategory
+    Get_category uintptr
+    Query_ranges uintptr
+    Child_next uintptr
+    Child_class_iterate uintptr
+}
+
 
 /**
  * @addtogroup lavu_log

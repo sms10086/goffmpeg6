@@ -33,15 +33,15 @@ import (
     "unsafe"
 )
 
-const AV_ESCAPE_FLAG_WHITESPACE = (1 << 0)
-const AV_ESCAPE_FLAG_STRICT = (1 << 1)
-const AV_ESCAPE_FLAG_XML_SINGLE_QUOTES = (1 << 2)
-const AV_ESCAPE_FLAG_XML_DOUBLE_QUOTES = (1 << 3)
+const AV_ESCAPE_FLAG_WHITESPACE =  (1 << 0) 
+const AV_ESCAPE_FLAG_STRICT =  (1 << 1) 
+const AV_ESCAPE_FLAG_XML_SINGLE_QUOTES =  (1 << 2) 
+const AV_ESCAPE_FLAG_XML_DOUBLE_QUOTES =  (1 << 3) 
 const AV_UTF8_FLAG_ACCEPT_INVALID_BIG_CODES = 1
 const AV_UTF8_FLAG_ACCEPT_NON_CHARACTERS = 2
 const AV_UTF8_FLAG_ACCEPT_SURROGATES = 4
 const AV_UTF8_FLAG_EXCLUDE_XML_INVALID_CONTROL_CODES = 8
-const AV_UTF8_FLAG_ACCEPT_ALL = AV_UTF8_FLAG_ACCEPT_INVALID_BIG_CODES|AV_UTF8_FLAG_ACCEPT_NON_CHARACTERS|AV_UTF8_FLAG_ACCEPT_SURROGATES
+const AV_UTF8_FLAG_ACCEPT_ALL =       AV_UTF8_FLAG_ACCEPT_INVALID_BIG_CODES|AV_UTF8_FLAG_ACCEPT_NON_CHARACTERS|AV_UTF8_FLAG_ACCEPT_SURROGATES 
 
 
                          
@@ -350,7 +350,14 @@ func Av_append_path_component(path *byte, component *byte) string {
         (*C.char)(unsafe.Pointer(component))))
 }
 
-type AVEscapeMode C.enum_AVEscapeMode
+type AVEscapeMode int32
+const (
+    AV_ESCAPE_MODE_AUTO AVEscapeMode = iota
+    AV_ESCAPE_MODE_BACKSLASH
+    AV_ESCAPE_MODE_QUOTE
+    AV_ESCAPE_MODE_XML
+)
+
 
 /**
  * Consider spaces special and escape them even in the middle of the

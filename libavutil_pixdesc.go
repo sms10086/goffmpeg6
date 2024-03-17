@@ -34,23 +34,23 @@ import (
     "unsafe"
 )
 
-const AV_PIX_FMT_FLAG_BE = (1 << 0)
-const AV_PIX_FMT_FLAG_PAL = (1 << 1)
-const AV_PIX_FMT_FLAG_BITSTREAM = (1 << 2)
-const AV_PIX_FMT_FLAG_HWACCEL = (1 << 3)
-const AV_PIX_FMT_FLAG_PLANAR = (1 << 4)
-const AV_PIX_FMT_FLAG_RGB = (1 << 5)
-const AV_PIX_FMT_FLAG_ALPHA = (1 << 7)
-const AV_PIX_FMT_FLAG_BAYER = (1 << 8)
-const AV_PIX_FMT_FLAG_FLOAT = (1 << 9)
-const FF_LOSS_RESOLUTION = 0x0001
-const FF_LOSS_DEPTH = 0x0002
-const FF_LOSS_COLORSPACE = 0x0004
-const FF_LOSS_ALPHA = 0x0008
-const FF_LOSS_COLORQUANT = 0x0010
-const FF_LOSS_CHROMA = 0x0020
-const FF_LOSS_EXCESS_RESOLUTION = 0x0040
-const FF_LOSS_EXCESS_DEPTH = 0x0080
+const AV_PIX_FMT_FLAG_BE =            (1 << 0) 
+const AV_PIX_FMT_FLAG_PAL =           (1 << 1) 
+const AV_PIX_FMT_FLAG_BITSTREAM =     (1 << 2) 
+const AV_PIX_FMT_FLAG_HWACCEL =       (1 << 3) 
+const AV_PIX_FMT_FLAG_PLANAR =        (1 << 4) 
+const AV_PIX_FMT_FLAG_RGB =           (1 << 5) 
+const AV_PIX_FMT_FLAG_ALPHA =         (1 << 7) 
+const AV_PIX_FMT_FLAG_BAYER =         (1 << 8) 
+const AV_PIX_FMT_FLAG_FLOAT =         (1 << 9) 
+const FF_LOSS_RESOLUTION =         0x0001  
+const FF_LOSS_DEPTH =              0x0002  
+const FF_LOSS_COLORSPACE =         0x0004  
+const FF_LOSS_ALPHA =              0x0008  
+const FF_LOSS_COLORQUANT =         0x0010  
+const FF_LOSS_CHROMA =             0x0020  
+const FF_LOSS_EXCESS_RESOLUTION =  0x0040  
+const FF_LOSS_EXCESS_DEPTH =       0x0080  
 
 
                         
@@ -61,7 +61,14 @@ const FF_LOSS_EXCESS_DEPTH = 0x0080
                        
                    
 
-type AVComponentDescriptor C.struct_AVComponentDescriptor
+type AVComponentDescriptor struct {
+    Plane int32
+    Step int32
+    Offset int32
+    Shift int32
+    Depth int32
+}
+
 
 /**
  * Descriptor that unambiguously describes how the bits of a pixel are
@@ -72,7 +79,16 @@ type AVComponentDescriptor C.struct_AVComponentDescriptor
  *       and all the YUV variants) AVPixFmtDescriptor just stores how values
  *       are stored not what these values represent.
  */
-type AVPixFmtDescriptor C.struct_AVPixFmtDescriptor
+type AVPixFmtDescriptor struct {
+    Name *byte
+    Nb_components uint8
+    Log2_chroma_w uint8
+    Log2_chroma_h uint8
+    Flags uint64
+    Comp [4]AVComponentDescriptor
+    Alias *byte
+}
+
 
 /**
  * Pixel format is big-endian.
@@ -132,7 +148,7 @@ type AVPixFmtDescriptor C.struct_AVPixFmtDescriptor
  */
 func Av_get_bits_per_pixel(pixdesc *AVPixFmtDescriptor) int32 {
     return int32(C.av_get_bits_per_pixel(
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(pixdesc))))
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(pixdesc))))
 }
 
 /**
@@ -141,7 +157,7 @@ func Av_get_bits_per_pixel(pixdesc *AVPixFmtDescriptor) int32 {
  */
 func Av_get_padded_bits_per_pixel(pixdesc *AVPixFmtDescriptor) int32 {
     return int32(C.av_get_padded_bits_per_pixel(
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(pixdesc))))
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(pixdesc))))
 }
 
 /**
@@ -162,7 +178,7 @@ func Av_pix_fmt_desc_get(pix_fmt AVPixelFormat) *AVPixFmtDescriptor {
  */
 func Av_pix_fmt_desc_next(prev *AVPixFmtDescriptor) *AVPixFmtDescriptor {
     return (*AVPixFmtDescriptor)(unsafe.Pointer(C.av_pix_fmt_desc_next(
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(prev)))))
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(prev)))))
 }
 
 /**
@@ -171,7 +187,7 @@ func Av_pix_fmt_desc_next(prev *AVPixFmtDescriptor) *AVPixFmtDescriptor {
  */
 func Av_pix_fmt_desc_get_id(desc *AVPixFmtDescriptor) AVPixelFormat {
     return AVPixelFormat(C.av_pix_fmt_desc_get_id(
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(desc))))
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(desc))))
 }
 
 /**
@@ -186,9 +202,8 @@ func Av_pix_fmt_desc_get_id(desc *AVPixFmtDescriptor) AVPixelFormat {
  */
 func Av_pix_fmt_get_chroma_sub_sample(pix_fmt AVPixelFormat,
                                      h_shift *int32, v_shift *int32) int32 {
-    return int32(C.av_pix_fmt_get_chroma_sub_sample(
-        C.enum_AVPixelFormat(pix_fmt), (*C.int)(unsafe.Pointer(h_shift)), 
-        (*C.int)(unsafe.Pointer(v_shift))))
+    return int32(C.av_pix_fmt_get_chroma_sub_sample(C.enum_AVPixelFormat(pix_fmt), 
+        (*C.int)(unsafe.Pointer(h_shift)), (*C.int)(unsafe.Pointer(v_shift))))
 }
 
 /**
@@ -356,23 +371,23 @@ func Av_get_pix_fmt_string(buf *byte, buf_size int32,
  * data[0]. The behavior is undefined if the format is not paletted.
  * @param dst_element_size size of elements in dst array (2 or 4 byte)
  */
-func Av_read_image_line2(dst unsafe.Pointer, data[4] *uint8,
-                        linesize[4] int32, desc *AVPixFmtDescriptor,
+func Av_read_image_line2(dst unsafe.Pointer, data [4]*uint8,
+                        linesize [4]int32, desc *AVPixFmtDescriptor,
                         x int32, y int32, c int32, w int32, read_pal_component int32,
                         dst_element_size int32)  {
     C.av_read_image_line2(dst, (**C.uchar)(unsafe.Pointer(&data[0])), 
         (*C.int)(unsafe.Pointer(&linesize[0])), 
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
         C.int(c), C.int(w), C.int(read_pal_component), C.int(dst_element_size))
 }
 
-func Av_read_image_line(dst *uint16, data[4] *uint8,
-                        linesize[4] int32, desc *AVPixFmtDescriptor,
+func Av_read_image_line(dst *uint16, data [4]*uint8,
+                        linesize [4]int32, desc *AVPixFmtDescriptor,
                         x int32, y int32, c int32, w int32, read_pal_component int32)  {
     C.av_read_image_line((*C.ushort)(unsafe.Pointer(dst)), 
         (**C.uchar)(unsafe.Pointer(&data[0])), 
         (*C.int)(unsafe.Pointer(&linesize[0])), 
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
         C.int(c), C.int(w), C.int(read_pal_component))
 }
 
@@ -391,22 +406,22 @@ func Av_read_image_line(dst *uint16, data[4] *uint8,
  * values to write to the image line
  * @param src_element_size size of elements in src array (2 or 4 byte)
  */
-func Av_write_image_line2(src unsafe.Pointer, data[4] *uint8,
-                         linesize[4] int32, desc *AVPixFmtDescriptor,
+func Av_write_image_line2(src unsafe.Pointer, data [4]*uint8,
+                         linesize [4]int32, desc *AVPixFmtDescriptor,
                          x int32, y int32, c int32, w int32, src_element_size int32)  {
     C.av_write_image_line2(src, (**C.uchar)(unsafe.Pointer(&data[0])), 
         (*C.int)(unsafe.Pointer(&linesize[0])), 
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
         C.int(c), C.int(w), C.int(src_element_size))
 }
 
-func Av_write_image_line(src *uint16, data[4] *uint8,
-                         linesize[4] int32, desc *AVPixFmtDescriptor,
+func Av_write_image_line(src *uint16, data [4]*uint8,
+                         linesize [4]int32, desc *AVPixFmtDescriptor,
                          x int32, y int32, c int32, w int32)  {
     C.av_write_image_line((*C.ushort)(unsafe.Pointer(src)), 
         (**C.uchar)(unsafe.Pointer(&data[0])), 
         (*C.int)(unsafe.Pointer(&linesize[0])), 
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(desc)), C.int(x), C.int(y), 
         C.int(c), C.int(w))
 }
 
@@ -419,8 +434,7 @@ func Av_write_image_line(src *uint16, data[4] *uint8,
  * otherwise AV_PIX_FMT_NONE
  */
 func Av_pix_fmt_swap_endianness(pix_fmt AVPixelFormat) AVPixelFormat {
-    return AVPixelFormat(C.av_pix_fmt_swap_endianness(
-        C.enum_AVPixelFormat(pix_fmt)))
+    return AVPixelFormat(C.av_pix_fmt_swap_endianness(C.enum_AVPixelFormat(pix_fmt)))
 }
 
 /**< loss due to resolution change */

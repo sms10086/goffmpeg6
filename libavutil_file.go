@@ -84,20 +84,23 @@ func Av_file_unmap(bufptr *uint8, size uint64)  {
 }
 
                         
-   
-                                                         
-                                                         
-                                                                               
-                                                                                
-                         
-                                      
-                                                                       
-                                                                             
-                                                                    
-                                                                                    
-   
-                    
-                                                                                    
+/**
+ * Wrapper to work around the lack of mkstemp() on mingw.
+ * Also, tries to create file in /tmp first, if possible.
+ * *prefix can be a character constant; *filename will be allocated internally.
+ * @return file descriptor of opened file (or negative value corresponding to an
+ * AVERROR code on error)
+ * and opened file name in **filename.
+ * @note On very old libcs it is necessary to set a secure umask before
+ *       calling this, av_tempfile() can't call umask itself as it is used in
+ *       libraries and could interfere with the calling application.
+ * @deprecated as fd numbers cannot be passed saftely between libs on some platforms
+ */
+
+func Av_tempfile(prefix *byte, filename **byte, log_offset int32, log_ctx unsafe.Pointer) int32 {
+    return int32(C.av_tempfile((*C.char)(unsafe.Pointer(prefix)), 
+        (**C.char)(unsafe.Pointer(filename)), C.int(log_offset), log_ctx))
+}
       
 
                           

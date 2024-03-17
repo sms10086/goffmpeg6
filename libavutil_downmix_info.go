@@ -56,7 +56,15 @@ import (
 /**
  * Possible downmix types.
  */
-type AVDownmixType C.enum_AVDownmixType
+type AVDownmixType int32
+const (
+    AV_DOWNMIX_TYPE_UNKNOWN AVDownmixType = iota
+    AV_DOWNMIX_TYPE_LORO
+    AV_DOWNMIX_TYPE_LTRT
+    AV_DOWNMIX_TYPE_DPLII
+    AV_DOWNMIX_TYPE_NB
+)
+
 
 /**
  * This structure describes optional metadata relevant to a downmix procedure.
@@ -64,7 +72,15 @@ type AVDownmixType C.enum_AVDownmixType
  * All fields are set by the decoder to the value indicated in the audio
  * bitstream (if present), or to a "sane" default otherwise.
  */
-type AVDownmixInfo C.struct_AVDownmixInfo
+type AVDownmixInfo struct {
+    Preferred_downmix_type AVDownmixType
+    Center_mix_level float64
+    Center_mix_level_ltrt float64
+    Surround_mix_level float64
+    Surround_mix_level_ltrt float64
+    Lfe_mix_level float64
+}
+
 
 /**
  * Get a frame's AV_FRAME_DATA_DOWNMIX_INFO side data for editing.
@@ -78,7 +94,7 @@ type AVDownmixInfo C.struct_AVDownmixInfo
  */
 func Av_downmix_info_update_side_data(frame *AVFrame) *AVDownmixInfo {
     return (*AVDownmixInfo)(unsafe.Pointer(C.av_downmix_info_update_side_data(
-        (*C.AVFrame)(unsafe.Pointer(frame)))))
+        (*C.struct_AVFrame)(unsafe.Pointer(frame)))))
 }
 
 /**

@@ -38,13 +38,13 @@ import (
 )
 
 const FF_LAMBDA_SHIFT = 7
-const FF_LAMBDA_SCALE = (1<<FF_LAMBDA_SHIFT)
+const FF_LAMBDA_SCALE =  (1<<FF_LAMBDA_SHIFT) 
 const FF_QP2LAMBDA = 118
-const FF_LAMBDA_MAX = (256*128-1)
-const FF_QUALITY_SCALE = FF_LAMBDA_SCALE
-const AV_NOPTS_VALUE = (^int64(0x7fffffffffffffff))
+const FF_LAMBDA_MAX = 32767
+const FF_QUALITY_SCALE =  FF_LAMBDA_SCALE  
+const AV_NOPTS_VALUE =           (^int64(0x7fffffffffffffff)) 
 const AV_TIME_BASE = 1000000
-//const AV_TIME_BASE_Q = (AVRational){1, AV_TIME_BASE}
+//const AV_TIME_BASE_Q =           (AVRational){1, AV_TIME_BASE} 
 const AV_FOURCC_MAX_STRING_SIZE = 32
 
 
@@ -234,7 +234,17 @@ func Avutil_license() string {
  * @brief Media Type
  */
 
-type AVMediaType C.enum_AVMediaType
+type AVMediaType int32
+const (
+    AVMEDIA_TYPE_UNKNOWN AVMediaType = -1 + iota
+    AVMEDIA_TYPE_VIDEO
+    AVMEDIA_TYPE_AUDIO
+    AVMEDIA_TYPE_DATA
+    AVMEDIA_TYPE_SUBTITLE
+    AVMEDIA_TYPE_ATTACHMENT
+    AVMEDIA_TYPE_NB
+)
+
 
 /**
  * Return a string describing the media_type enum, NULL if media_type
@@ -306,7 +316,18 @@ func Av_get_media_type_string(media_type AVMediaType) string {
  * @{
  */
 
-type AVPictureType C.enum_AVPictureType
+type AVPictureType int32
+const (
+    AV_PICTURE_TYPE_NONE AVPictureType = 0 + iota
+    AV_PICTURE_TYPE_I
+    AV_PICTURE_TYPE_P
+    AV_PICTURE_TYPE_B
+    AV_PICTURE_TYPE_S
+    AV_PICTURE_TYPE_SI
+    AV_PICTURE_TYPE_SP
+    AV_PICTURE_TYPE_BI
+)
+
 
 /**
  * Return a single letter to describe the given picture type
@@ -360,23 +381,27 @@ func Av_int_list_length_for_size(elsize uint32,
 
 
                         
-   
-                                      
-                                                                              
-         
-                                                                         
-                                                                             
-                                                                         
-   
-                    
-                                                        
+/**
+ * Open a file using a UTF-8 filename.
+ * The API of this function matches POSIX fopen(), errors are returned through
+ * errno.
+ * @deprecated Avoid using it, as on Windows, the FILE* allocated by this
+ *             function may be allocated with a different CRT than the caller
+ *             who uses the FILE*. No replacement provided in public API.
+ */
+
+func Av_fopen_utf8(path *byte, mode *byte) *C.FILE {
+    return (*C.FILE)(unsafe.Pointer(C.av_fopen_utf8((*C.char)(unsafe.Pointer(path)), 
+        (*C.char)(unsafe.Pointer(mode)))))
+}
       
 
 /**
  * Return the fractional representation of the internal time base.
  */
 func Av_get_time_base_q() AVRational {
-    return AVRational(C.av_get_time_base_q())
+    _ret := C.av_get_time_base_q()
+    return *(*AVRational)(unsafe.Pointer(&_ret))
 }
 
 

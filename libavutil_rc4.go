@@ -44,7 +44,12 @@ import (
  * @{
  */
 
-type AVRC4 C.struct_AVRC4
+type AVRC4 struct {
+    State [256]uint8
+    X int32
+    Y int32
+}
+
 
 /**
  * Allocate an AVRC4 context.

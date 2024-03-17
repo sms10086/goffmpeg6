@@ -69,7 +69,9 @@ import (
 
 //extern const int av_sha512_size;
 
-type AVSHA512 C.struct_AVSHA512
+type AVSHA512 struct {
+}
+
 
 /**
  * Allocate an AVSHA512 context.

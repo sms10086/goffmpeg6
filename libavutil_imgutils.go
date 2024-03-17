@@ -69,11 +69,11 @@ import (
  * for each plane which has the max pixel step. May be NULL.
  * @param pixdesc the AVPixFmtDescriptor for the image, describing its format
  */
-func Av_image_fill_max_pixsteps(max_pixsteps[4] int32, max_pixstep_comps[4] int32,
+func Av_image_fill_max_pixsteps(max_pixsteps [4]int32, max_pixstep_comps [4]int32,
                                 pixdesc *AVPixFmtDescriptor)  {
     C.av_image_fill_max_pixsteps((*C.int)(unsafe.Pointer(&max_pixsteps[0])), 
         (*C.int)(unsafe.Pointer(&max_pixstep_comps[0])), 
-        (*C.AVPixFmtDescriptor)(unsafe.Pointer(pixdesc)))
+        (*C.struct_AVPixFmtDescriptor)(unsafe.Pointer(pixdesc)))
 }
 
 /**
@@ -83,8 +83,8 @@ func Av_image_fill_max_pixsteps(max_pixsteps[4] int32, max_pixstep_comps[4] int3
  * @return the computed size in bytes
  */
 func Av_image_get_linesize(pix_fmt AVPixelFormat, width int32, plane int32) int32 {
-    return int32(C.av_image_get_linesize(C.enum_AVPixelFormat(pix_fmt), 
-        C.int(width), C.int(plane)))
+    return int32(C.av_image_get_linesize(C.enum_AVPixelFormat(pix_fmt), C.int(width), 
+        C.int(plane)))
 }
 
 /**
@@ -96,10 +96,9 @@ func Av_image_get_linesize(pix_fmt AVPixelFormat, width int32, plane int32) int3
  * @param width width of the image in pixels
  * @return >= 0 in case of success, a negative error code otherwise
  */
-func Av_image_fill_linesizes(linesizes[4] int32, pix_fmt AVPixelFormat, width int32) int32 {
-    return int32(C.av_image_fill_linesizes(
-        (*C.int)(unsafe.Pointer(&linesizes[0])), C.enum_AVPixelFormat(pix_fmt), 
-        C.int(width)))
+func Av_image_fill_linesizes(linesizes [4]int32, pix_fmt AVPixelFormat, width int32) int32 {
+    return int32(C.av_image_fill_linesizes((*C.int)(unsafe.Pointer(&linesizes[0])), 
+        C.enum_AVPixelFormat(pix_fmt), C.int(width)))
 }
 
 /**
@@ -115,8 +114,8 @@ func Av_image_fill_linesizes(linesizes[4] int32, pix_fmt AVPixelFormat, width in
  * @note The linesize parameters have the type ptrdiff_t here, while they are
  *       int for av_image_fill_linesizes().
  */
-func Av_image_fill_plane_sizes(size[4] uint64, pix_fmt AVPixelFormat,
-                              height int32, linesizes[4] C.ptrdiff_t) int32 {
+func Av_image_fill_plane_sizes(size [4]uint64, pix_fmt AVPixelFormat,
+                              height int32, linesizes [4]int32) int32 {
     return int32(C.av_image_fill_plane_sizes(
         (*C.ulonglong)(unsafe.Pointer(&size[0])), C.enum_AVPixelFormat(pix_fmt), 
         C.int(height), (*C.ptrdiff_t)(unsafe.Pointer(&linesizes[0]))))
@@ -135,8 +134,8 @@ func Av_image_fill_plane_sizes(size[4] uint64, pix_fmt AVPixelFormat,
  * @return the size in bytes required for the image buffer, a negative
  * error code in case of failure
  */
-func Av_image_fill_pointers(data[4] *uint8, pix_fmt AVPixelFormat, height int32,
-                           ptr *uint8, linesizes[4] int32) int32 {
+func Av_image_fill_pointers(data [4]*uint8, pix_fmt AVPixelFormat, height int32,
+                           ptr *uint8, linesizes [4]int32) int32 {
     return int32(C.av_image_fill_pointers((**C.uchar)(unsafe.Pointer(&data[0])), 
         C.enum_AVPixelFormat(pix_fmt), C.int(height), 
         (*C.uchar)(unsafe.Pointer(ptr)), (*C.int)(unsafe.Pointer(&linesizes[0]))))
@@ -157,7 +156,7 @@ func Av_image_fill_pointers(data[4] *uint8, pix_fmt AVPixelFormat, height int32,
  * @return the size in bytes required for the image buffer, a negative
  * error code in case of failure
  */
-func Av_image_alloc(pointers[4] *uint8, linesizes[4] int32,
+func Av_image_alloc(pointers [4]*uint8, linesizes [4]int32,
                    w int32, h int32, pix_fmt AVPixelFormat, align int32) int32 {
     return int32(C.av_image_alloc((**C.uchar)(unsafe.Pointer(&pointers[0])), 
         (*C.int)(unsafe.Pointer(&linesizes[0])), C.int(w), C.int(h), 
@@ -201,11 +200,12 @@ func Av_image_copy_plane(dst *uint8, dst_linesize int32,
  * @note On x86, the linesizes currently need to be aligned to the cacheline
  *       size (i.e. 64) to get improved performance.
  */
-func Av_image_copy_plane_uc_from(dst *uint8, dst_linesize C.ptrdiff_t,
-                                 src *uint8, src_linesize C.ptrdiff_t,
-                                 bytewidth C.ptrdiff_t, height int32)  {
-    C.av_image_copy_plane_uc_from((*C.uchar)(unsafe.Pointer(dst)), dst_linesize, 
-        (*C.uchar)(unsafe.Pointer(src)), src_linesize, bytewidth, C.int(height))
+func Av_image_copy_plane_uc_from(dst *uint8, dst_linesize int32,
+                                 src *uint8, src_linesize int32,
+                                 bytewidth int32, height int32)  {
+    C.av_image_copy_plane_uc_from((*C.uchar)(unsafe.Pointer(dst)), 
+        C.ptrdiff_t(dst_linesize), (*C.uchar)(unsafe.Pointer(src)), 
+        C.ptrdiff_t(src_linesize), C.ptrdiff_t(bytewidth), C.int(height))
 }
 
 /**
@@ -219,8 +219,8 @@ func Av_image_copy_plane_uc_from(dst *uint8, dst_linesize C.ptrdiff_t,
  * @param width         width of the image in pixels
  * @param height        height of the image in pixels
  */
-func Av_image_copy(dst_data[4] *uint8, dst_linesizes[4] int32,
-                   src_data[4] *uint8, src_linesizes[4] int32,
+func Av_image_copy(dst_data [4]*uint8, dst_linesizes [4]int32,
+                   src_data [4]*uint8, src_linesizes [4]int32,
                    pix_fmt AVPixelFormat, width int32, height int32)  {
     C.av_image_copy((**C.uchar)(unsafe.Pointer(&dst_data[0])), 
         (*C.int)(unsafe.Pointer(&dst_linesizes[0])), 
@@ -251,8 +251,8 @@ func Av_image_copy(dst_data[4] *uint8, dst_linesizes[4] int32,
  * @note On x86, the linesizes currently need to be aligned to the cacheline
  *       size (i.e. 64) to get improved performance.
  */
-func Av_image_copy_uc_from(dst_data[4] *uint8,       dst_linesizes[4] C.ptrdiff_t,
-                           src_data[4] *uint8, src_linesizes[4] C.ptrdiff_t,
+func Av_image_copy_uc_from(dst_data [4]*uint8,       dst_linesizes [4]int32,
+                           src_data [4]*uint8, src_linesizes [4]int32,
                            pix_fmt AVPixelFormat, width int32, height int32)  {
     C.av_image_copy_uc_from((**C.uchar)(unsafe.Pointer(&dst_data[0])), 
         (*C.ptrdiff_t)(unsafe.Pointer(&dst_linesizes[0])), 
@@ -287,11 +287,10 @@ func Av_image_copy_uc_from(dst_data[4] *uint8,       dst_linesizes[4] C.ptrdiff_
  * @return the size in bytes required for src, a negative error code
  * in case of failure
  */
-func Av_image_fill_arrays(dst_data[4] *uint8, dst_linesize[4] int32,
+func Av_image_fill_arrays(dst_data [4]*uint8, dst_linesize [4]int32,
                          src *uint8,
                          pix_fmt AVPixelFormat, width int32, height int32, align int32) int32 {
-    return int32(C.av_image_fill_arrays(
-        (**C.uchar)(unsafe.Pointer(&dst_data[0])), 
+    return int32(C.av_image_fill_arrays((**C.uchar)(unsafe.Pointer(&dst_data[0])), 
         (*C.int)(unsafe.Pointer(&dst_linesize[0])), 
         (*C.uchar)(unsafe.Pointer(src)), C.enum_AVPixelFormat(pix_fmt), 
         C.int(width), C.int(height), C.int(align)))
@@ -330,7 +329,7 @@ func Av_image_get_buffer_size(pix_fmt AVPixelFormat, width int32, height int32, 
  * (error code) on error
  */
 func Av_image_copy_to_buffer(dst *uint8, dst_size int32,
-                            src_data[4] *uint8, src_linesize[4] int32,
+                            src_data [4]*uint8, src_linesize [4]int32,
                             pix_fmt AVPixelFormat, width int32, height int32, align int32) int32 {
     return int32(C.av_image_copy_to_buffer((*C.uchar)(unsafe.Pointer(dst)), 
         C.int(dst_size), (**C.uchar)(unsafe.Pointer(&src_data[0])), 
@@ -367,9 +366,8 @@ func Av_image_check_size(w uint32, h uint32, log_offset int32, log_ctx unsafe.Po
  * @return >= 0 if valid, a negative error code otherwise
  */
 func Av_image_check_size2(w uint32, h uint32, max_pixels int64, pix_fmt AVPixelFormat, log_offset int32, log_ctx unsafe.Pointer) int32 {
-    return int32(C.av_image_check_size2(C.uint(w), C.uint(h), 
-        C.longlong(max_pixels), C.enum_AVPixelFormat(pix_fmt), C.int(log_offset), 
-        log_ctx))
+    return int32(C.av_image_check_size2(C.uint(w), C.uint(h), C.longlong(max_pixels), 
+        C.enum_AVPixelFormat(pix_fmt), C.int(log_offset), log_ctx))
 }
 
 /**
@@ -385,7 +383,8 @@ func Av_image_check_size2(w uint32, h uint32, max_pixels int64, pix_fmt AVPixelF
  * @return 0 if valid, a negative AVERROR code otherwise
  */
 func Av_image_check_sar(w uint32, h uint32, sar AVRational) int32 {
-    return int32(C.av_image_check_sar(C.uint(w), C.uint(h), C.AVRational(sar)))
+    return int32(C.av_image_check_sar(C.uint(w), C.uint(h), 
+        *(*C.struct_AVRational)(unsafe.Pointer(&sar))))
 }
 
 /**
@@ -411,7 +410,7 @@ func Av_image_check_sar(w uint32, h uint32, sar AVRational) int32 {
  * @param height        the height of the image in pixels
  * @return 0 if the image data was cleared, a negative AVERROR code otherwise
  */
-func Av_image_fill_black(dst_data[4] *uint8, dst_linesize[4] C.ptrdiff_t,
+func Av_image_fill_black(dst_data [4]*uint8, dst_linesize [4]int32,
                         pix_fmt AVPixelFormat, rangex AVColorRange,
                         width int32, height int32) int32 {
     return int32(C.av_image_fill_black((**C.uchar)(unsafe.Pointer(&dst_data[0])), 

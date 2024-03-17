@@ -96,9 +96,8 @@ import (
  * @note floating point numbers are inherently inexact, so callers are
  *       recommended to round the return value to nearest integer before use.
  */
-func Av_display_rotation_get(matrix[9] int32) float64 {
-    return float64(C.av_display_rotation_get(
-        (*C.int)(unsafe.Pointer(&matrix[0]))))
+func Av_display_rotation_get(matrix [9]int32) float64 {
+    return float64(C.av_display_rotation_get((*C.int)(unsafe.Pointer(&matrix[0]))))
 }
 
 /**
@@ -109,9 +108,8 @@ func Av_display_rotation_get(matrix[9] int32) float64 {
  *                    by this function)
  * @param angle rotation angle in degrees.
  */
-func Av_display_rotation_set(matrix[9] int32, angle float64)  {
-    C.av_display_rotation_set((*C.int)(unsafe.Pointer(&matrix[0])), 
-        C.double(angle))
+func Av_display_rotation_set(matrix [9]int32, angle float64)  {
+    C.av_display_rotation_set((*C.int)(unsafe.Pointer(&matrix[0])), C.double(angle))
 }
 
 /**
@@ -121,7 +119,7 @@ func Av_display_rotation_set(matrix[9] int32, angle float64)  {
  * @param hflip whether the matrix should be flipped horizontally
  * @param vflip whether the matrix should be flipped vertically
  */
-func Av_display_matrix_flip(matrix[9] int32, hflip int32, vflip int32)  {
+func Av_display_matrix_flip(matrix [9]int32, hflip int32, vflip int32)  {
     C.av_display_matrix_flip((*C.int)(unsafe.Pointer(&matrix[0])), C.int(hflip), 
         C.int(vflip))
 }

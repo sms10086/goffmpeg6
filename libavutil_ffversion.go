@@ -6,7 +6,7 @@
 package goffmpeg6
 
 
-//const FFMPEG_VERSION = "6.1.1-full_build-www.gyan.dev"
+//const FFMPEG_VERSION =  "6.1.1-full_build-www.gyan.dev" 
 
                           
                           
